@@ -26,8 +26,8 @@ namespace Complexity {
             //Create all the things
             Console.Write("Creating Objects... ");
 
-            ComplexCube cube = new ComplexCube();
-            cube.SetScale("1/10");
+            //ComplexCube cube = new ComplexCube();
+            //cube.SetScale("1/10");
 
             SimpleDot3 dot = new SimpleDot3(4);
             
@@ -55,7 +55,7 @@ namespace Complexity {
             });
             Scene scene = new Scene();
             scene.Add(pen);
-            scene.Add(cube);
+            //scene.Add(cube);
             //scene.Add(sys);
 
             Console.WriteLine("Done.");

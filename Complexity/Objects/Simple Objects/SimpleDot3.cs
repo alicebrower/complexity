@@ -25,9 +25,7 @@ namespace Complexity.Objects {
             GL.Color4(color);
             foreach (Point3 p in vertecies) {
                 GL.Vertex3(p.x, p.y, p.z);
-                //Console.Write("(" + p.x + ", " + p.y + ", " + p.z + ") ");
             }
-            //Console.WriteLine("\n");
 
             GL.End();
         }

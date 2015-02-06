@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Complexity.Math_Things;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,15 +24,35 @@ namespace Complexity.Util {
 
         public override MatrixD Transform(MatrixD matrix) {
             vec.Recalculate();
-            return matrix.Rotate(vec.Values);
+            matrix.Rotate(vec.Values());
+            return matrix;
         }
     }
 
     public class MatrixTranslateAction : MatrixTransformAction {
+        private VectorExpr vec;
 
+        public MatrixTranslateAction(VectorExpr vec) {
+            this.vec = vec;
+        }
+
+        public override MatrixD Transform(MatrixD matrix) {
+            vec.Recalculate();
+            matrix.Translate(vec.Values());
+            return matrix;
+        }
     }
 
     public class MatrixScaleAction : MatrixTransformAction {
+        private ExpressionD expr;
 
+        public MatrixScaleAction(ExpressionD expr) {
+            this.expr = expr;
+        }
+
+        public override MatrixD Transform(MatrixD matrix) {
+            matrix.Scale(expr.Evaluate());
+            return matrix;
+        }
     }
 }

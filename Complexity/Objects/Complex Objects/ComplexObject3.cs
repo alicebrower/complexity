@@ -22,10 +22,11 @@ namespace Complexity.Objects {
         protected VectorExpr trans, color, rot, origin;
         protected ExpressionD scale;
 
-        public ComplexObject3() { }
+        public ComplexObject3() {
+            Init();
+        }
 
-        public ComplexObject3(double[,] geometry) {
-            ConvertGeometry(geometry);
+        public ComplexObject3(double[,] geometry) : base(geometry) {
         }
 
         public override void SetColor(double[] color) {
@@ -35,7 +36,7 @@ namespace Complexity.Objects {
             this.color.SetExprAt(3, "" + color[3]);
         }
 
-        public override void Recalculate() {
+        new public void Recalculate() {
             //Recalculate the vector values
             rot.Recalculate();
             trans.Recalculate();

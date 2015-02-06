@@ -17,12 +17,8 @@ namespace Complexity.Objects {
         protected double[] geometry;
         protected double[] colors;
 
-        public ComplexCube() {
-            ConvertGeometry(GeometryBuilder.Cube());
-            originalGeo = MatrixD.OfArray(GeometryBuilder.Cube());
-
-            vertecies = new PointMatrix(originalGeo.ToArray());
-            geometry = vertecies.ToColumnWiseArray();
+        public ComplexCube()
+            : base(GeometryBuilder.Cube()) {
             colors = new double[geometry.Length];
             for (int i = 0; i < colors.Length; i+=3) {
                 colors[i] = 1;
@@ -53,7 +49,7 @@ namespace Complexity.Objects {
             };
         }
 
-        public override void Recalculate() {
+        new public void Recalculate() {
             base.Recalculate();
 
             geometry = vertecies.ToColumnWiseArray();

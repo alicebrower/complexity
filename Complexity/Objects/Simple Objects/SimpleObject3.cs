@@ -14,11 +14,7 @@ namespace Complexity.Objects {
     public abstract class SimpleObject3 : Object3 {
         protected double[] color;
 
-        public SimpleObject3() { }
-
-        public SimpleObject3(double[,] geometry) {
-            ConvertGeometry(geometry);
-            originalGeo = MatrixD.OfArray(vertecies.ToArray());
+        public SimpleObject3(double[,] geometry) : base(geometry) {
         }
 
         public override void SetAttributes(Dictionary<string, string> args) {
@@ -27,15 +23,6 @@ namespace Complexity.Objects {
 
         public override void SetColor(double[] color) {
             this.color = color;
-        }
-
-        /// <summary>
-        /// For simple objects this just resets the point matrix to the originalGeo.
-        /// Use this before performing any calculations on vertecies, unless you know what
-        /// you're doing.
-        /// </summary>
-        public override void Recalculate() {
-            vertecies.SetFromMatrix(originalGeo);
         }
 
         protected override void Init() {

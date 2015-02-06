@@ -18,12 +18,10 @@ namespace Complexity.Objects {
             public Object3 obj;
             public float distance;
 
-            public SysVertex Clone() {
+            new public SysVertex Clone() {
                 return (SysVertex)MemberwiseClone();
             }
         }
-
-        public System3() { }
 
         /// <summary>
         /// 
@@ -32,15 +30,21 @@ namespace Complexity.Objects {
         /// <param name="masterObj"></param>
         public System3(double[,] geometry, Object3 masterObj) {
             SetMasterObj(masterObj);
-            ConvertGeometry(geometry);
+            vertecies = ConvertGeometry(geometry);
             originalGeo = MatrixD.OfArray(geometry);
         }
 
+        /// <summary>
+        /// Sets up the masterObj object
+        /// </summary>
+        /// <param name="obj"></param>
         protected virtual void SetMasterObj(Object3 obj) {
             masterObj = obj;
+
+            //Add transforms based on inheritence
         }
 
-        protected override void ConvertGeometry(double[,] _geometry) {
+        protected override PointMatrix ConvertGeometry(double[,] _geometry) {
             TypedArrayList<Point3> _vertecies = new TypedArrayList<Point3>();
             SysVertex sysVert;
             for (int i = 0; i < _geometry.GetLength(1); i++) {
@@ -53,13 +57,13 @@ namespace Complexity.Objects {
                 _vertecies.Add(sysVert);
             }
 
-            vertecies = new PointMatrix(_vertecies);
+            return new PointMatrix(_vertecies);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public override void Recalculate() {
+        new public void Recalculate() {
             base.Recalculate();
             masterObj.Recalculate();
 
@@ -69,8 +73,8 @@ namespace Complexity.Objects {
                 //Set
                 vert.obj.Recalculate();
                 vert.obj.SetColor(color.Values());
-                vert.obj.ScaleGeo(scale.Evaluate());
-                vert.obj.TranslateGeo(vert.x, vert.y, vert.z);
+                //vert.obj.ScaleGeo(scale.Evaluate());
+                //vert.obj.TranslateGeo(vert.x, vert.y, vert.z);
             }
 
             UpdateClones();

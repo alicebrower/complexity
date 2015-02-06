@@ -28,6 +28,9 @@ namespace Complexity.Objects {
             public PenVertex(float x, float y, float z)
                 : base(x, y, z) {
             }
+
+            public PenVertex(Point3 point) : base(point.x, point.y, point.z) {
+            }
             //A unit direction vector representing the slope of the line at the point
             public float[] slope;
 
@@ -36,9 +39,7 @@ namespace Complexity.Objects {
             }
         }
 
-        public Pen3(double[,] geometry) {
-            masterObj = new SimpleDot3(30);
-            ConvertGeometry(geometry);
+        public Pen3(double[,] geometry) : base(geometry, new SimpleDot3(30)) {
         }
 
         public override void SetAttributes(Dictionary<string, string> args) {
@@ -53,7 +54,7 @@ namespace Complexity.Objects {
             }
         }
 
-        public override void Recalculate() {
+        new public void Recalculate() {
             //base.Recalculate();
 
             //Setup expression values
@@ -77,8 +78,8 @@ namespace Complexity.Objects {
                 //Set
                 ((SimpleObject3)penVert.obj).Recalculate();
                 ((SimpleObject3)penVert.obj).SetColor(color.Values());
-                ((SimpleObject3)penVert.obj).ScaleGeo(scale.Evaluate());
-                ((SimpleObject3)penVert.obj).TranslateGeo(penVert.x, penVert.y, penVert.z);
+                //((SimpleObject3)penVert.obj).ScaleGeo(scale.Evaluate());
+                //((SimpleObject3)penVert.obj).TranslateGeo(penVert.x, penVert.y, penVert.z);
             }
 
             //Remove them as the program leaves scope
@@ -118,7 +119,7 @@ namespace Complexity.Objects {
         /// </summary>
         /// <param name="geometry"></param>
         /// <param name="rmaxDist">The maximum distance objects are allowed to be from each other</param>
-        protected override void ConvertGeometry(double[,] g) {
+        protected override PointMatrix ConvertGeometry(double[,] g) {
             //Create the temp points array
             TypedArrayList<Point3> _points = new TypedArrayList<Point3>();
             double dist, _dist, xdist, ydist, zdist;
@@ -126,7 +127,6 @@ namespace Complexity.Objects {
             int noPoints;
 
             dist = 0;
-            PenVertex _point;
             for (int i = 1; i < g.GetLength(1); i++) {
                 slope = new float[] { 
                     (float)(g[0, i] / g[0, i - 1]),
@@ -143,36 +143,37 @@ namespace Complexity.Objects {
                     ydist = (g[1, i] - g[1, i - 1]) / noPoints;
                     zdist = (g[2, i] - g[2, i - 1]) / noPoints;
 
+                    //Insert intermediary points
                     for (double d = 0; d < noPoints; d += 1) {
-                        _point = new PenVertex(
-                            (float)(d * xdist + g[0, i - 1]),
-                            (float)(d * ydist + g[1, i - 1]),
-                            (float)(d * zdist + g[2, i - 1]));
-                        _point.obj = (Object3)masterObj.Clone();
-
                         _dist = (_points.Count() > 0) ? ((PenVertex)_points.Last()).distance : 0;
-                        _point.distance = (float)(_dist + maxDist);
-                        _point.slope = slope;
-                        _points.Add(_point);
+                        _points.Add(CreateVertex(
+                            d * xdist + g[0, i - 1],
+                            d * ydist + g[1, i - 1],
+                            d * zdist + g[2, i - 1],
+                            _dist, slope
+                        ));
                     }
                 }
 
-                _point = new PenVertex((float)g[0, i], (float)g[1, i], (float)g[2, i]);
-                _point.obj = (Object3)masterObj.Clone();
-
                 //calculate distance
                 if (_points.Count() > 0) {
-                    _point.distance = ((PenVertex)_points.Last()).distance + ((float)maxDist);
+                    _dist = ((PenVertex)_points.Last()).distance + ((float)maxDist);
                 } else {
-                    _point.distance = 0;
+                    _dist = 0;
                 }
-                _point.slope = slope;
-                _points.Add(_point);
+                _points.Add(CreateVertex(g[0, i], g[1, i], g[2, i], _dist, slope));
             }
 
             length = (_points.Count() > 0) ? ((PenVertex)_points.Last()).distance : 0;
+            return new PointMatrix(_points);
+        }
 
-            vertecies = new PointMatrix(_points);
+        protected PenVertex CreateVertex(double x, double y, double z, double dist, float[] slope) {
+            PenVertex result = new PenVertex((float)x, (float)y, (float)z);
+            result.distance = (float)dist;
+            result.slope = slope;
+            result.obj = masterObj.Clone();
+            return result;
         }
     }
 }
