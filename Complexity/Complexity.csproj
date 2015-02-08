@@ -36,9 +36,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main\InputManager.cs" />
+    <Compile Include="Managers\ExpressisonManager.cs" />
+    <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Main\RenderWindow.cs" />
     <Compile Include="Main\Universe.cs" />
+    <Compile Include="Math_Things\Evaluateable.cs" />
     <Compile Include="Math_Things\ExpressionD.cs" />
     <Compile Include="Objects\Compound Objects\Pen3.cs" />
     <Compile Include="Objects\Simple Objects\SimpleDot3.cs" />
@@ -79,6 +81,7 @@
     <Reference Include="MathNet.Symbolics">
       <HintPath>..\packages\MathNet.Symbolics.0.4.0\lib\net40\MathNet.Symbolics.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="OpenTK">
       <HintPath>..\Libraries\Open TK 1.1\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
     </Reference>

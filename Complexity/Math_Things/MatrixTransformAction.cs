@@ -44,14 +44,14 @@ namespace Complexity.Util {
     }
 
     public class MatrixScaleAction : MatrixTransformAction {
-        private ExpressionD expr;
+        private VectorExpr scale;
 
-        public MatrixScaleAction(ExpressionD expr) {
-            this.expr = expr;
+        public MatrixScaleAction(VectorExpr scale) {
+            this.scale = scale;
         }
 
         public override MatrixD Transform(MatrixD matrix) {
-            matrix.Scale(expr.Evaluate());
+            matrix.Scale(scale.Values());
             return matrix;
         }
     }

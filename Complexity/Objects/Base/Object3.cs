@@ -17,7 +17,8 @@ namespace Complexity.Objects {
     /// ComplexObject -> Has a Recalculate method and can update itself
     /// </summary>
     public abstract class Object3 : Renderable {
-        protected string name;
+        private static readonly Object LockObject = new Object();
+
         protected const int ORIGIN_T = 0;
         protected const int SCALE_T = 1;
         protected const int ROTATE_T = 2;
@@ -26,22 +27,97 @@ namespace Complexity.Objects {
         protected PointMatrix vertecies;
         protected MatrixD originalGeo;
 
-        public Object3() { }
+        //Attributes
+        protected class ObjectAttribute {
+            public dynamic value;
+            public bool inherit;
+            public readonly bool removable;
+
+            public ObjectAttribute() { }
+
+            public ObjectAttribute(bool removable) {
+                this.removable = removable;
+            }
+
+            public ObjectAttribute(dynamic value, bool inherit, bool removable) {
+                this.value = value;
+                this.inherit = inherit;
+                this.removable = removable;
+            }
+        }
+
+        protected class ObjectAttributeT<T> : ObjectAttribute {
+            public T value;
+
+            public ObjectAttributeT() { }
+
+            public ObjectAttributeT(bool removable)
+                : base(removable) {
+            }
+
+            public ObjectAttributeT(T value, bool inherit, bool removable)
+                : base(removable) {
+                this.value = value;
+                this.inherit = inherit;
+            }
+        }
+
+        protected Dictionary<string, ObjectAttribute> attributes;
+
+        protected Object3() { }
 
         public Object3(double[,] geometry) {
             vertecies = ConvertGeometry(geometry);
             originalGeo = MatrixD.OfArray(geometry);
 
+            lock (LockObject) {
+                attributes = new Dictionary<string, ObjectAttribute>() {
+                    {"origin", new ObjectAttributeT<MatrixTranslateAction>()},
+                    {"scale", new ObjectAttributeT<MatrixScaleAction>()},
+                    {"rotate", new ObjectAttributeT<MatrixRotateAction>()},
+                    {"translate", new ObjectAttributeT<MatrixTranslateAction>()}
+                };
+
+                //Initialize the transform list, leave entries blank
+                //they will be checked for null
+                transforms = new ArrayList(4);
+                transforms.Add(attributes["origin"].value);
+                transforms.Add(attributes["scale"].value);
+                transforms.Add(attributes["rotate"].value);
+                transforms.Add(attributes["translate"].value);
+            }
+
             Init();
+        }
+
+        public void SetInherit(string name, bool inherit) {
+            attributes[name].inherit = inherit;
+        }
+
+        public void AddAttribute(string name, dynamic value, bool inherit) {
+            attributes.Add(name, new ObjectAttribute(value, inherit, false));
+        }
+
+        public void SetAttribute(string name, dynamic value) {
+            attributes[name].value = value;
+        }
+
+        public void RemoveAttribute(string name) {
+            if (attributes[name].removable) {
+                attributes.Remove(name);
+            } else {
+                attributes[name].value = null;
+            }
         }
 
         /// <summary>
         /// Set object attributes from a Dictionary. 
         /// </summary>
         /// <param name="args"></param>
+        [Obsolete("Object properties are being moved an attributes array and this method will no longer work.")]
         public virtual void SetAttributes(Dictionary<string, string> args) {
             if (args.ContainsKey("name")) {
-                name = args["name"];
+                //name = args["name"];
             }
         }
 
@@ -49,26 +125,10 @@ namespace Complexity.Objects {
         /// 
         /// </summary>
         protected virtual void Init() {
-            //Initialize the transform list, leave entries blank
-            //they will be checked for null
-            transforms = new ArrayList(4);
+
         }
 
-        public void SetOrigin(VectorExpr origin) {
-            transforms[ORIGIN_T] = new MatrixTranslateAction(origin);
-        }
-
-        public void SetScale(ExpressionD expr) {
-            transforms[SCALE_T] = new MatrixScaleAction(expr);
-        }
-
-        public void SetRotate(VectorExpr rotate) {
-            transforms[ROTATE_T] = new MatrixRotateAction(rotate);
-        }
-
-        public void SetTranslate(VectorExpr trans) {
-            transforms[TRANSLATE_T] = trans;
-        }
+        #region Transforms
 
         /// <summary>
         /// Appends a custom transform to the transforms ArrayList
@@ -77,6 +137,34 @@ namespace Complexity.Objects {
         /// <returns></returns>
         public int AppendTransform(MatrixTransformAction trans) {
             return transforms.Add(trans);
+        }
+
+        public void SetTransform(int index, MatrixTransformAction trans) {
+            if (index >= transforms.Count) {
+                throw new IndexOutOfRangeException();
+            }
+
+            transforms[index] = trans;
+        }
+
+        public void SetOrigin(VectorExpr origin) {
+            attributes["origin"].value = new MatrixTranslateAction(origin);
+            transforms[ORIGIN_T] = attributes["origin"].value;
+        }
+
+        public void SetScale(VectorExpr scale) {
+            attributes["scale"].value = new MatrixScaleAction(scale);
+            transforms[SCALE_T] = attributes["scale"].value;
+        }
+
+        public void SetRotate(VectorExpr rotate) {
+            attributes["rotate"].value = new MatrixRotateAction(rotate);
+            transforms[ROTATE_T] = attributes["rotate"].value;
+        }
+
+        public void SetTranslate(VectorExpr trans) {
+            attributes["translate"].value = new MatrixTranslateAction(trans);
+            transforms[TRANSLATE_T] = attributes["translate"].value;
         }
 
         /// <summary>
@@ -97,6 +185,12 @@ namespace Complexity.Objects {
             }
         }
 
+        #endregion
+
+        public PointMatrix GetVertecies() {
+            return vertecies;
+        }
+
         /*
         public void ScaleGeo(double scale) {
             vertecies.Scale(scale);
@@ -114,6 +208,7 @@ namespace Complexity.Objects {
         /// </summary>
         public void Recalculate() {
             vertecies.SetFromMatrix(originalGeo);
+
             foreach (MatrixTransformAction mta in transforms) {
                 if (mta != null) {
                     mta.Transform(vertecies);

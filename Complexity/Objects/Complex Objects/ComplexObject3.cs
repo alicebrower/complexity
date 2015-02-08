@@ -46,7 +46,7 @@ namespace Complexity.Objects {
             //Transform geometry matrix
             vertecies.SetFromMatrix(originalGeo);
             vertecies.Translate(origin.values);
-            vertecies.Scale(scale.Evaluate());
+            //vertecies.Scale(scale.Evaluate());
             vertecies.Rotate(rot.values);
             vertecies.Translate(position[0], position[1], position[2]);
             vertecies.Translate(trans.values);

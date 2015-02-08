@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Complexity.Objects;
 using Complexity.Util;
+using Complexity.Managers;
 
 namespace Complexity.Main {
     /// <summary>
@@ -89,7 +90,7 @@ namespace Complexity.Main {
             //This should be modified so that everything is calculated to a buffer
             //That could be done on a separate thread, then, when that's over
             //we can swap buffers after rendering
-            //ExpressionD.Recalculate();
+            ExpressionManager.Recalculate();
             renderScene.Recalculate();
 
             //Draw the scene

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using Complexity.Math_Things;
+using Complexity.Managers;
 
 namespace Complexity.Util {
     /// <summary>
@@ -29,7 +30,7 @@ namespace Complexity.Util {
 
         public static double[] ToColumnWiseArray(double[,] array) {
             double[] result = new double[array.GetLength(0) * array.GetLength(1)];
-            for (int i = 0; i < array.GetLength(1); i++ ) {
+            for (int i = 0; i < array.GetLength(1); i++) {
                 for (int j = 0; j < array.GetLength(0); j++) {
                     result[i * array.GetLength(0) + j] = array[j, i];
                 }
@@ -76,7 +77,7 @@ namespace Complexity.Util {
         /// <param name="z"></param>
         /// <returns></returns>
         private static Matrix<double> RotZ(double z) {
-           return DenseMatrix.OfArray(new Double[,] {
+            return DenseMatrix.OfArray(new Double[,] {
                 {Math.Cos(z), -Math.Sin(z), 0},
                 {Math.Sin(z), Math.Cos(z), 0},
                 {0, 0, 1}
@@ -102,7 +103,7 @@ namespace Complexity.Util {
         /// <param name="A"></param>
         /// <returns></returns>
         public static MatrixD RotateMatrix(double x, double y, double z, MatrixD A) {
-            MatrixD result = ConvertMatrix((DenseMatrix) (RotX(x) * RotY(y) * RotZ(z) * A));
+            MatrixD result = ConvertMatrix((DenseMatrix)(RotX(x) * RotY(y) * RotZ(z) * A));
             return result;
         }
 
@@ -122,6 +123,7 @@ namespace Complexity.Util {
         /// <param name="scale"></param>
         /// <param name="A"></param>
         /// <returns></returns>
+        [Obsolete("This method applies the same scale to all dimensions.")]
         public static MatrixD ScaleMatrix(double scale, MatrixD A) {
             Matrix<double> result = DenseMatrix.OfArray(A.ToArray());
             result *= scale;
@@ -143,7 +145,7 @@ namespace Complexity.Util {
             trans.SetRow(1, Vector<double>.Build.Dense(A.ColumnCount, y));
             trans.SetRow(2, Vector<double>.Build.Dense(A.ColumnCount, z));
 
-            return ConvertMatrix((DenseMatrix) trans + A);
+            return ConvertMatrix((DenseMatrix)trans + A);
         }
 
         /// <summary>
@@ -157,7 +159,7 @@ namespace Complexity.Util {
             for (int i = 0; i < vec.Count; i++) {
                 trans.SetRow(i, Vector<double>.Build.Dense(A.ColumnCount, vec.At(i)));
             }
-            return ConvertMatrix((DenseMatrix) trans + A);
+            return ConvertMatrix((DenseMatrix)trans + A);
         }
 
         /// <summary>
@@ -167,7 +169,7 @@ namespace Complexity.Util {
         /// <param name="B"></param>
         /// <returns></returns>
         public static MatrixD Add(MatrixD A, MatrixD B) {
-            return (MatrixD) (((Matrix<double>) A)+((Matrix<double>) B));
+            return (MatrixD)(((Matrix<double>)A) + ((Matrix<double>)B));
         }
 
         /// <summary>
@@ -205,7 +207,7 @@ namespace Complexity.Util {
         /// </summary>
         /// <returns></returns>
         public new MatrixD Transpose() {
-            Matrix<double> _this = ((Matrix<double>) this).Transpose();
+            Matrix<double> _this = ((Matrix<double>)this).Transpose();
             return new MatrixD(_this.RowCount, _this.ColumnCount, _this.ToColumnWiseArray());
         }
 
@@ -215,7 +217,7 @@ namespace Complexity.Util {
         /// <param name="index"></param>
         /// <returns></returns>
         public new VectorD Column(int index) {
-            return new VectorD(base.Column(index).ToArray()); 
+            return new VectorD(base.Column(index).ToArray());
         }
 
         /// <summary>
@@ -235,13 +237,14 @@ namespace Complexity.Util {
         /// <param name="scale"></param>
         /// <param name="A"></param>
         /// <returns></returns>
-        public void Scale(double scale) {
-            Matrix<double> result = DenseMatrix.OfArray(ToArray());
-            result *= scale;
-            SetSubMatrix(0, 0, result);
+        public void Scale(double x, double y, double z) {
+            SetRow(0, (Row(0) * x).ToArray());
+            SetRow(1, (Row(1) * y).ToArray());
+            SetRow(2, (Row(2) * z).ToArray());
         }
 
         public void Rotate(double x, double y, double z) {
+            throw new NotImplementedException();
             //MatrixD result = ConvertMatrix((DenseMatrix) (RotX(x) * RotY(y) * RotZ(z) * A));
         }
 
@@ -263,6 +266,10 @@ namespace Complexity.Util {
             SetSubMatrix(0, 0, trans + this);
         }
 
+        public void Scale(double[] values) {
+            Scale(values[0], values[1], values[2]);
+        }
+
         public void Rotate(double[] values) {
             if (values.Length != 3) {
                 throw new ArgumentException("MatrixD.Rotate : Must provide an array of length 3 for rotation.");
@@ -279,6 +286,14 @@ namespace Complexity.Util {
             Translate(values[0], values[1], values[2]);
         }
 
+        public void Scale(VectorD scale) {
+            Scale(scale.At(0), scale.At(1), scale.At(2));
+        }
+
+        public void Rotate(VectorD rot) {
+            Rotate(rot.At(0), rot.At(1), rot.At(2));
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -291,10 +306,6 @@ namespace Complexity.Util {
                 trans.SetRow(i, Vector<double>.Build.Dense(ColumnCount, vec.At(i)));
             }
             SetSubMatrix(0, 0, trans + this);
-        }
-
-        public void Rotate(VectorD rot) {
-            Rotate(rot.At(0), rot.At(1), rot.At(2));
         }
 
         #endregion
@@ -332,7 +343,7 @@ namespace Complexity.Util {
     /// A vector of ExpressionDs.
     /// Maintains a VectorD of the most recently calculated values.
     /// </summary>
-    public class VectorExpr {
+    public class VectorExpr : Recalculated {
         public VectorD values;
         private ExpressionD[] expressions;
 
@@ -341,8 +352,9 @@ namespace Complexity.Util {
             foreach (string s in exprStrings) {
                 _expressions.Add(new ExpressionD(s));
             }
-            expressions = (ExpressionD[]) _expressions.ToArray(typeof(ExpressionD));
-            Recalculate();
+            expressions = (ExpressionD[])_expressions.ToArray(typeof(ExpressionD));
+
+            ExpressionManager.Add(this);
         }
 
         /// <summary>

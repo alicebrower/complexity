@@ -15,10 +15,6 @@ namespace Complexity.Objects {
             : base(GeometryBuilder.Circle(resolution)) {
         }
 
-        public override void SetAttributes(Dictionary<string, string> args) {
-            base.SetAttributes(args);
-        }
-
         public override void Draw() {
             GL.Begin(BeginMode.TriangleFan);
 

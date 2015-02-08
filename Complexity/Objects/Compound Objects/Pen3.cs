@@ -108,9 +108,8 @@ namespace Complexity.Objects {
         }
 
         protected override void SetMasterObj(Object3 obj) {
-            SimpleDot3 dot = new SimpleDot3(5);
-            //dot.SetScale("1/50");
-            masterObj = dot;
+            base.SetMasterObj(new SimpleDot3(3));
+            //masterObj = dot;
         }
 
         /// <summary>
