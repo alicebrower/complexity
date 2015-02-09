@@ -244,8 +244,7 @@ namespace Complexity.Util {
         }
 
         public void Rotate(double x, double y, double z) {
-            throw new NotImplementedException();
-            //MatrixD result = ConvertMatrix((DenseMatrix) (RotX(x) * RotY(y) * RotZ(z) * A));
+            SetSubMatrix(0, 0, (DenseMatrix) (RotX(x) * RotY(y) * RotZ(z) * this));
         }
 
         /// <summary>

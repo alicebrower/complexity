@@ -38,6 +38,9 @@ namespace Complexity.Math_Things {
                 {"sqrt", new Symbol("sqrt", true, 1, LEFT_ASSOC, 10, (a) => Math.Sqrt(a[0]))},
                 {"log", new Symbol("log", true, 1, LEFT_ASSOC, 10, (a) => Math.Log(a[0]))},
 
+                {"rad", new Symbol("rad", true, 1, LEFT_ASSOC, 10, (a) => a[0] * Math.PI / 180.0)},
+                {"deg", new Symbol("deg", true, 1, LEFT_ASSOC, 10, (a) => a[0] * 180.0 / Math.PI)},
+
                 {"abs", new Symbol("abs", true, 1, LEFT_ASSOC, 10, (a) => Math.Abs(a[0]))},
                 {"ceil", new Symbol("ceil", true, 1, LEFT_ASSOC, 10, (a) => Math.Ceiling(a[0]))},
                 {"floor", new Symbol("floor", true, 1, LEFT_ASSOC, 10, (a) => Math.Floor(a[0]))},

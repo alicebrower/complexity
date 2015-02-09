@@ -29,19 +29,15 @@ namespace Complexity {
             //ComplexCube cube = new ComplexCube();
             //cube.SetScale("1/10");
 
-            SimpleDot3 dot = new SimpleDot3(60);
+            SimpleDot3 dot = new SimpleDot3(6);
             //dot.SetScale(new VectorExpr(new string[] { "sin(time)+1", "sin(2*time)+1", "1" }));
-            dot.SetColor(new string[] { "0", "sin(time)", "1", "1" });
-            dot.SetScale(new string[] { ".2", ".2", "1" });
+            dot.SetColor(new string[] { "1", "0.5", "1", "1" });
+            dot.SetScale(new string[] { ".01", ".01", "1" });
             
-            System3 sys = new System3(
-                new double[,] {
-                    { 1, 0, -1 },
-                    { 0, 0,  0 },
-                    { 0, 0,  0 }
-                },
-                dot);
+            System3 sys = new System3(GeometryBuilder.Grid(20, 20), dot);
 
+            //sys.SetScale(new string[] { "sin(time)", "sin(time)", "1"});
+            sys.SetRotate(new string[] { "rad(45)", "sin(time)/2", "0"});
             /*
             sys.SetColor(new double[] { 0, 1, 1, 1});
             

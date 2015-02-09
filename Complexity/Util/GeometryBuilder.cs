@@ -58,7 +58,7 @@ namespace Complexity.Util {
             int index = 0;
             double theta;
             for (double i = start; i < stop; i += step) {
-                ExpressionD.SetSymbolValue("i", i*Math.PI/180.0);
+                ExpressionD.SetSymbolValue("i", i * Math.PI / 180.0);
                 theta = i * Math.PI / 180.0;
 
                 points.Add(new Point3(
@@ -66,7 +66,7 @@ namespace Complexity.Util {
                     expression.Evaluate() * Math.Cos(theta),
                     0
                 ));
-                
+
                 index++;
             }
             ExpressionD.RemoveSymbol("i");
@@ -79,6 +79,28 @@ namespace Complexity.Util {
                 result[1, count] = p.y;
                 result[2, count] = p.z;
                 count++;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a grid with x rows and y columns with the origin at the center
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static double[,] Grid(int x, int y) {
+            double[,] result = new double[3, x * y];
+
+            double xOff = (((double)x - 1) / 2.0);
+            double yOff = (((double)y - 1) / 2.0);
+            for (int j = 0; j < y; j++) {
+                for (int i = 0; i < x; i++) {
+                    result[0, i + j * y] = (i - xOff) / (double)x;
+                    result[1, i + j * y] = (j - yOff) / (double)y;
+                    result[2, i + j * y] = 0;
+                }
             }
 
             return result;

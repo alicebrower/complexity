@@ -146,6 +146,18 @@ namespace Complexity.Objects {
             transforms[index] = trans;
         }
 
+        public void SetScale(string[] args) {
+            SetScale(new VectorExpr(args));
+        }
+
+        public void SetRotate(string[] args) {
+            SetRotate(new VectorExpr(args));
+        }
+
+        public void SetTranslate(string[] args) {
+            SetTranslate(new VectorExpr(args));
+        }
+
         public void SetOrigin(VectorExpr origin) {
             attributes["origin"].value = new MatrixTranslateAction(origin);
             transforms[ORIGIN_T] = attributes["origin"].value;
@@ -154,10 +166,6 @@ namespace Complexity.Objects {
         public void SetScale(VectorExpr scale) {
             attributes["scale"].value = new MatrixScaleAction(scale);
             transforms[SCALE_T] = attributes["scale"].value;
-        }
-
-        public void SetScale(string[] args) {
-            SetScale(new VectorExpr(args));
         }
 
         public void SetRotate(VectorExpr rotate) {
