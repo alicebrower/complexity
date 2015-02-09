@@ -17,12 +17,13 @@ namespace Complexity.Objects {
     /// ComplexObject -> Has a Recalculate method and can update itself
     /// </summary>
     public abstract class Object3 : Renderable {
-        private static readonly Object LockObject = new Object();
-
+        public readonly string[] DEFAULT_COLOR = new string[] { "1", "0", "1", "1" };
         protected const int ORIGIN_T = 0;
         protected const int SCALE_T = 1;
         protected const int ROTATE_T = 2;
         protected const int TRANSLATE_T = 3;
+
+        //Don't forget that collections need special handling in the clone method!
         protected ArrayList transforms;
         protected PointMatrix vertecies;
         protected MatrixD originalGeo;
@@ -64,30 +65,28 @@ namespace Complexity.Objects {
 
         protected Dictionary<string, ObjectAttribute> attributes;
 
-        protected Object3() { }
+        protected Object3() {
+            attributes = new Dictionary<string, ObjectAttribute>() {
+                {"origin", new ObjectAttributeT<MatrixTranslateAction>()},
+                {"scale", new ObjectAttributeT<MatrixScaleAction>()},
+                {"rotate", new ObjectAttributeT<MatrixRotateAction>()},
+                {"translate", new ObjectAttributeT<MatrixTranslateAction>()},
+                {"color", new ObjectAttributeT<VectorExpr>()}
+            };
+            attributes["color"].value = new VectorExpr(DEFAULT_COLOR);
 
-        public Object3(double[,] geometry) {
+            //Initialize the transform list, leave entries blank
+            //they will be checked for null
+            transforms = new ArrayList(4);
+            transforms.Add(attributes["origin"].value);
+            transforms.Add(attributes["scale"].value);
+            transforms.Add(attributes["rotate"].value);
+            transforms.Add(attributes["translate"].value);
+        }
+
+        public Object3(double[,] geometry) : this() {
             vertecies = ConvertGeometry(geometry);
             originalGeo = MatrixD.OfArray(geometry);
-
-            lock (LockObject) {
-                attributes = new Dictionary<string, ObjectAttribute>() {
-                    {"origin", new ObjectAttributeT<MatrixTranslateAction>()},
-                    {"scale", new ObjectAttributeT<MatrixScaleAction>()},
-                    {"rotate", new ObjectAttributeT<MatrixRotateAction>()},
-                    {"translate", new ObjectAttributeT<MatrixTranslateAction>()}
-                };
-
-                //Initialize the transform list, leave entries blank
-                //they will be checked for null
-                transforms = new ArrayList(4);
-                transforms.Add(attributes["origin"].value);
-                transforms.Add(attributes["scale"].value);
-                transforms.Add(attributes["rotate"].value);
-                transforms.Add(attributes["translate"].value);
-            }
-
-            Init();
         }
 
         public void SetInherit(string name, bool inherit) {
@@ -119,13 +118,6 @@ namespace Complexity.Objects {
             if (args.ContainsKey("name")) {
                 //name = args["name"];
             }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected virtual void Init() {
-
         }
 
         #region Transforms
@@ -201,7 +193,9 @@ namespace Complexity.Objects {
         }
         */
 
-        public abstract void SetColor(double[] color);
+        public void SetColor(string[] color) {
+            attributes["color"].value = new VectorExpr(color);
+        }
 
         /// <summary>
         /// 
@@ -217,7 +211,7 @@ namespace Complexity.Objects {
         }
 
         /// <summary>
-        /// Need to perform recursive clone of vertecies PointMatrix
+        /// Need to perform recursive clone of vertecies PointMatrix, transforms and attributes
         /// </summary>
         /// <returns>a shallow copy of this object</returns>
         public virtual Object3 Clone() {

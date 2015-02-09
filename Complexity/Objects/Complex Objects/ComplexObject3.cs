@@ -22,14 +22,19 @@ namespace Complexity.Objects {
         protected VectorExpr trans, color, rot, origin;
         protected ExpressionD scale;
 
-        public ComplexObject3() {
-            Init();
+        public ComplexObject3() : base() {
+            position = new double[] { 0, 0, 0 };
+            scale = new ExpressionD("1");
+            trans = new VectorExpr(new string[] { "0", "0", "0" });
+            color = new VectorExpr(new string[] { "1", "0", "1", "0" });
+            origin = new VectorExpr(new string[] { "0", "0", "0" });
+            rot = new VectorExpr(new string[] { "0", "0", "0" });
         }
 
         public ComplexObject3(double[,] geometry) : base(geometry) {
         }
 
-        public override void SetColor(double[] color) {
+        new public void SetColor(double[] color) {
             this.color.SetExprAt(0, "" + color[0]);
             this.color.SetExprAt(1, "" + color[1]);
             this.color.SetExprAt(2, "" + color[2]);
@@ -145,17 +150,6 @@ namespace Complexity.Objects {
                 throw new Exception("Invalid number of elements in position array, need exactly 3.");
             }
             this.position = position;
-        }
-
-        protected override void Init() {
-            base.Init();
-
-            position = new double[] { 0, 0, 0 };
-            scale = new ExpressionD("1");
-            trans = new VectorExpr(new string[] { "0", "0", "0" });
-            color = new VectorExpr(new string[] { "1", "0", "1", "0" });
-            origin = new VectorExpr(new string[] { "0", "0", "0" });
-            rot = new VectorExpr(new string[] { "0", "0", "0" });
         }
     }
 }

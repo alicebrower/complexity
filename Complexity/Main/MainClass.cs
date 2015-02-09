@@ -30,9 +30,9 @@ namespace Complexity {
             //cube.SetScale("1/10");
 
             SimpleDot3 dot = new SimpleDot3(60);
-            dot.SetScale(new VectorExpr(new string[] { "sin(time)+1", "sin(2*time)+1", "1" }));
+            //dot.SetScale(new VectorExpr(new string[] { "sin(time)+1", "sin(2*time)+1", "1" }));
+            dot.SetColor(new string[] { "0", "sin(time)", "1", "1" });
             
-            /*
             System3 sys = new System3(
                 new double[,] {
                     { 1, 0, -1 },
@@ -41,6 +41,7 @@ namespace Complexity {
                 },
                 dot);
 
+            /*
             sys.SetColor(new double[] { 0, 1, 1, 1});
             
             //Pen3 pen = new Pen3(GeometryBuilder.Circle(60));
@@ -57,10 +58,10 @@ namespace Complexity {
             });
              * */
             Scene scene = new Scene();
-            scene.Add(dot);
+            //scene.Add(dot);
             //scene.Add(pen);
             //scene.Add(cube);
-            //scene.Add(sys);
+            scene.Add(sys);
 
             Console.WriteLine("Done.");
             #endregion

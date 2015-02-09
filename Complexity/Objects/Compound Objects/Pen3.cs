@@ -28,6 +28,8 @@ namespace Complexity.Objects {
             public PenVertex(float x, float y, float z)
                 : base(x, y, z) {
             }
+            public PenVertex(SysVertex v) : base(v.x, v.y, v.z) {
+            }
 
             public PenVertex(Point3 point) : base(point.x, point.y, point.z) {
             }
@@ -76,8 +78,8 @@ namespace Complexity.Objects {
                 color.Recalculate();
 
                 //Set
-                ((SimpleObject3)penVert.obj).Recalculate();
-                ((SimpleObject3)penVert.obj).SetColor(color.Values());
+                //((SimpleObject3)penVert.obj).Recalculate();
+                //((SimpleObject3)penVert.obj).SetColor(color.Values());
                 //((SimpleObject3)penVert.obj).ScaleGeo(scale.Evaluate());
                 //((SimpleObject3)penVert.obj).TranslateGeo(penVert.x, penVert.y, penVert.z);
             }
@@ -168,10 +170,8 @@ namespace Complexity.Objects {
         }
 
         protected PenVertex CreateVertex(double x, double y, double z, double dist, float[] slope) {
-            PenVertex result = new PenVertex((float)x, (float)y, (float)z);
-            result.distance = (float)dist;
+            PenVertex result = new PenVertex(base.CreateVertex(x, y, z, dist));
             result.slope = slope;
-            result.obj = masterObj.Clone();
             return result;
         }
     }

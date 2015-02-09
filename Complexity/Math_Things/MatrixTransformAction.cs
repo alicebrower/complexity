@@ -23,7 +23,6 @@ namespace Complexity.Util {
         }
 
         public override MatrixD Transform(MatrixD matrix) {
-            vec.Recalculate();
             matrix.Rotate(vec.Values());
             return matrix;
         }
@@ -37,8 +36,20 @@ namespace Complexity.Util {
         }
 
         public override MatrixD Transform(MatrixD matrix) {
-            vec.Recalculate();
             matrix.Translate(vec.Values());
+            return matrix;
+        }
+    }
+
+    public class MatrixTranslatePoint3Action : MatrixTransformAction {
+        Point3 point;
+
+        public MatrixTranslatePoint3Action(Point3 point) {
+            this.point = point;
+        }
+
+        public override MatrixD Transform(MatrixD matrix) {
+            matrix.Translate(point.x, point.y, point.z);
             return matrix;
         }
     }

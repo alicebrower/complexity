@@ -19,21 +19,7 @@ namespace Complexity.Objects {
 
         public ComplexCube()
             : base(GeometryBuilder.Cube()) {
-            colors = new double[geometry.Length];
-            for (int i = 0; i < colors.Length; i+=3) {
-                colors[i] = 1;
-                colors[i + 1] = 0;
-                colors[i + 2] = 1;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override void Init() {
-            base.Init();
-
-            triangles = new byte[] {
+                triangles = new byte[] {
                 1, 0, 2, // front
 			    3, 2, 0,
 			    6, 4, 5, // back
@@ -47,6 +33,13 @@ namespace Complexity.Objects {
 			    2, 3, 6, // bottom
 			    3, 7, 6
             };
+
+            colors = new double[geometry.Length];
+            for (int i = 0; i < colors.Length; i+=3) {
+                colors[i] = 1;
+                colors[i + 1] = 0;
+                colors[i + 2] = 1;
+            }
         }
 
         new public void Recalculate() {

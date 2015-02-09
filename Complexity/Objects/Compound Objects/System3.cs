@@ -28,7 +28,8 @@ namespace Complexity.Objects {
         /// </summary>
         /// <param name="geometry"></param>
         /// <param name="masterObj"></param>
-        public System3(double[,] geometry, Object3 masterObj) {
+        public System3(double[,] geometry, Object3 masterObj)
+            : base() {
             SetMasterObj(masterObj);
             vertecies = ConvertGeometry(geometry);
             originalGeo = MatrixD.OfArray(geometry);
@@ -46,18 +47,23 @@ namespace Complexity.Objects {
 
         protected override PointMatrix ConvertGeometry(double[,] _geometry) {
             TypedArrayList<Point3> _vertecies = new TypedArrayList<Point3>();
-            SysVertex sysVert;
             for (int i = 0; i < _geometry.GetLength(1); i++) {
-                sysVert = new SysVertex(
-                    (float)_geometry[0, i],
-                    (float)_geometry[1, i],
-                    (float)_geometry[2, i]);
-                sysVert.obj = (Object3)masterObj.Clone();
-                sysVert.distance = i;
-                _vertecies.Add(sysVert);
+                _vertecies.Add(CreateVertex(
+                    _geometry[0, i], _geometry[1, i], _geometry[2, i], i));
             }
 
             return new PointMatrix(_vertecies);
+        }
+
+        protected SysVertex CreateVertex(double x, double y, double z, double index) {
+            SysVertex vert = new SysVertex((float)x, (float)y, (float)z);
+            vert.distance = (float)index;
+
+            Object3 obj = masterObj.Clone();
+            obj.AppendTransform(new MatrixTranslatePoint3Action(vert));
+            vert.obj = obj;
+
+            return vert;
         }
 
         /// <summary>
@@ -72,7 +78,7 @@ namespace Complexity.Objects {
 
                 //Set
                 vert.obj.Recalculate();
-                vert.obj.SetColor(color.Values());
+                //vert.obj.SetColor(attributes["color"].value.Values());
                 //vert.obj.ScaleGeo(scale.Evaluate());
                 //vert.obj.TranslateGeo(vert.x, vert.y, vert.z);
             }
