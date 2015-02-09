@@ -40,6 +40,7 @@
     <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Main\RenderWindow.cs" />
     <Compile Include="Main\Universe.cs" />
+    <Compile Include="Managers\ObjectManager.cs" />
     <Compile Include="Math_Things\Evaluateable.cs" />
     <Compile Include="Math_Things\ExpressionD.cs" />
     <Compile Include="Objects\Compound Objects\Pen3.cs" />

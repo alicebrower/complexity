@@ -71,19 +71,19 @@ namespace Complexity.Objects {
         /// </summary>
         new public void Recalculate() {
             base.Recalculate();
-            masterObj.Recalculate();
+            //masterObj.Recalculate();
 
-            foreach (SysVertex vert in vertecies) {
-                vert.obj.Recalculate();
+            //foreach (SysVertex vert in vertecies) {
+               // vert.obj.Recalculate();
 
                 //Set
-                vert.obj.Recalculate();
+                //vert.obj.Recalculate();
                 //vert.obj.SetColor(attributes["color"].value.Values());
                 //vert.obj.ScaleGeo(scale.Evaluate());
                 //vert.obj.TranslateGeo(vert.x, vert.y, vert.z);
-            }
+            //}
 
-            UpdateClones();
+            //UpdateClones();
         }
 
         /// <summary>

@@ -91,6 +91,7 @@ namespace Complexity.Main {
             //That could be done on a separate thread, then, when that's over
             //we can swap buffers after rendering
             ExpressionManager.Recalculate();
+            ObjectManager.Recalculate();
             renderScene.Recalculate();
 
             //Draw the scene

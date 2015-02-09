@@ -9,6 +9,7 @@ using OpenTK.Graphics.OpenGL;
 using Complexity.Util;
 using System.Collections;
 using Complexity.Math_Things;
+using Complexity.Managers;
 
 namespace Complexity.Objects {
     /// <summary>
@@ -82,6 +83,8 @@ namespace Complexity.Objects {
             transforms.Add(attributes["scale"].value);
             transforms.Add(attributes["rotate"].value);
             transforms.Add(attributes["translate"].value);
+
+            ObjectManager.AddObject(this);
         }
 
         public Object3(double[,] geometry) : this() {
@@ -120,7 +123,11 @@ namespace Complexity.Objects {
             }
         }
 
-        #region Transforms
+        #region Transforms ----------
+
+        public void SetTransformArray(ArrayList trans) {
+            transforms = trans;
+        }
 
         /// <summary>
         /// Appends a custom transform to the transforms ArrayList
@@ -147,6 +154,10 @@ namespace Complexity.Objects {
         public void SetScale(VectorExpr scale) {
             attributes["scale"].value = new MatrixScaleAction(scale);
             transforms[SCALE_T] = attributes["scale"].value;
+        }
+
+        public void SetScale(string[] args) {
+            SetScale(new VectorExpr(args));
         }
 
         public void SetRotate(VectorExpr rotate) {
@@ -215,13 +226,22 @@ namespace Complexity.Objects {
         /// </summary>
         /// <returns>a shallow copy of this object</returns>
         public virtual Object3 Clone() {
-            PointMatrix newVerts = new PointMatrix(vertecies.ToArray());
-            for (int i = 0; i < newVerts.ColumnCount; i++) {
-                newVerts.Set(i, vertecies.Get(i).Clone());
+            PointMatrix _vertecies = new PointMatrix(vertecies.ToArray());
+            for (int i = 0; i < _vertecies.ColumnCount; i++) {
+                _vertecies.Set(i, vertecies.Get(i).Clone());
+            }
+
+            ArrayList _transforms = new ArrayList();
+            foreach (MatrixTransformAction mta in transforms) {
+                _transforms.Add(mta);
             }
 
             Object3 result = (Object3)MemberwiseClone();
-            result.SetVertecies(newVerts);
+            result.SetVertecies(_vertecies);
+            result.SetTransformArray(_transforms);
+
+            ObjectManager.AddObject(result);
+
             return result;
         }
 

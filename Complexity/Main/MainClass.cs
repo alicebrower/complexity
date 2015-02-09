@@ -32,6 +32,7 @@ namespace Complexity {
             SimpleDot3 dot = new SimpleDot3(60);
             //dot.SetScale(new VectorExpr(new string[] { "sin(time)+1", "sin(2*time)+1", "1" }));
             dot.SetColor(new string[] { "0", "sin(time)", "1", "1" });
+            dot.SetScale(new string[] { ".2", ".2", "1" });
             
             System3 sys = new System3(
                 new double[,] {
