@@ -172,6 +172,11 @@ namespace Complexity.Objects {
         protected PenVertex CreateVertex(double x, double y, double z, double dist, float[] slope) {
             PenVertex result = new PenVertex(base.CreateVertex(x, y, z, dist));
             result.slope = slope;
+
+            Object3 obj = masterObj.Clone();
+            obj.AppendTransform(new MatrixTranslatePoint3Action(result));
+            result.obj = obj;
+
             return result;
         }
     }

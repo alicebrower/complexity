@@ -36,12 +36,14 @@ namespace Complexity {
             
             System3 sys = new System3(GeometryBuilder.Grid(20, 20), dot);
 
-            //sys.SetScale(new string[] { "sin(time)", "sin(time)", "1"});
-            sys.SetRotate(new string[] { "rad(45)", "sin(time)/2", "0"});
-            /*
+            sys.SetScale(new string[] { "1", "sin(time)^2+1", "1"});
+            sys.SetRotate(new string[] { "rad(70)", "0", "0"});
+            
             sys.SetColor(new double[] { 0, 1, 1, 1});
             
-            //Pen3 pen = new Pen3(GeometryBuilder.Circle(60));
+            Pen3 pen = new Pen3(GeometryBuilder.Circle(60));
+
+            /*
             Pen3 pen = new Pen3(GeometryBuilder.GraphPolar(new ExpressionD("sin(2*i)*2"), 0, 360, 2));
             pen.SetAttributes(new Dictionary<string, string> {
                 {"speed", "2"}
@@ -56,7 +58,7 @@ namespace Complexity {
              * */
             Scene scene = new Scene();
             //scene.Add(dot);
-            //scene.Add(pen);
+            scene.Add(pen);
             //scene.Add(cube);
             scene.Add(sys);
 

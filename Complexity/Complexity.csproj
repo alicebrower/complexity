@@ -44,7 +44,7 @@
     <Compile Include="Math_Things\Evaluateable.cs" />
     <Compile Include="Math_Things\ExpressionD.cs" />
     <Compile Include="Objects\Compound Objects\Pen3.cs" />
-    <Compile Include="Objects\Simple Objects\SimpleDot3.cs" />
+    <Compile Include="Objects\SimpleDot3.cs" />
     <Compile Include="Objects\Complex Objects\ComplexObject3.cs" />
     <Compile Include="Objects\Base\Renderable.cs" />
     <Compile Include="Objects\Compound Objects\System3.cs" />
