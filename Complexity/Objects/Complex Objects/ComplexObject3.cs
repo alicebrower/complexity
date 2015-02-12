@@ -41,7 +41,7 @@ namespace Complexity.Objects {
             this.color.SetExprAt(3, "" + color[3]);
         }
 
-        new public void Recalculate() {
+        public void _Recalculate() {
             //Recalculate the vector values
             rot.Recalculate();
             trans.Recalculate();

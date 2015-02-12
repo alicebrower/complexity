@@ -13,11 +13,5 @@ namespace Complexity.Managers {
         public static void AddObject(Object3 obj) {
             objects.Add(obj);
         }
-
-        public static void Recalculate() {
-            foreach (Object3 obj in objects) {
-                obj.Recalculate();
-            }
-        }
     }
 }

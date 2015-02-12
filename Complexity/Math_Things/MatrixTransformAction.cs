@@ -23,6 +23,7 @@ namespace Complexity.Util {
         }
 
         public override MatrixD Transform(MatrixD matrix) {
+            vec.Recalculate();
             matrix.Rotate(vec.Values());
             return matrix;
         }
@@ -36,6 +37,7 @@ namespace Complexity.Util {
         }
 
         public override MatrixD Transform(MatrixD matrix) {
+            vec.Recalculate();
             matrix.Translate(vec.Values());
             return matrix;
         }
@@ -55,14 +57,15 @@ namespace Complexity.Util {
     }
 
     public class MatrixScaleAction : MatrixTransformAction {
-        private VectorExpr scale;
+        private VectorExpr vec;
 
-        public MatrixScaleAction(VectorExpr scale) {
-            this.scale = scale;
+        public MatrixScaleAction(VectorExpr vec) {
+            this.vec = vec;
         }
 
         public override MatrixD Transform(MatrixD matrix) {
-            matrix.Scale(scale.Values());
+            vec.Recalculate();
+            matrix.Scale(vec.Values());
             return matrix;
         }
     }

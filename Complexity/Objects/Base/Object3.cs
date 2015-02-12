@@ -49,7 +49,7 @@ namespace Complexity.Objects {
         }
 
         protected class ObjectAttributeT<T> : ObjectAttribute {
-            public T value;
+            new public T value;
 
             public ObjectAttributeT() { }
 
@@ -83,8 +83,6 @@ namespace Complexity.Objects {
             transforms.Add(attributes["scale"].value);
             transforms.Add(attributes["rotate"].value);
             transforms.Add(attributes["translate"].value);
-
-            ObjectManager.AddObject(this);
         }
 
         public Object3(double[,] geometry) : this() {
@@ -219,7 +217,7 @@ namespace Complexity.Objects {
         /// <summary>
         /// 
         /// </summary>
-        public void Recalculate() {
+        public virtual void Recalculate() {
             vertecies.SetFromMatrix(originalGeo);
 
             foreach (MatrixTransformAction mta in transforms) {
@@ -228,6 +226,16 @@ namespace Complexity.Objects {
                 }
             }
         }
+
+        /// <summary>
+        /// This method comminicates with ExpressionD to reserve certain variable names
+        /// </summary>
+        protected abstract void ReserveVariables();
+
+        /// <summary>
+        /// This method removes it's reserved variables from ExpressionD
+        /// </summary>
+        protected abstract void ReleaseVariables();
 
         /// <summary>
         /// Need to perform recursive clone of vertecies PointMatrix, transforms and attributes

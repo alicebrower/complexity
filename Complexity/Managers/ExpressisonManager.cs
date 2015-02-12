@@ -15,6 +15,10 @@ namespace Complexity.Managers {
             expressions.Add(expr);
         }
 
+        /// <summary>
+        /// This is incharge of recalculating objects extending or containing expressions
+        /// Within an object like VectorExpr 
+        /// </summary>
         public static void Recalculate() {
             foreach (Recalculated expr in expressions) {
                 expr.Recalculate();

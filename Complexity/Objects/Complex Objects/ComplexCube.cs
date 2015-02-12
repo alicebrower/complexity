@@ -48,6 +48,20 @@ namespace Complexity.Objects {
             geometry = vertecies.ToColumnWiseArray();
         }
 
+        /// <summary>
+        /// This method comminicates with ExpressionD to reserve certain variable names
+        /// </summary>
+        protected override void ReserveVariables() {
+
+        }
+
+        /// <summary>
+        /// This method removes it's reserved variables from ExpressionD
+        /// </summary>
+        protected override void ReleaseVariables() {
+
+        }
+
         public override void Draw() {
             //GL.Color4(color.Values());
             GL.VertexPointer(3, VertexPointerType.Double, 0, vertecies.ToColumnWiseArray());

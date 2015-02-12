@@ -37,6 +37,7 @@ namespace Complexity {
         /// </summary>
         /// <param name="obj"></param>
         public void Add(Object3 obj) {
+            ObjectManager.AddObject(obj);
             objects.Add(obj);
         }
 

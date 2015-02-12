@@ -1,4 +1,5 @@
-﻿using Complexity.Util;
+﻿using Complexity.Math_Things;
+using Complexity.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace Complexity.Objects {
     /// </summary>
     public class System3 : ComplexObject3 {
         protected Object3 masterObj;
+        protected int count;
+
         protected class SysVertex : Point3 {
             public SysVertex(float x, float y, float z)
                 : base(x, y, z) { }
@@ -52,6 +55,7 @@ namespace Complexity.Objects {
                     _geometry[0, i], _geometry[1, i], _geometry[2, i], i));
             }
 
+            count = _vertecies.Count();
             return new PointMatrix(_vertecies);
         }
 
@@ -69,21 +73,31 @@ namespace Complexity.Objects {
         /// <summary>
         /// 
         /// </summary>
-        new public void Recalculate() {
+        public override void Recalculate() {
             base.Recalculate();
-            //masterObj.Recalculate();
 
-            //foreach (SysVertex vert in vertecies) {
-               // vert.obj.Recalculate();
+            ReserveVariables();
+            masterObj.Recalculate();
+            foreach (SysVertex vert in vertecies) {
+                SetVariables(vert);
+                vert.obj.Recalculate();
+            }
 
-                //Set
-                //vert.obj.Recalculate();
-                //vert.obj.SetColor(attributes["color"].value.Values());
-                //vert.obj.ScaleGeo(scale.Evaluate());
-                //vert.obj.TranslateGeo(vert.x, vert.y, vert.z);
-            //}
+            ReleaseVariables();
+        }
 
-            //UpdateClones();
+        protected void SetVariables(SysVertex vert) {
+            ExpressionD.SetSymbolValue("dist", vert.distance);
+        }
+
+        protected override void ReserveVariables() {
+            ExpressionD.AddSymbol("dist", 0);
+            ExpressionD.AddSymbol("length", count);
+        }
+
+        protected override void ReleaseVariables() {
+            ExpressionD.RemoveSymbol("dist");
+            ExpressionD.RemoveSymbol("length");
         }
 
         /// <summary>
@@ -120,24 +134,6 @@ namespace Complexity.Objects {
         /// <param name="clones"></param>
         protected void SetVertecies(SysVertex[] verts) {
             vertecies.SetFromArray(verts);
-        }
-
-        /// <summary>
-        /// Updates all the atributes of the clones
-        /// </summary>
-        protected virtual void UpdateClones() {
-            SetPositions();
-        }
-
-        /// <summary>
-        /// Sets the positions of the clone objects.
-        /// Should be used after recalculating.
-        /// </summary>
-        protected virtual void SetPositions() {
-            foreach (SysVertex vert in vertecies) {
-                //((ComplexObject3)vert.obj).SetPosition(new  double[] {
-                //    vert.x, vert.y, vert.z});
-            }
         }
     }
 }

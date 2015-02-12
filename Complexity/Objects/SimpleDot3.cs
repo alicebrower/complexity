@@ -25,5 +25,25 @@ namespace Complexity.Objects {
 
             GL.End();
         }
+
+        public override void Recalculate() {
+            base.Recalculate();
+
+            attributes["color"].value.Recalculate();
+        }
+
+        /// <summary>
+        /// This method comminicates with ExpressionD to reserve certain variable names
+        /// </summary>
+        protected override void ReserveVariables() {
+
+        }
+
+        /// <summary>
+        /// This method removes it's reserved variables from ExpressionD
+        /// </summary>
+        protected override void ReleaseVariables() {
+
+        }
     }
 }

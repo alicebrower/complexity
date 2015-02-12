@@ -56,35 +56,22 @@ namespace Complexity.Objects {
             }
         }
 
-        new public void Recalculate() {
-            //base.Recalculate();
+        protected void SetVariables(PenVertex vert) {
+            ExpressionD.SetSymbolValue("dist", vert.distance);
+            ExpressionD.SetSymbolValue("xslope", vert.slope[0]);
+            ExpressionD.SetSymbolValue("yslope", vert.slope[1]);
+            ExpressionD.SetSymbolValue("zslope", vert.slope[2]);
+        }
 
-            //Setup expression values
+        protected override void ReserveVariables() {
             ExpressionD.AddSymbol("dist", 0);
             ExpressionD.AddSymbol("length", length);
             ExpressionD.AddSymbol("xslope", 0);
             ExpressionD.AddSymbol("yslope", 0);
             ExpressionD.AddSymbol("zslope", 0);
+        }
 
-            //Set the properties of the child objects
-            foreach (PenVertex penVert in vertecies) {
-                //Set variables
-                ExpressionD.SetSymbolValue("dist", penVert.distance);
-                ExpressionD.SetSymbolValue("xslope", penVert.slope[0]);
-                ExpressionD.SetSymbolValue("yslope", penVert.slope[1]);
-                ExpressionD.SetSymbolValue("zslope", penVert.slope[2]);
-
-                //Calculate
-                color.Recalculate();
-
-                //Set
-                //((SimpleObject3)penVert.obj).Recalculate();
-                //((SimpleObject3)penVert.obj).SetColor(color.Values());
-                //((SimpleObject3)penVert.obj).ScaleGeo(scale.Evaluate());
-                //((SimpleObject3)penVert.obj).TranslateGeo(penVert.x, penVert.y, penVert.z);
-            }
-
-            //Remove them as the program leaves scope
+        protected override void ReleaseVariables() {
             ExpressionD.RemoveSymbol("dist");
             ExpressionD.RemoveSymbol("length");
             ExpressionD.RemoveSymbol("xslope");

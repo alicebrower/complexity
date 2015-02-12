@@ -31,7 +31,7 @@ namespace Complexity {
 
             SimpleDot3 dot = new SimpleDot3(6);
             //dot.SetScale(new VectorExpr(new string[] { "sin(time)+1", "sin(2*time)+1", "1" }));
-            dot.SetColor(new string[] { "1", "0.5", "1", "1" });
+            dot.SetColor(new string[] { "dist/length", "0", "1", "1" });
             dot.SetScale(new string[] { ".01", ".01", "1" });
             
             System3 sys = new System3(GeometryBuilder.Grid(20, 20), dot);
@@ -58,7 +58,7 @@ namespace Complexity {
              * */
             Scene scene = new Scene();
             //scene.Add(dot);
-            scene.Add(pen);
+            //scene.Add(pen);
             //scene.Add(cube);
             scene.Add(sys);
 
