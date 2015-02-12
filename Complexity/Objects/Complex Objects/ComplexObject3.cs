@@ -66,8 +66,8 @@ namespace Complexity.Objects {
             //vertexColor = _col.ToColumnWiseArray();
         }
 
-        public override void SetAttributes(Dictionary<string, string> args) {
-            base.SetAttributes(args);
+        public override void SetAttributes_OLD(Dictionary<string, string> args) {
+            base.SetAttributes_OLD(args);
 
             #region Set Rotational Values
             if (args.ContainsKey("rotation")) {

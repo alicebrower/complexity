@@ -29,15 +29,31 @@ namespace Complexity {
             //ComplexCube cube = new ComplexCube();
             //cube.SetScale("1/10");
 
-            SimpleDot3 dot = new SimpleDot3(6);
-            //dot.SetScale(new VectorExpr(new string[] { "sin(time)+1", "sin(2*time)+1", "1" }));
-            dot.SetColor(new string[] { "dist/length", "0", "1", "1" });
+            SimpleDot3 dot = new SimpleDot3(8);
+            //string trans1 = "sin((time/5 + dist%20/20)*5) / 12";
+            //dot.AppendTransform(new MatrixTranslateAction(
+            //    new VectorExpr(new string[] {"0", trans1, "0"})));
+            string trans2 = "( sin( (time/5 + floor(dist/40)/20) * 5 ) ) / 4";
+            dot.AppendTransform(new MatrixTranslateAction(
+                new VectorExpr(new string[] { "0", trans2, "0" })));
+
+            string color0 = "0";
+            string color1 = "sin(2 * time * rand(dist/length)         )^2";
+            string color2 = "sin(2 * time * rand(dist/length) + 2/3*pi)^2";
+            string color3 = "sin(2 * time * rand(dist/length) + 4/3*pi)^2";
+            string color4 = "sin(time + dist/length)^2";
+            dot.SetColor(new string[] { "1", color0, "1", "1" });
+
+            string scale = ".01 + .01 * sin(time + dist/2%40)^2";
+            dot.SetScale(new string[] { scale, scale, "1" });
             dot.SetScale(new string[] { ".01", ".01", "1" });
             
-            System3 sys = new System3(GeometryBuilder.Grid(20, 20), dot);
 
-            sys.SetScale(new string[] { "1", "sin(time)^2+1", "1"});
-            sys.SetRotate(new string[] { "rad(70)", "0", "0"});
+            //System testing
+            System3 sys = new System3(GeometryBuilder.Grid(40, 40), dot);
+
+            sys.SetScale(new string[] { "4", "4", "1"});
+            sys.SetRotate(new string[] { "rad(70)", "0", "rad(45)"});
             
             sys.SetColor(new double[] { 0, 1, 1, 1});
             

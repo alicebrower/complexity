@@ -18,7 +18,12 @@ namespace Complexity.Objects {
         public override void Draw() {
             GL.Begin(BeginMode.TriangleFan);
 
-            GL.Color4(attributes["color"].value.Values());
+            if (color != null) {
+                GL.Color4(color);
+            } else {
+                GL.Color4(DEFAULT_COLOR);
+            }
+            
             foreach (Point3 p in vertecies) {
                 GL.Vertex3(p.x, p.y, p.z);
             }
@@ -30,6 +35,7 @@ namespace Complexity.Objects {
             base.Recalculate();
 
             attributes["color"].value.Recalculate();
+            color = MathUtil.DoubleToFloat(attributes["color"].value.Values());
         }
 
         /// <summary>

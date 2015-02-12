@@ -18,7 +18,7 @@ namespace Complexity.Objects {
     /// ComplexObject -> Has a Recalculate method and can update itself
     /// </summary>
     public abstract class Object3 : Renderable {
-        public readonly string[] DEFAULT_COLOR = new string[] { "1", "0", "1", "1" };
+        public readonly float[] DEFAULT_COLOR = new float[] { 1, 0, 1, 1 };
         protected const int ORIGIN_T = 0;
         protected const int SCALE_T = 1;
         protected const int ROTATE_T = 2;
@@ -28,6 +28,7 @@ namespace Complexity.Objects {
         protected ArrayList transforms;
         protected PointMatrix vertecies;
         protected MatrixD originalGeo;
+        protected float[] color;
 
         //Attributes
         protected class ObjectAttribute {
@@ -46,6 +47,10 @@ namespace Complexity.Objects {
                 this.inherit = inherit;
                 this.removable = removable;
             }
+
+            public ObjectAttribute Clone() {
+                return (ObjectAttribute)MemberwiseClone();
+            }
         }
 
         protected class ObjectAttributeT<T> : ObjectAttribute {
@@ -62,6 +67,10 @@ namespace Complexity.Objects {
                 this.value = value;
                 this.inherit = inherit;
             }
+
+            public ObjectAttributeT<T> Clone() {
+                return (ObjectAttributeT<T>)MemberwiseClone();
+            }
         }
 
         protected Dictionary<string, ObjectAttribute> attributes;
@@ -74,7 +83,7 @@ namespace Complexity.Objects {
                 {"translate", new ObjectAttributeT<MatrixTranslateAction>()},
                 {"color", new ObjectAttributeT<VectorExpr>()}
             };
-            attributes["color"].value = new VectorExpr(DEFAULT_COLOR);
+            //attributes["color"].value = new VectorExpr(DEFAULT_COLOR);
 
             //Initialize the transform list, leave entries blank
             //they will be checked for null
@@ -92,6 +101,10 @@ namespace Complexity.Objects {
 
         public void SetInherit(string name, bool inherit) {
             attributes[name].inherit = inherit;
+        }
+
+        protected void SetAttributes(Dictionary<string, ObjectAttribute> attributes) {
+            this.attributes = attributes;
         }
 
         public void AddAttribute(string name, dynamic value, bool inherit) {
@@ -115,7 +128,7 @@ namespace Complexity.Objects {
         /// </summary>
         /// <param name="args"></param>
         [Obsolete("Object properties are being moved an attributes array and this method will no longer work.")]
-        public virtual void SetAttributes(Dictionary<string, string> args) {
+        public virtual void SetAttributes_OLD(Dictionary<string, string> args) {
             if (args.ContainsKey("name")) {
                 //name = args["name"];
             }
@@ -252,9 +265,15 @@ namespace Complexity.Objects {
                 _transforms.Add(mta);
             }
 
+            Dictionary<string, ObjectAttribute> _attributes = new Dictionary<string, ObjectAttribute>();
+            foreach (KeyValuePair<string, ObjectAttribute> attr in attributes) {
+                _attributes.Add(attr.Key, attr.Value.Clone());
+            }
+
             Object3 result = (Object3)MemberwiseClone();
             result.SetVertecies(_vertecies);
             result.SetTransformArray(_transforms);
+            result.SetAttributes(_attributes);
 
             ObjectManager.AddObject(result);
 

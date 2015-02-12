@@ -44,8 +44,8 @@ namespace Complexity.Objects {
         public Pen3(double[,] geometry) : base(geometry, new SimpleDot3(30)) {
         }
 
-        public override void SetAttributes(Dictionary<string, string> args) {
-            base.SetAttributes(args);
+        public override void SetAttributes_OLD(Dictionary<string, string> args) {
+            base.SetAttributes_OLD(args);
 
             if (args.ContainsKey("speed")) {
                 try {

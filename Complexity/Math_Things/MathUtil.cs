@@ -37,6 +37,20 @@ namespace Complexity.Util {
             }
             return result;
         }
+
+        public static float[] DoubleToFloat(double[] dubs) {
+            float[] floats = new float[dubs.Length];
+            for (int i = 0; i < floats.Length; i++) {
+                floats[i] = (float)dubs[i];
+            }
+
+            return floats;
+        }
+
+        public static double RandomDouble(double seed) {
+            string s = (seed + "").Replace(".", "");
+            return (new Random(int.Parse(s))).NextDouble();
+        }
     }
 
     /// <summary>

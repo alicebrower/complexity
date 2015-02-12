@@ -46,6 +46,7 @@ namespace Complexity.Math_Things {
                 {"floor", new Symbol("floor", true, 1, LEFT_ASSOC, 10, (a) => Math.Floor(a[0]))},
                 {"round", new Symbol("round", true, 1, LEFT_ASSOC, 10, (a) => Math.Round(a[0]))},
                 {"sign", new Symbol("sign", true, 1, LEFT_ASSOC, 10, (a) => Math.Sign(a[0]))},
+                {"rand", new Symbol("rand", true, 1, LEFT_ASSOC, 10, (a) => MathUtil.RandomDouble((double)a[0]))}
             };
 
             OPERATORS = new Dictionary<string, Symbol>() {
