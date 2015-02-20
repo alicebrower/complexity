@@ -31,8 +31,8 @@ namespace Complexity {
             centerDot.SetColor(new string[] { "1", "1", "1", "1" });
 
             SimpleDot3 dot = new SimpleDot3(8);
-            dot.SetScale(".02");
-            dot.SetColor(new string[] { "sin(time+dist/length)^2", "0", "0" });
+            dot.SetScale("sin(time + dist/length)^2/40");
+            dot.SetColor(new string[] { "0", "1", "1", "1" });
 
             System3 sys1 = new System3(GeometryBuilder.Circle(30), dot);
             sys1.SetScale(".2");

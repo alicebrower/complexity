@@ -43,6 +43,9 @@
     <Compile Include="Managers\ObjectManager.cs" />
     <Compile Include="Math_Things\Evaluateable.cs" />
     <Compile Include="Math_Things\ExpressionD.cs" />
+    <Compile Include="Math_Things\MatrixD.cs" />
+    <Compile Include="Math_Things\VectorD.cs" />
+    <Compile Include="Math_Things\VectorExpr.cs" />
     <Compile Include="Objects\Compound Objects\Pen3.cs" />
     <Compile Include="Objects\SimpleDot3.cs" />
     <Compile Include="Objects\Complex Objects\ComplexObject3.cs" />

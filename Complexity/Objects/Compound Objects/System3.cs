@@ -43,13 +43,51 @@ namespace Complexity.Objects {
         }
 
         /// <summary>
-        /// Sets up the masterObj object
+        /// For a system, we have to perform a recursive clone
         /// </summary>
-        /// <param name="obj"></param>
-        protected virtual void SetMasterObj(Object3 obj) {
-            masterObj = obj;
+        /// <returns></returns>
+        public override Object3 Clone() {
+            System3 result = new System3(GetVertecies().ToArray(), masterObj.Clone());
 
-            //Add transforms based on inheritence
+            ArrayList _transforms = new ArrayList();
+            foreach (MatrixTransformAction mta in transforms) {
+                _transforms.Add(mta);
+            }
+
+            Dictionary<string, ObjectAttribute> _attributes = new Dictionary<string, ObjectAttribute>();
+            foreach (KeyValuePair<string, ObjectAttribute> attr in attributes) {
+                _attributes.Add(attr.Key, attr.Value);
+            }
+
+            result.SetTransformArray(_transforms);
+            result.SetAttributes(_attributes);
+
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override void Draw() {
+            foreach (SysVertex vert in vertecies) {
+                vert.obj.Draw();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override void Recalculate() {
+            base.Recalculate();
+
+            ReserveVariables();
+            masterObj.Recalculate();
+            foreach (SysVertex vert in vertecies) {
+                SetVariables(vert);
+                vert.obj.Recalculate();
+            }
+
+            ReleaseVariables();
         }
 
         protected override PointMatrix ConvertGeometry(double[,] _geometry) {
@@ -74,26 +112,6 @@ namespace Complexity.Objects {
             return vert;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public override void Recalculate() {
-            base.Recalculate();
-
-            ReserveVariables();
-            masterObj.Recalculate();
-            foreach (SysVertex vert in vertecies) {
-                SetVariables(vert);
-                vert.obj.Recalculate();
-            }
-
-            ReleaseVariables();
-        }
-
-        protected void SetVariables(SysVertex vert) {
-            ExpressionD.SetScopedSymbol(DIST, vert.distance);
-        }
-
         protected override void ReserveVariables() {
             ExpressionD.AdvanceScope();
             ExpressionD.AddScopedSymbol(DIST, 0);
@@ -105,39 +123,21 @@ namespace Complexity.Objects {
         }
 
         /// <summary>
-        /// 
+        /// Sets up the masterObj object
         /// </summary>
-        public override void Draw() {
-            foreach (SysVertex vert in vertecies) {
-                vert.obj.Draw();
-            }
-        }
+        /// <param name="obj"></param>
+        protected virtual void SetMasterObj(Object3 obj) {
+            masterObj = obj;
 
-        /// <summary>
-        /// For a system, we have to perform a recursive clone
-        /// </summary>
-        /// <returns></returns>
-        public override Object3 Clone() {
-            System3 result = new System3(GetVertecies().ToArray(), masterObj.Clone());
-
-            ArrayList _transforms = new ArrayList();
-            foreach (MatrixTransformAction mta in transforms) {
-                _transforms.Add(mta);
-            }
-
-            Dictionary<string, ObjectAttribute> _attributes = new Dictionary<string, ObjectAttribute>();
-            foreach (KeyValuePair<string, ObjectAttribute> attr in attributes) {
-                _attributes.Add(attr.Key, attr.Value);
-            }
-
-            result.SetTransformArray(_transforms);
-            result.SetAttributes(_attributes);
-
-            return result;
+            //Add transforms based on inheritence
         }
 
         protected void SetPointMatrix(PointMatrix vertecies) {
             this.vertecies = vertecies;
+        }
+
+        protected void SetVariables(SysVertex vert) {
+            ExpressionD.SetScopedSymbol(DIST, vert.distance);
         }
 
         /// <summary>
