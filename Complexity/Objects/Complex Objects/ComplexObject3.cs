@@ -136,14 +136,6 @@ namespace Complexity.Objects {
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="scale"></param>
-        public void SetScale(string scale) {
-            this.scale.SetInfix(scale);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="position"></param>
         public void SetPosition(double[] position) {
             if (position.Length != 3) {

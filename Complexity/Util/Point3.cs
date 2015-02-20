@@ -36,7 +36,7 @@ namespace Complexity.Util {
             z = (float) points[2];
         }
 
-        public Point3 Clone() {
+        public virtual Point3 Clone() {
             return new Point3(x, y, z);
         }
     }

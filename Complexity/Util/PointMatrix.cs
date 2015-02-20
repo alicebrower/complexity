@@ -42,8 +42,6 @@ namespace Complexity.Util {
                 }
         }
 
-        
-
         public Point3 Get(int index) {
             return points.Get(index);
         }

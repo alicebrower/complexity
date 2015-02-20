@@ -15,6 +15,16 @@ namespace Complexity.Objects {
     /// 
     /// </summary>
     public class Pen3 : System3 {
+        protected const string X_SLOPE = "xslope";
+        protected const string Y_SLOPE = "yslope";
+        protected const string Z_SLOPE = "zslope";
+
+        static Pen3() {
+            ExpressionD.ReserveSymbol(X_SLOPE);
+            ExpressionD.ReserveSymbol(Y_SLOPE);
+            ExpressionD.ReserveSymbol(Z_SLOPE);
+        }
+
         /*
          * maxDist = maximum allowed distance between dots
          * speed = speed at which the pen is drawn, < 0 for instant
@@ -57,26 +67,23 @@ namespace Complexity.Objects {
         }
 
         protected void SetVariables(PenVertex vert) {
-            ExpressionD.SetSymbolValue("dist", vert.distance);
-            ExpressionD.SetSymbolValue("xslope", vert.slope[0]);
-            ExpressionD.SetSymbolValue("yslope", vert.slope[1]);
-            ExpressionD.SetSymbolValue("zslope", vert.slope[2]);
+            ExpressionD.SetSymbolValue(DIST, vert.distance);
+            ExpressionD.SetSymbolValue(X_SLOPE, vert.slope[0]);
+            ExpressionD.SetSymbolValue(Y_SLOPE, vert.slope[1]);
+            ExpressionD.SetSymbolValue(Z_SLOPE, vert.slope[2]);
         }
 
         protected override void ReserveVariables() {
-            ExpressionD.AddSymbol("dist", 0);
-            ExpressionD.AddSymbol("length", length);
-            ExpressionD.AddSymbol("xslope", 0);
-            ExpressionD.AddSymbol("yslope", 0);
-            ExpressionD.AddSymbol("zslope", 0);
+            ExpressionD.AdvanceScope();
+            ExpressionD.AddScopedSymbol(DIST, 0);
+            ExpressionD.AddScopedSymbol(LENGTH, length);
+            ExpressionD.AddScopedSymbol(X_SLOPE, 0);
+            ExpressionD.AddScopedSymbol(Y_SLOPE, 0);
+            ExpressionD.AddScopedSymbol(Z_SLOPE, 0);
         }
 
         protected override void ReleaseVariables() {
-            ExpressionD.RemoveSymbol("dist");
-            ExpressionD.RemoveSymbol("length");
-            ExpressionD.RemoveSymbol("xslope");
-            ExpressionD.RemoveSymbol("yslope");
-            ExpressionD.RemoveSymbol("zslope");
+            ExpressionD.DecreaseScope();
         }
 
         public override void Draw() {

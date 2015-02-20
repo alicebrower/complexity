@@ -83,7 +83,7 @@ namespace Complexity.Objects {
                 {"translate", new ObjectAttributeT<MatrixTranslateAction>()},
                 {"color", new ObjectAttributeT<VectorExpr>()}
             };
-            //attributes["color"].value = new VectorExpr(DEFAULT_COLOR);
+            attributes["color"].value = new VectorExpr(MathUtil.FloatToString(DEFAULT_COLOR));
 
             //Initialize the transform list, leave entries blank
             //they will be checked for null
@@ -155,6 +155,12 @@ namespace Complexity.Objects {
             }
 
             transforms[index] = trans;
+        }
+
+        public void SetScale(string scale) {
+            SetScale(new string[] {
+                scale, scale, scale
+            });
         }
 
         public void SetScale(string[] args) {
@@ -274,8 +280,6 @@ namespace Complexity.Objects {
             result.SetVertecies(_vertecies);
             result.SetTransformArray(_transforms);
             result.SetAttributes(_attributes);
-
-            ObjectManager.AddObject(result);
 
             return result;
         }

@@ -10,20 +10,27 @@ using System.Threading.Tasks;
 namespace Complexity.Math_Things {
     public class ExpressionD {
         #region Static Expression MGMT
+
         private static readonly int LEFT_ASSOC = 0;
         private static readonly int RIGHT_ASSOC = 1;
 
         private static readonly string OPS_REGEX;
         private static readonly string VAR_REGEX = "[a-zA-Z_]+[0-9]*[a-zA-Z_]*";
         private static readonly string DEL_REGEX = "[\\(\\)]";
+        private static Stack<Dictionary<string, Symbol>> scope;
+        private static HashSet<string> RESERVED;
         private static Dictionary<string, Symbol> SYMBOLS, FUNCTIONS, OPERATORS;
 
         static ExpressionD() {
+            scope = new Stack<Dictionary<string, Symbol>>(); 
+
             SYMBOLS = new Dictionary<string, Symbol>() {
                 {"time", new Symbol("time", false, 0, LEFT_ASSOC, 0, (a) => Global.GetElapsedTime())},
                 {"pi", new Symbol("pi", false, 0, LEFT_ASSOC, 0, (a) => Math.PI)},
                 {"e", new Symbol("e", false, 0, LEFT_ASSOC, 0, (a) => Math.E)}
             };
+
+            RESERVED = new HashSet<string>();
 
             FUNCTIONS = new Dictionary<string, Symbol>() {
                 {"sin", new Symbol("sin", true, 1, LEFT_ASSOC, 10, (a) => Math.Sin(a[0]))},
@@ -72,6 +79,9 @@ namespace Complexity.Math_Things {
         /// <param name="name"></param>
         /// <param name="value"></param>
         public static void AddSymbol(string name, double value) {
+            if (RESERVED.Contains(name)) {
+                throw new Exception("Can not add symbol " + name + ", it is reserved.");
+            }
             SYMBOLS.Add(name, new Symbol(name, value));
         }
 
@@ -80,7 +90,11 @@ namespace Complexity.Math_Things {
         }
 
         public static double GetSymbolValue(string name) {
-            return SYMBOLS[name].eval(null);
+            if (RESERVED.Contains(name)) {
+                return GetScopedSymbol(name);
+            } else {
+                return SYMBOLS[name].eval(null);
+            }
         }
 
         /// <summary>
@@ -89,6 +103,71 @@ namespace Complexity.Math_Things {
         /// <param name="name"></param>
         public static void RemoveSymbol(string name) {
             SYMBOLS.Remove(name);
+        }
+
+        public static void ReserveSymbol(string name) {
+            RESERVED.Add(name);
+        }
+
+        public static void AdvanceScope() {
+            scope.Push(new Dictionary<string, Symbol>());
+        }
+
+        public static void DecreaseScope() {
+            scope.Pop();
+        }
+
+        public static void AddScopedSymbol(string name, double value) {
+            scope.Peek().Add(name, new Symbol(value));
+        }
+
+        public static void SetScopedSymbol(string name, double value) {
+            bool found = false;
+            Stack<Dictionary<string, Symbol>> _scope = new Stack<Dictionary<string, Symbol>>();
+
+            while (scope.Peek() != null && !found) {
+                if (scope.Peek().ContainsKey(name)) {
+                    scope.Peek()[name] = new Symbol(name, value);
+                    found = true;
+                } else {
+                    _scope.Push(scope.Pop());
+                }
+            }
+
+            //put all the dictionaries back on
+            while (_scope.Count > 0) {
+                scope.Push(_scope.Pop());
+            }
+
+            if (!found) {
+                throw new Exception("Symbol " + name + " cannot be found");
+            }
+        }
+
+        public static double GetScopedSymbol(string name) {
+            bool found = false;
+            double value = 0;
+            Stack<Dictionary<string, Symbol>> _scope = new Stack<Dictionary<string, Symbol>>();
+
+            while (scope.Peek() != null && !found) {
+                if (scope.Peek().ContainsKey(name)) {
+                    value = scope.Peek()[name].eval(null);
+                    found = true;
+                } else {
+                    _scope.Push(scope.Pop());
+                }
+            }
+
+            //put all the dictionaries back on
+            while (_scope.Count > 0) {
+                scope.Push(_scope.Pop());
+            }
+
+            if (!found) {
+                throw new Exception("Symbol " + name + " cannot be found");
+            }
+
+            return value;
         }
 
         #endregion

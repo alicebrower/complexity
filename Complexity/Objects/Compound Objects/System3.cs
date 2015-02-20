@@ -12,6 +12,14 @@ namespace Complexity.Objects {
     /// Represents a system of objects and/or systems in 3 Dimensions
     /// </summary>
     public class System3 : ComplexObject3 {
+        protected const string DIST = "dist";
+        protected const string LENGTH = "length";
+
+        static System3() {
+            ExpressionD.ReserveSymbol(DIST);
+            ExpressionD.ReserveSymbol(LENGTH);
+        }
+
         protected Object3 masterObj;
         protected int count;
 
@@ -20,10 +28,6 @@ namespace Complexity.Objects {
                 : base(x, y, z) { }
             public Object3 obj;
             public float distance;
-
-            new public SysVertex Clone() {
-                return (SysVertex)MemberwiseClone();
-            }
         }
 
         /// <summary>
@@ -87,17 +91,17 @@ namespace Complexity.Objects {
         }
 
         protected void SetVariables(SysVertex vert) {
-            ExpressionD.SetSymbolValue("dist", vert.distance);
+            ExpressionD.SetScopedSymbol(DIST, vert.distance);
         }
 
         protected override void ReserveVariables() {
-            ExpressionD.AddSymbol("dist", 0);
-            ExpressionD.AddSymbol("length", count);
+            ExpressionD.AdvanceScope();
+            ExpressionD.AddScopedSymbol(DIST, 0);
+            ExpressionD.AddScopedSymbol(LENGTH, count);
         }
 
         protected override void ReleaseVariables() {
-            ExpressionD.RemoveSymbol("dist");
-            ExpressionD.RemoveSymbol("length");
+            ExpressionD.DecreaseScope();
         }
 
         /// <summary>
@@ -113,14 +117,22 @@ namespace Complexity.Objects {
         /// For a system, we have to perform a recursive clone
         /// </summary>
         /// <returns></returns>
-        public new System3 Clone() {
-            TypedArrayList<Point3> _verts = new TypedArrayList<Point3>();
-            foreach (SysVertex vert in vertecies) {
-                _verts.Add(vert.Clone());
+        public override Object3 Clone() {
+            System3 result = new System3(GetVertecies().ToArray(), masterObj.Clone());
+
+            ArrayList _transforms = new ArrayList();
+            foreach (MatrixTransformAction mta in transforms) {
+                _transforms.Add(mta);
             }
 
-            System3 result = (System3)MemberwiseClone();
-            result.SetPointMatrix(new PointMatrix(_verts));
+            Dictionary<string, ObjectAttribute> _attributes = new Dictionary<string, ObjectAttribute>();
+            foreach (KeyValuePair<string, ObjectAttribute> attr in attributes) {
+                _attributes.Add(attr.Key, attr.Value);
+            }
+
+            result.SetTransformArray(_transforms);
+            result.SetAttributes(_attributes);
+
             return result;
         }
 
@@ -129,7 +141,7 @@ namespace Complexity.Objects {
         }
 
         /// <summary>
-        /// 
+        /// Sets the vertecies
         /// </summary>
         /// <param name="clones"></param>
         protected void SetVertecies(SysVertex[] verts) {

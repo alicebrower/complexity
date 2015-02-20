@@ -10,7 +10,6 @@ using Complexity.Util;
 
 namespace Complexity.Objects {
     public class SimpleDot3 : Object3 {
-
         public SimpleDot3(int resolution)
             : base(GeometryBuilder.Circle(resolution)) {
         }

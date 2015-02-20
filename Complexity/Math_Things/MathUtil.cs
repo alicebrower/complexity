@@ -38,6 +38,15 @@ namespace Complexity.Util {
             return result;
         }
 
+        public static string[] FloatToString(float[] values) {
+            string[] result = new string[values.Length];
+            for (int i = 0; i < result.Length; i++) {
+                result[i] = values[i].ToString();
+            }
+
+            return result;
+        }
+
         public static float[] DoubleToFloat(double[] dubs) {
             float[] floats = new float[dubs.Length];
             for (int i = 0; i < floats.Length; i++) {
@@ -376,7 +385,7 @@ namespace Complexity.Util {
         public void Recalculate() {
             values = new VectorD(expressions.Length);
             for (int i = 0; i < expressions.Length; i++) {
-                values.At(i, expressions[i].Evaluate());
+                 values.At(i, expressions[i].Evaluate());
             }
         }
 
