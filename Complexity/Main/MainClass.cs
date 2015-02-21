@@ -30,25 +30,22 @@ namespace Complexity {
             centerDot.SetScale(".02");
             centerDot.SetColor(new string[] { "1", "1", "1", "1" });
 
-            SimpleDot3 dot = new SimpleDot3(8);
-            dot.SetScale("sin(time + dist/length)^2/40");
-            dot.SetColor(new string[] { "0", "1", "1", "1" });
+            SimpleDot3 sysDot = new SimpleDot3(20);
+            sysDot.SetColor(new string[] {"1", "0", "rand( dist * floor(time) )", "1"});
+            sysDot.SetScale(".05");
+            sysDot.AppendTransform(new MatrixTranslateAction(new VectorExpr(
+                new string[] { "0", "0", "sin(time)*rand(dist)" })));
 
-            System3 sys1 = new System3(GeometryBuilder.Circle(30), dot);
-            sys1.SetScale(".2");
+            System3 sys = new System3(GeometryBuilder.Grid(10, 10), sysDot);
+            sys.SetScale(new string[] { "1", "2", "1" });
+            sys.SetRotate(new string[] { "rad(70)", "0", "rad(30)" });
 
-            System3 sys2 = new System3(GeometryBuilder.Grid(4, 4), sys1);
-            sys2.SetScale("2");
-            sys2.SetRotate(new string[] { "0", "0", "time"});
+            System3 sys2 = new System3(GeometryBuilder.Grid(1, 4), sys);
+
 
             Scene scene = new Scene();
-            //scene.Add(dot);
-            //scene.Add(pen);
-            //scene.Add(cube);
-            //scene.Add(sys);
-
+            //scene.Add(centerDot);
             scene.Add(sys2);
-            scene.Add(centerDot);
 
             Console.WriteLine("Done.");
             #endregion

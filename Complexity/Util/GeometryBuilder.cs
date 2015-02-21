@@ -21,8 +21,8 @@ namespace Complexity.Util {
 
             for (int i = 0; i < points; i++) {
                 t = ((double)i) / ((double)points);
-                result[0, i] = Math.Sin(t * Math.PI * 2);
-                result[1, i] = Math.Cos(t * Math.PI * 2);
+                result[0, i] = Math.Sin(t * Math.PI * 2) / 2.0;
+                result[1, i] = Math.Cos(t * Math.PI * 2) / 2.0;
                 result[2, i] = 0;
             }
 
@@ -92,14 +92,15 @@ namespace Complexity.Util {
         /// <returns></returns>
         public static double[,] Grid(int x, int y) {
             double[,] result = new double[3, x * y];
+            //ArrayList points = new ArrayList();
 
             double xOff = (((double)x - 1) / 2.0);
             double yOff = (((double)y - 1) / 2.0);
             for (int j = 0; j < y; j++) {
                 for (int i = 0; i < x; i++) {
-                    result[0, i + j * y] = (i - xOff) / (double)x;
-                    result[1, i + j * y] = (j - yOff) / (double)y;
-                    result[2, i + j * y] = 0;
+                    result[0, i + j * x] = (i - xOff) / (double)x * 2.0;
+                    result[1, i + j * x] = (j - yOff) / (double)y * 2.0;
+                    result[2, i + j * x] = 0;
                 }
             }
 
