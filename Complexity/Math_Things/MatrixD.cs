@@ -58,7 +58,7 @@ namespace Complexity.Math_Things {
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public new static MatrixD OfArray(Double[,] data) {
+        public new static MatrixD OfArray(double[,] data) {
             Matrix<double> _data = DenseMatrix.OfArray(data);
             return new MatrixD(_data.RowCount, _data.ColumnCount, _data.ToColumnWiseArray());
         }
@@ -167,7 +167,7 @@ namespace Complexity.Math_Things {
         /// <param name="rows"></param>
         /// <param name="columns"></param>
         /// <param name="data"></param>
-        public MatrixD(int rows, int columns, Double[] data)
+        public MatrixD(int rows, int columns, double[] data)
             : base(rows, columns, data) {
         }
 

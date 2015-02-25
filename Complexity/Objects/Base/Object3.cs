@@ -164,33 +164,54 @@ namespace Complexity.Objects {
         }
 
         public void SetScale(string[] args) {
+            if (args.Length != 3) {
+                throw new ArgumentException("Scale array must have three cells, one for each dimension.");
+            }
             SetScale(new VectorExpr(args));
         }
 
         public void SetRotate(string[] args) {
+            if (args.Length != 3) {
+                throw new ArgumentException("Rotate array must have three cells, one for each dimension.");
+            }
             SetRotate(new VectorExpr(args));
         }
 
         public void SetTranslate(string[] args) {
+            if (args.Length != 3) {
+                throw new ArgumentException("Translate array must have three cells, one for each dimension.");
+            }
             SetTranslate(new VectorExpr(args));
         }
 
         public void SetOrigin(VectorExpr origin) {
+            if (origin.Size() != 3) {
+                throw new ArgumentException("Origin vector must have three cells, one for each dimension.");
+            }
             attributes["origin"].value = new MatrixTranslateAction(origin);
             transforms[ORIGIN_T] = attributes["origin"].value;
         }
 
         public void SetScale(VectorExpr scale) {
+            if (scale.Size() != 3) {
+                throw new ArgumentException("Scale vector must have three cells, one for each dimension.");
+            }
             attributes["scale"].value = new MatrixScaleAction(scale);
             transforms[SCALE_T] = attributes["scale"].value;
         }
 
         public void SetRotate(VectorExpr rotate) {
+            if (rotate.Size() != 3) {
+                throw new ArgumentException("Rotate vector must have three cells, one for each dimension.");
+            }
             attributes["rotate"].value = new MatrixRotateAction(rotate);
             transforms[ROTATE_T] = attributes["rotate"].value;
         }
 
         public void SetTranslate(VectorExpr trans) {
+            if (trans.Size() != 3) {
+                throw new ArgumentException("Trans vector must have three cells, one for each dimension.");
+            }
             attributes["translate"].value = new MatrixTranslateAction(trans);
             transforms[TRANSLATE_T] = attributes["translate"].value;
         }
@@ -230,6 +251,9 @@ namespace Complexity.Objects {
         */
 
         public void SetColor(string[] color) {
+            if (color.Length != 4) {
+                throw new ArgumentException("Color array must have four cells, r, g, b & a.");
+            }
             attributes["color"].value = new VectorExpr(color);
         }
 

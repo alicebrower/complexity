@@ -64,5 +64,9 @@ namespace Complexity.Math_Things {
         public void SetExprAt(int index, string expr) {
             expressions[index] = new ExpressionD(expr);
         }
+
+        public int Size() {
+            return expressions.Length;
+        }
     }
 }
