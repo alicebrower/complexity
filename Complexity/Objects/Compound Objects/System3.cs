@@ -16,8 +16,8 @@ namespace Complexity.Objects {
         protected const string LENGTH = "length";
 
         static System3() {
-            ExpressionD.ReserveSymbol(DIST);
-            ExpressionD.ReserveSymbol(LENGTH);
+            ExpressionF.ReserveSymbol(DIST);
+            ExpressionF.ReserveSymbol(LENGTH);
         }
 
         protected Object3 masterObj;
@@ -35,11 +35,11 @@ namespace Complexity.Objects {
         /// </summary>
         /// <param name="geometry"></param>
         /// <param name="masterObj"></param>
-        public System3(double[,] geometry, Object3 masterObj)
+        public System3(float[,] geometry, Object3 masterObj)
             : base() {
             SetMasterObj(masterObj);
             vertecies = ConvertGeometry(geometry);
-            originalGeo = MatrixD.OfArray(geometry);
+            originalGeo = MatrixF.OfArray(geometry);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Complexity.Objects {
             ReleaseVariables();
         }
 
-        protected override PointMatrix ConvertGeometry(double[,] _geometry) {
+        protected override PointMatrixF ConvertGeometry(float[,] _geometry) {
             TypedArrayList<Point3> _vertecies = new TypedArrayList<Point3>();
             for (int i = 0; i < _geometry.GetLength(1); i++) {
                 _vertecies.Add(CreateVertex(
@@ -98,7 +98,7 @@ namespace Complexity.Objects {
             }
 
             count = _vertecies.Count();
-            return new PointMatrix(_vertecies);
+            return new PointMatrixF(_vertecies);
         }
 
         protected SysVertex CreateVertex(double x, double y, double z, double index) {
@@ -113,13 +113,13 @@ namespace Complexity.Objects {
         }
 
         protected override void ReserveVariables() {
-            ExpressionD.AdvanceScope();
-            ExpressionD.AddScopedSymbol(DIST, 0);
-            ExpressionD.AddScopedSymbol(LENGTH, count);
+            ExpressionF.AdvanceScope();
+            ExpressionF.AddScopedSymbol(DIST, 0);
+            ExpressionF.AddScopedSymbol(LENGTH, count);
         }
 
         protected override void ReleaseVariables() {
-            ExpressionD.DecreaseScope();
+            ExpressionF.DecreaseScope();
         }
 
         /// <summary>
@@ -132,12 +132,12 @@ namespace Complexity.Objects {
             //Add transforms based on inheritence
         }
 
-        protected void SetPointMatrix(PointMatrix vertecies) {
+        protected void SetPointMatrix(PointMatrixF vertecies) {
             this.vertecies = vertecies;
         }
 
         protected void SetVariables(SysVertex vert) {
-            ExpressionD.SetScopedSymbol(DIST, vert.distance);
+            ExpressionF.SetScopedSymbol(DIST, vert.distance);
         }
 
         /// <summary>

@@ -23,17 +23,17 @@ namespace Complexity.Util {
             this.z = (float)z;
         }
 
-        public double[] AsArray() {
-            return new double[] { x, y, z};
+        public float[] AsArray() {
+            return new float[] { x, y, z};
         }
 
-        public void SetFromArray(double[] points) {
+        public void SetFromArray(float[] points) {
             if (points.Length != 3) {
                 throw new Exception("Invalid array dimensions");
             }
-            x = (float) points[0];
-            y = (float) points[1];
-            z = (float) points[2];
+            x = points[0];
+            y = points[1];
+            z = points[2];
         }
 
         public virtual Point3 Clone() {

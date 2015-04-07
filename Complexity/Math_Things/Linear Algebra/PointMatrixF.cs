@@ -13,34 +13,34 @@ namespace Complexity.Util {
     /// it also keeps track of other properties 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class PointMatrix : MatrixD, IEnumerable, IEnumerator {
+    public class PointMatrixF : MatrixF, IEnumerable, IEnumerator {
         TypedArrayList<Point3> points;
         private int position = -1;
 
-        public PointMatrix(int noPoints)
+        public PointMatrixF(int noPoints)
             : base(3, noPoints) {
-                points = new TypedArrayList<Point3>(noPoints);
-                PopulatePoints();
+            points = new TypedArrayList<Point3>(noPoints);
+            PopulatePoints();
         }
 
-        public PointMatrix(int noPoints, double[] data)
+        public PointMatrixF(int noPoints, float[] data)
             : base(3, noPoints, data) {
-                points = new TypedArrayList<Point3>();
-                PopulatePoints();
+            points = new TypedArrayList<Point3>();
+            PopulatePoints();
         }
 
-        public PointMatrix(double[,] data)
+        public PointMatrixF(float[,] data)
             : base(data.GetLength(0), data.GetLength(1), MathUtil.ToColumnWiseArray(data)) {
-                points = new TypedArrayList<Point3>(data.GetLength(1));
-                PopulatePoints();
+            points = new TypedArrayList<Point3>(data.GetLength(1));
+            PopulatePoints();
         }
 
-        public PointMatrix(TypedArrayList<Point3> points)
+        public PointMatrixF(TypedArrayList<Point3> points)
             : base(3, points.Count()) {
-                this.points = points;
-                for (int i = 0; i < points.Count(); i++) {
-                    SetColumn(i, points.Get(i).AsArray());
-                }
+            this.points = points;
+            for (int i = 0; i < points.Count(); i++) {
+                SetColumn(i, points.Get(i).AsArray());
+            }
         }
 
         public Point3 Get(int index) {
@@ -56,7 +56,7 @@ namespace Complexity.Util {
             SetColumn(index, point.AsArray());
         }
 
-        public void SetFromMatrix(MatrixD newValues) {
+        public void SetFromMatrix(MatrixF newValues) {
             SetSubMatrix(0, 0, newValues);
         }
 

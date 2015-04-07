@@ -26,8 +26,8 @@ namespace Complexity.Objects {
 
         //Don't forget that collections need special handling in the clone method!
         protected ArrayList transforms;
-        protected PointMatrix vertecies;
-        protected MatrixD originalGeo;
+        protected PointMatrixF vertecies;
+        protected MatrixF originalGeo;
         protected float[] color;
 
         //Attributes
@@ -94,9 +94,9 @@ namespace Complexity.Objects {
             transforms.Add(attributes["translate"].value);
         }
 
-        public Object3(double[,] geometry) : this() {
+        public Object3(float[,] geometry) : this() {
             vertecies = ConvertGeometry(geometry);
-            originalGeo = MatrixD.OfArray(geometry);
+            originalGeo = MatrixF.OfArray(geometry);
         }
 
         public void SetInherit(string name, bool inherit) {
@@ -236,7 +236,7 @@ namespace Complexity.Objects {
 
         #endregion
 
-        public PointMatrix GetVertecies() {
+        public PointMatrixF GetVertecies() {
             return vertecies;
         }
 
@@ -285,7 +285,7 @@ namespace Complexity.Objects {
         /// </summary>
         /// <returns>a shallow copy of this object</returns>
         public virtual Object3 Clone() {
-            PointMatrix _vertecies = new PointMatrix(vertecies.ToArray());
+            PointMatrixF _vertecies = new PointMatrixF(vertecies.ToArray());
             for (int i = 0; i < _vertecies.ColumnCount; i++) {
                 _vertecies.Set(i, vertecies.Get(i).Clone());
             }
@@ -308,7 +308,7 @@ namespace Complexity.Objects {
             return result;
         }
 
-        public void SetVertecies(PointMatrix vertecies) {
+        public void SetVertecies(PointMatrixF vertecies) {
             this.vertecies = vertecies;
         }
 
@@ -323,8 +323,8 @@ namespace Complexity.Objects {
         /// populated PointMatrix representing all the object's vertecies
         /// </summary>
         /// <param name="geometry"></param>
-        protected virtual PointMatrix ConvertGeometry(double[,] geometry) {
-            return new PointMatrix(geometry);
+        protected virtual PointMatrixF ConvertGeometry(float[,] geometry) {
+            return new PointMatrixF(geometry);
         }
     }
 }

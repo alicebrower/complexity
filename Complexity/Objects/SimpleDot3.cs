@@ -34,7 +34,7 @@ namespace Complexity.Objects {
             base.Recalculate();
 
             attributes["color"].value.Recalculate();
-            color = MathUtil.DoubleToFloat(attributes["color"].value.Values());
+            color = attributes["color"].value.Values();
         }
 
         /// <summary>

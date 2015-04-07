@@ -42,17 +42,18 @@
     <Compile Include="Main\Universe.cs" />
     <Compile Include="Managers\ObjectManager.cs" />
     <Compile Include="Math_Things\Evaluateable.cs" />
-    <Compile Include="Math_Things\ExpressionD.cs" />
-    <Compile Include="Math_Things\MatrixD.cs" />
-    <Compile Include="Math_Things\VectorD.cs" />
-    <Compile Include="Math_Things\VectorExpr.cs" />
+    <Compile Include="Math_Things\ExpressionF.cs" />
+    <Compile Include="Math_Things\Linear Algebra\MatrixF.cs" />
+    <Compile Include="Math_Things\Linear Algebra\PointMatrixF.cs" />
+    <Compile Include="Math_Things\Linear Algebra\VectorExpr.cs" />
+    <Compile Include="Math_Things\Linear Algebra\VectorF.cs" />
     <Compile Include="Objects\Compound Objects\Pen3.cs" />
     <Compile Include="Objects\SimpleDot3.cs" />
     <Compile Include="Objects\Complex Objects\ComplexObject3.cs" />
     <Compile Include="Objects\Base\Renderable.cs" />
     <Compile Include="Objects\Compound Objects\System3.cs" />
     <Compile Include="Util\CloneableStack.cs" />
-    <Compile Include="Math_Things\MatrixTransformAction.cs" />
+    <Compile Include="Math_Things\Linear Algebra\MatrixTransformAction.cs" />
     <Compile Include="Util\GeometryBuilder.cs" />
     <Compile Include="Util\Global.cs" />
     <Compile Include="Main\MainClass.cs" />
@@ -61,7 +62,6 @@
     <Compile Include="Main\Scene.cs" />
     <Compile Include="Math_Things\MathUtil.cs" />
     <Compile Include="Util\Point3.cs" />
-    <Compile Include="Util\PointMatrix.cs" />
     <Compile Include="Util\TypedArrayList.cs" />
   </ItemGroup>
   <ItemGroup>

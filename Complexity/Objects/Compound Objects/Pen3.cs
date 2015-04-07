@@ -20,9 +20,9 @@ namespace Complexity.Objects {
         protected const string Z_SLOPE = "zslope";
 
         static Pen3() {
-            ExpressionD.ReserveSymbol(X_SLOPE);
-            ExpressionD.ReserveSymbol(Y_SLOPE);
-            ExpressionD.ReserveSymbol(Z_SLOPE);
+            ExpressionF.ReserveSymbol(X_SLOPE);
+            ExpressionF.ReserveSymbol(Y_SLOPE);
+            ExpressionF.ReserveSymbol(Z_SLOPE);
         }
 
         /*
@@ -51,7 +51,7 @@ namespace Complexity.Objects {
             }
         }
 
-        public Pen3(double[,] geometry) : base(geometry, new SimpleDot3(30)) {
+        public Pen3(float[,] geometry) : base(geometry, new SimpleDot3(30)) {
         }
 
         public override void SetAttributes_OLD(Dictionary<string, string> args) {
@@ -67,28 +67,28 @@ namespace Complexity.Objects {
         }
 
         protected void SetVariables(PenVertex vert) {
-            ExpressionD.SetSymbolValue(DIST, vert.distance);
-            ExpressionD.SetSymbolValue(X_SLOPE, vert.slope[0]);
-            ExpressionD.SetSymbolValue(Y_SLOPE, vert.slope[1]);
-            ExpressionD.SetSymbolValue(Z_SLOPE, vert.slope[2]);
+            ExpressionF.SetSymbolValue(DIST, vert.distance);
+            ExpressionF.SetSymbolValue(X_SLOPE, vert.slope[0]);
+            ExpressionF.SetSymbolValue(Y_SLOPE, vert.slope[1]);
+            ExpressionF.SetSymbolValue(Z_SLOPE, vert.slope[2]);
         }
 
         protected override void ReserveVariables() {
-            ExpressionD.AdvanceScope();
-            ExpressionD.AddScopedSymbol(DIST, 0);
-            ExpressionD.AddScopedSymbol(LENGTH, length);
-            ExpressionD.AddScopedSymbol(X_SLOPE, 0);
-            ExpressionD.AddScopedSymbol(Y_SLOPE, 0);
-            ExpressionD.AddScopedSymbol(Z_SLOPE, 0);
+            ExpressionF.AdvanceScope();
+            ExpressionF.AddScopedSymbol(DIST, 0);
+            ExpressionF.AddScopedSymbol(LENGTH, length);
+            ExpressionF.AddScopedSymbol(X_SLOPE, 0);
+            ExpressionF.AddScopedSymbol(Y_SLOPE, 0);
+            ExpressionF.AddScopedSymbol(Z_SLOPE, 0);
         }
 
         protected override void ReleaseVariables() {
-            ExpressionD.DecreaseScope();
+            ExpressionF.DecreaseScope();
         }
 
         public override void Draw() {
             foreach (PenVertex penVert in vertecies) {
-                double dist = speed * ExpressionD.GetSymbolValue("time");
+                double dist = speed * ExpressionF.GetSymbolValue("time");
                 double sdfs = penVert.distance;
                 if (speed >= 0) {
                     if (penVert.distance < dist) {
@@ -114,7 +114,7 @@ namespace Complexity.Objects {
         /// </summary>
         /// <param name="geometry"></param>
         /// <param name="rmaxDist">The maximum distance objects are allowed to be from each other</param>
-        protected override PointMatrix ConvertGeometry(double[,] g) {
+        protected override PointMatrixF ConvertGeometry(float[,] g) {
             //Create the temp points array
             TypedArrayList<Point3> _points = new TypedArrayList<Point3>();
             double dist, _dist, xdist, ydist, zdist;
@@ -160,7 +160,7 @@ namespace Complexity.Objects {
             }
 
             length = (_points.Count() > 0) ? ((PenVertex)_points.Last()).distance : 0;
-            return new PointMatrix(_points);
+            return new PointMatrixF(_points);
         }
 
         protected PenVertex CreateVertex(double x, double y, double z, double dist, float[] slope) {

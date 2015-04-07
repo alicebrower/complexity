@@ -15,25 +15,25 @@ namespace Complexity.Util {
         /// <param name="points">The number of points to be calculated.
         /// Points are evenly spaced.</param>
         /// <returns></returns>
-        public static double[,] Circle(int points) {
-            double[,] result = new double[3, points];
-            double t;
+        public static float[,] Circle(int points) {
+            float[,] result = new float[3, points];
+            float t;
 
             for (int i = 0; i < points; i++) {
-                t = ((double)i) / ((double)points);
-                result[0, i] = Math.Sin(t * Math.PI * 2) / 2.0;
-                result[1, i] = Math.Cos(t * Math.PI * 2) / 2.0;
+                t = ((float)i) / ((float)points);
+                result[0, i] = (float)(Math.Sin(t * Math.PI * 2) / 2.0);
+                result[1, i] = (float)(Math.Cos(t * Math.PI * 2) / 2.0);
                 result[2, i] = 0;
             }
 
             return result;
         }
 
-        public static double[,] Cube() {
-            return new double[,] {
-                {-0.5, 0.5,  0.5, -0.5, -0.5,  0.5,  0.5, -0.5},
-                { 0.5, 0.5, -0.5, -0.5,  0.5,  0.5, -0.5, -0.5},
-                { 0.5, 0.5,  0.5,  0.5, -0.5, -0.5, -0.5, -0.5}
+        public static float[,] Cube() {
+            return new float[,] {
+                {-0.5f, 0.5f,  0.5f, -0.5f, -0.5f,  0.5f,  0.5f, -0.5f},
+                { 0.5f, 0.5f, -0.5f, -0.5f,  0.5f,  0.5f, -0.5f, -0.5f},
+                { 0.5f, 0.5f,  0.5f,  0.5f, -0.5f, -0.5f, -0.5f, -0.5f}
             };
         }
 
@@ -45,21 +45,21 @@ namespace Complexity.Util {
         /// <param name="stop">Theta value to end at</param>
         /// <param name="step">Theta resolution</param>
         /// <returns></returns>
-        public static double[,] GraphPolar(ExpressionD expression, double start, double stop, double step) {
+        public static float[,] GraphPolar(ExpressionF expression, double start, double stop, double step) {
             if (start >= stop || step <= 0) {
                 throw new Exception("Cannot graph polar, invalid arguments");
             }
 
-            double[,] result;
+            float[,] result;
             ArrayList points = new ArrayList();
 
             //Perform calculations
-            ExpressionD.AddSymbol("i", 0);
+            ExpressionF.AddSymbol("i", 0);
             int index = 0;
-            double theta;
+            float theta;
             for (double i = start; i < stop; i += step) {
-                ExpressionD.SetSymbolValue("i", i * Math.PI / 180.0);
-                theta = i * Math.PI / 180.0;
+                ExpressionF.SetSymbolValue("i", (float)(i * Math.PI / 180.0));
+                theta = (float)(i * Math.PI / 180.0);
 
                 points.Add(new Point3(
                     expression.Evaluate() * Math.Sin(theta),
@@ -69,10 +69,10 @@ namespace Complexity.Util {
 
                 index++;
             }
-            ExpressionD.RemoveSymbol("i");
+            ExpressionF.RemoveSymbol("i");
 
             //Convert
-            result = new double[3, points.Count];
+            result = new float[3, points.Count];
             int count = 0;
             foreach (Point3 p in points) {
                 result[0, count] = p.x;
@@ -90,16 +90,16 @@ namespace Complexity.Util {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public static double[,] Grid(int x, int y) {
-            double[,] result = new double[3, x * y];
+        public static float[,] Grid(int x, int y) {
+            float[,] result = new float[3, x * y];
             //ArrayList points = new ArrayList();
 
             double xOff = (((double)x - 1) / 2.0);
             double yOff = (((double)y - 1) / 2.0);
             for (int j = 0; j < y; j++) {
                 for (int i = 0; i < x; i++) {
-                    result[0, i + j * x] = (i - xOff) / (double)x * 2.0;
-                    result[1, i + j * x] = (j - yOff) / (double)y * 2.0;
+                    result[0, i + j * x] = (float)((i - xOff) / (double)x * 2.0);
+                    result[1, i + j * x] = (float)((j - yOff) / (double)y * 2.0);
                     result[2, i + j * x] = 0;
                 }
             }

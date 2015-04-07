@@ -38,6 +38,16 @@ namespace Complexity.Util {
             return result;
         }
 
+        public static float[] ToColumnWiseArray(float[,] array) {
+            float[] result = new float[array.GetLength(0) * array.GetLength(1)];
+            for (int i = 0; i < array.GetLength(1); i++) {
+                for (int j = 0; j < array.GetLength(0); j++) {
+                    result[i * array.GetLength(0) + j] = array[j, i];
+                }
+            }
+            return result;
+        }
+
         public static string[] FloatToString(float[] values) {
             string[] result = new string[values.Length];
             for (int i = 0; i < result.Length; i++) {
@@ -59,6 +69,11 @@ namespace Complexity.Util {
         public static double RandomDouble(double seed) {
             string s = (seed + "").Replace(".", "");
             return (new Random(int.Parse(s))).NextDouble();
+        }
+
+        public static double RandomFloat(float seed) {
+            string s = (seed + "").Replace(".", "");
+            return (float)(new Random(int.Parse(s))).NextDouble();
         }
     }
 }

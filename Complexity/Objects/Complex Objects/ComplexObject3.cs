@@ -20,18 +20,18 @@ namespace Complexity.Objects {
         protected double[] position;
         protected double[] vertexColor;
         protected VectorExpr trans, color, rot, origin;
-        protected ExpressionD scale;
+        protected ExpressionF scale;
 
         public ComplexObject3() : base() {
             position = new double[] { 0, 0, 0 };
-            scale = new ExpressionD("1");
+            scale = new ExpressionF("1");
             trans = new VectorExpr(new string[] { "0", "0", "0" });
             color = new VectorExpr(new string[] { "1", "0", "1", "0" });
             origin = new VectorExpr(new string[] { "0", "0", "0" });
             rot = new VectorExpr(new string[] { "0", "0", "0" });
         }
 
-        public ComplexObject3(double[,] geometry) : base(geometry) {
+        public ComplexObject3(float[,] geometry) : base(geometry) {
         }
 
         new public void SetColor(double[] color) {
@@ -53,7 +53,7 @@ namespace Complexity.Objects {
             vertecies.Translate(origin.values);
             //vertecies.Scale(scale.Evaluate());
             vertecies.Rotate(rot.values);
-            vertecies.Translate(position[0], position[1], position[2]);
+            //vertecies.Translate(position[0], position[1], position[2]);
             vertecies.Translate(trans.values);
 
             //vertecies = new _geo.ToColumnWiseArray();
@@ -113,7 +113,7 @@ namespace Complexity.Objects {
             #endregion
 
             if (args.ContainsKey("scale")) {
-                scale = new ExpressionD(args["scale"]);
+                scale = new ExpressionF(args["scale"]);
             }
         }
 

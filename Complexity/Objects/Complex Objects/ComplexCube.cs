@@ -14,7 +14,7 @@ namespace Complexity.Objects {
     /// </summary>
     public class ComplexCube : ComplexObject3 {
         protected byte[] triangles;
-        protected double[] geometry;
+        protected float[] geometry;
         protected double[] colors;
 
         public ComplexCube()

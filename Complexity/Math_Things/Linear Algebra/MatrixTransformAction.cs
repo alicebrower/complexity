@@ -12,7 +12,7 @@ namespace Complexity.Util {
     /// a Matrix/PointMatrix
     /// </summary>
     public abstract class MatrixTransformAction {
-        public abstract MatrixD Transform(MatrixD matrix);
+        public abstract MatrixF Transform(MatrixF matrix);
     }
 
     public class MatrixRotateAction : MatrixTransformAction {
@@ -22,7 +22,7 @@ namespace Complexity.Util {
             this.vec = vec;
         }
 
-        public override MatrixD Transform(MatrixD matrix) {
+        public override MatrixF Transform(MatrixF matrix) {
             vec.Recalculate();
             matrix.Rotate(vec.Values());
             return matrix;
@@ -36,7 +36,7 @@ namespace Complexity.Util {
             this.vec = vec;
         }
 
-        public override MatrixD Transform(MatrixD matrix) {
+        public override MatrixF Transform(MatrixF matrix) {
             vec.Recalculate();
             matrix.Translate(vec.Values());
             return matrix;
@@ -50,7 +50,7 @@ namespace Complexity.Util {
             this.point = point;
         }
 
-        public override MatrixD Transform(MatrixD matrix) {
+        public override MatrixF Transform(MatrixF matrix) {
             matrix.Translate(point.x, point.y, point.z);
             return matrix;
         }
@@ -63,7 +63,7 @@ namespace Complexity.Util {
             this.vec = vec;
         }
 
-        public override MatrixD Transform(MatrixD matrix) {
+        public override MatrixF Transform(MatrixF matrix) {
             vec.Recalculate();
             matrix.Scale(vec.Values());
             return matrix;
