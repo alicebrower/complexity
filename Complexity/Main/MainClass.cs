@@ -27,9 +27,10 @@ namespace Complexity {
             Console.Write("Creating Objects... ");
 
             SimpleDot3 centerDot = new SimpleDot3(30);
-            centerDot.SetScale(".02");
+            centerDot.SetScale("(-0.5 * time + 1) % 2");
             centerDot.SetColor(new string[] { "1", "1", "1", "1" });
 
+            /*
             SimpleDot3 sysDot = new SimpleDot3(20);
             sysDot.SetColor(new string[] {"1", "0", "rand( dist * floor(time) )", "1"});
             sysDot.SetScale(".05");
@@ -41,11 +42,12 @@ namespace Complexity {
             sys.SetRotate(new string[] { "rad(70)", "0", "rad(30)" });
 
             System3 sys2 = new System3(GeometryBuilder.Grid(1, 4), sys);
-
+            */
 
             Scene scene = new Scene();
+            scene.Add(centerDot);
             //scene.Add(centerDot);
-            scene.Add(sys2);
+            //scene.Add(sys2);
 
             Console.WriteLine("Done.");
             #endregion

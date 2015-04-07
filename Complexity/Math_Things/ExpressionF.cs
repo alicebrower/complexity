@@ -180,11 +180,6 @@ namespace Complexity.Math_Things {
             expression = InfixToRPN(Parse(infix));
         }
 
-        //Test if is an operator
-        private bool IsOperator(string token) {
-            return (OPERATORS.ContainsKey(token) || FUNCTIONS.ContainsKey(token));
-        }
-
         /// <summary>
         /// Test associativity
         /// </summary>
@@ -274,18 +269,45 @@ namespace Complexity.Math_Things {
             //Convert and test
             ArrayList _tokens = new ArrayList();
             int parens = 0;
-            foreach (string token in tokens) {
-                if (IsDefined(token) || IsNumeric(token) || IsVariable(token)) {
-                    _tokens.Add(token);
-                } else if (token.CompareTo("(") == 0) {
-                    _tokens.Add(token);
+            for(int i = 0; i < tokens.Length; i++) {
+                if(OPERATORS.ContainsKey(tokens[i])) {
+                    if (tokens[i].CompareTo("-") == 0) {
+                        if (i == tokens.Length - 1) {
+                            throw new Exception("Invalid expression format");
+                        }
+
+                        if(i == 0) {
+                            _tokens.Add("-1");
+                            _tokens.Add("*");
+                        } else if (tokens[i + 1].CompareTo("-") == 0) {
+                            _tokens.Add("+");
+                            i++;
+                        } else if (IsDelimiter(tokens[i + 1])) {
+                            _tokens.Add("-1");
+                            _tokens.Add("*");
+                        } else if (IsNumeric(tokens[i + 1])) {
+                            _tokens.Add("+");
+                            _tokens.Add("-" + tokens[i + 1]);
+                            i++;
+                        } else if (IsVariable(tokens[i + 1])) {
+                            _tokens.Add("+");
+                            _tokens.Add("-1");
+                            _tokens.Add("*");
+                        }
+                    } else {
+                        _tokens.Add(tokens[i]);
+                    }
+                } else if (IsNumeric(tokens[i]) || IsVariable(tokens[i])) {
+                    _tokens.Add(tokens[i]);
+                } else if (tokens[i].CompareTo("(") == 0) {
+                    _tokens.Add(tokens[i]);
                     parens++;
-                } else if (token.CompareTo(")") == 0) {
-                    _tokens.Add(token);
+                } else if (tokens[i].CompareTo(")") == 0) {
+                    _tokens.Add(tokens[i]);
                     parens--;
-                } else if (token.CompareTo("") == 0) {
+                } else if (tokens[i].CompareTo("") == 0) {
                 } else {
-                    throw new Exception("Undefined SymbolF " + token);
+                    throw new Exception("Undefined SymbolF " + tokens[i]);
                 }
             }
 
@@ -318,6 +340,22 @@ namespace Complexity.Math_Things {
         }
 
         /// <summary>
+        /// Test if is an operator
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        private bool IsOperator(string token) {
+            return (OPERATORS.ContainsKey(token) || FUNCTIONS.ContainsKey(token));
+        }
+
+        private bool IsDelimiter(string token) {
+            if (token.CompareTo("") == 0) {
+                return false;
+            }
+            return (Regex.Match(token, "^" + DEL_REGEX + "$") != null); 
+        }
+
+        /// <summary>
         /// Tests if the given input can be pared to a float
         /// </summary>
         /// <param name="s"></param>
@@ -331,6 +369,11 @@ namespace Complexity.Math_Things {
             }
         }
 
+        /// <summary>
+        /// Check if the symbol is a user defined variable
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         private bool IsVariable(string s) {
             if (s.CompareTo("") == 0) {
                 return false;
@@ -339,7 +382,7 @@ namespace Complexity.Math_Things {
         }
 
         /// <summary>
-        /// Tests if a given input is contained in any of the SymbolF Dictionaries
+        /// Tests if a given input is contained in any of the predefined SymbolF Dictionaries
         /// </summary>
         /// <param name="SymbolF"></param>
         /// <returns></returns>
@@ -379,7 +422,6 @@ namespace Complexity.Math_Things {
             return infix;
         }
     }
-
 
     public class SymbolF {
         public readonly string name;
