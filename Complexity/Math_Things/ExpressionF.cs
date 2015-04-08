@@ -266,33 +266,48 @@ namespace Complexity.Math_Things {
             input = input.Replace("\n", "");
             string[] tokens = Regex.Split(input, @"(" + VAR_REGEX + "|" + DEL_REGEX + "|" + OPS_REGEX + ")");
 
-            //Convert and test
+            //Remove blanks
             ArrayList _tokens = new ArrayList();
+            foreach (string token in tokens) {
+                if (token.CompareTo("") != 0) {
+                    _tokens.Add(token);
+                }
+            }
+
+            tokens = (string[])(_tokens.ToArray(typeof(string)));
+            _tokens = new ArrayList();
             int parens = 0;
+
+            //Syntax & Symantics
             for(int i = 0; i < tokens.Length; i++) {
                 if(OPERATORS.ContainsKey(tokens[i])) {
-                    if (tokens[i].CompareTo("-") == 0) {
-                        if (i == tokens.Length - 1) {
-                            throw new Exception("Invalid expression format");
-                        }
+                    if (i == tokens.Length - 1) {
+                        throw new Exception("Invalid expression format");
+                    }
 
+                    if (tokens[i].CompareTo("-") == 0) {
                         if(i == 0) {
                             _tokens.Add("-1");
                             _tokens.Add("*");
                         } else if (tokens[i + 1].CompareTo("-") == 0) {
                             _tokens.Add("+");
                             i++;
-                        } else if (IsDelimiter(tokens[i + 1])) {
-                            _tokens.Add("-1");
-                            _tokens.Add("*");
                         } else if (IsNumeric(tokens[i + 1])) {
                             _tokens.Add("+");
                             _tokens.Add("-" + tokens[i + 1]);
                             i++;
-                        } else if (IsVariable(tokens[i + 1])) {
+                        } else if (IsVariable(tokens[i + 1]) || IsDelimiter(tokens[i + 1]) || IsFunction(tokens[i + 1])) {
                             _tokens.Add("+");
                             _tokens.Add("-1");
                             _tokens.Add("*");
+                        } else {
+                            _tokens.Add("-");
+                        }
+                    } else if (tokens[i].CompareTo("+") == 0) {
+                        if (i == 0 || tokens[i + 1].CompareTo("-") == 0) {
+                            continue;
+                        }  else {
+                            _tokens.Add("+");
                         }
                     } else {
                         _tokens.Add(tokens[i]);
@@ -379,6 +394,10 @@ namespace Complexity.Math_Things {
                 return false;
             }
             return (Regex.Match(s, "^" + VAR_REGEX + "$") != null);
+        }
+
+        private bool IsFunction(string token) {
+            return FUNCTIONS.ContainsKey(token);
         }
 
         /// <summary>

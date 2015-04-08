@@ -27,7 +27,8 @@ namespace Complexity {
             Console.Write("Creating Objects... ");
 
             SimpleDot3 centerDot = new SimpleDot3(30);
-            centerDot.SetScale("(-0.5 * time + 1) % 2");
+            
+            centerDot.SetScale("-time+1");
             centerDot.SetColor(new string[] { "1", "1", "1", "1" });
 
             /*
