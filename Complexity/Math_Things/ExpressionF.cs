@@ -312,14 +312,30 @@ namespace Complexity.Math_Things {
                     } else {
                         _tokens.Add(tokens[i]);
                     }
-                } else if (IsNumeric(tokens[i]) || IsVariable(tokens[i])) {
-                    _tokens.Add(tokens[i]);
                 } else if (tokens[i].CompareTo("(") == 0) {
                     _tokens.Add(tokens[i]);
                     parens++;
                 } else if (tokens[i].CompareTo(")") == 0) {
-                    _tokens.Add(tokens[i]);
+                    if (i < tokens.Length - 1
+                        && (tokens[i + 1].CompareTo("(") == 0 
+                            || FUNCTIONS.ContainsKey(tokens[i + 1])
+                            || SymbolFS.ContainsKey(tokens[i + 1]))) {
+
+                        _tokens.Add(tokens[i]);
+                        _tokens.Add("*");
+                    } else {
+                        _tokens.Add(tokens[i]);
+                    }
                     parens--;
+                } else if (IsNumeric(tokens[i]) || IsVariable(tokens[i])) {
+                    if (i < tokens.Length - 1 && !OPERATORS.ContainsKey(tokens[i + 1]) && tokens[i + 1].CompareTo(")") != 0) {
+                        _tokens.Add(tokens[i]);
+                        _tokens.Add("*");
+                    } else {
+                        _tokens.Add(tokens[i]);
+                    }
+                } else if (IsFunction(tokens[i])) {
+                    _tokens.Add(tokens[i]);
                 } else if (tokens[i].CompareTo("") == 0) {
                 } else {
                     throw new Exception("Undefined SymbolF " + tokens[i]);
@@ -371,7 +387,7 @@ namespace Complexity.Math_Things {
         }
 
         /// <summary>
-        /// Tests if the given input can be pared to a float
+        /// Tests if the given input can be parsed to a float
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
@@ -393,7 +409,7 @@ namespace Complexity.Math_Things {
             if (s.CompareTo("") == 0) {
                 return false;
             }
-            return (Regex.Match(s, "^" + VAR_REGEX + "$") != null);
+            return ( (Regex.Match(s, "^" + VAR_REGEX + "$") != null) && !FUNCTIONS.ContainsKey(s));
         }
 
         private bool IsFunction(string token) {

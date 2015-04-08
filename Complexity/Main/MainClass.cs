@@ -22,14 +22,22 @@ namespace Complexity {
         /// <param name="args"></param>
         /// <returns></returns>
         static int Main(string[] args) {
+            //ExpressionF expr = new ExpressionF("(1+0)(1+1)sin(time-1)");
             #region Objects
             //Create all the things
             Console.Write("Creating Objects... ");
 
             SimpleDot3 centerDot = new SimpleDot3(30);
             
-            centerDot.SetScale("-time+1");
+            centerDot.SetScale("(1+0)time(1-.9)");
             centerDot.SetColor(new string[] { "1", "1", "1", "1" });
+
+            System3 sys = new System3(new float[,] {
+               {-1f,    0f,     1f,     -1f,    1f},
+               {1f,     0f,     1f,     -1f,    -1f},
+               {0f,     0f,     0f,     0f,     0f}
+            }, centerDot);
+            sys.SetScale(".2");
 
             /*
             SimpleDot3 sysDot = new SimpleDot3(20);
@@ -46,7 +54,7 @@ namespace Complexity {
             */
 
             Scene scene = new Scene();
-            scene.Add(centerDot);
+            scene.Add(sys);
             //scene.Add(centerDot);
             //scene.Add(sys2);
 
