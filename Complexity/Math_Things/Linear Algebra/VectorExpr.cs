@@ -61,8 +61,8 @@ namespace Complexity.Math_Things {
         /// </summary>
         /// <param name="index"></param>
         /// <param name="expr"></param>
-        public void SetExprAt(int index, string expr) {
-            expressions[index] = new ExpressionF(expr);
+        public void SetExprAt(int index, ExpressionF expr) {
+            expressions[index] = expr;
         }
 
         public int Size() {

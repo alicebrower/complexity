@@ -10,6 +10,8 @@ using Complexity.Util;
 using System.Collections;
 using Complexity.Math_Things;
 using Complexity.Managers;
+using Complexity.Objects.Base;
+using Complexity.Interfaces;
 
 namespace Complexity.Objects {
     /// <summary>
@@ -17,65 +19,24 @@ namespace Complexity.Objects {
     /// SimpleObject -> Does not recalculate, must be modified externally.
     /// ComplexObject -> Has a Recalculate method and can update itself
     /// </summary>
-    public abstract class Object3 : Renderable {
+    public abstract class Object3 : Renderable, Recalculatable {
         public readonly float[] DEFAULT_COLOR = new float[] { 1, 0, 1, 1 };
         protected const int ORIGIN_T = 0;
         protected const int SCALE_T = 1;
         protected const int ROTATE_T = 2;
         protected const int TRANSLATE_T = 3;
+        protected static ulong ID = 0;
 
         //Don't forget that collections need special handling in the clone method!
+        protected ulong id;
+        protected float[] color;
         protected ArrayList transforms;
         protected PointMatrixF vertecies;
         protected MatrixF originalGeo;
-        protected float[] color;
-
-        //Attributes
-        protected class ObjectAttribute {
-            public dynamic value;
-            public bool inherit;
-            public readonly bool removable;
-
-            public ObjectAttribute() { }
-
-            public ObjectAttribute(bool removable) {
-                this.removable = removable;
-            }
-
-            public ObjectAttribute(dynamic value, bool inherit, bool removable) {
-                this.value = value;
-                this.inherit = inherit;
-                this.removable = removable;
-            }
-
-            public ObjectAttribute Clone() {
-                return (ObjectAttribute)MemberwiseClone();
-            }
-        }
-
-        protected class ObjectAttributeT<T> : ObjectAttribute {
-            new public T value;
-
-            public ObjectAttributeT() { }
-
-            public ObjectAttributeT(bool removable)
-                : base(removable) {
-            }
-
-            public ObjectAttributeT(T value, bool inherit, bool removable)
-                : base(removable) {
-                this.value = value;
-                this.inherit = inherit;
-            }
-
-            public ObjectAttributeT<T> Clone() {
-                return (ObjectAttributeT<T>)MemberwiseClone();
-            }
-        }
-
         protected Dictionary<string, ObjectAttribute> attributes;
 
         protected Object3() {
+            id = ID++;
             attributes = new Dictionary<string, ObjectAttribute>() {
                 {"origin", new ObjectAttributeT<MatrixTranslateAction>()},
                 {"scale", new ObjectAttributeT<MatrixScaleAction>()},
@@ -261,6 +222,10 @@ namespace Complexity.Objects {
         /// 
         /// </summary>
         public virtual void Recalculate() {
+            //When recalculating, first check if the attribute is locally defined.
+            //if it is, use it and set a corresponding value in resourceMgr if it is 
+            //inheritable. Else if there is no local value check the resourceMgr.
+            //Else, use a default value
             vertecies.SetFromMatrix(originalGeo);
 
             foreach (MatrixTransformAction mta in transforms) {
@@ -270,15 +235,9 @@ namespace Complexity.Objects {
             }
         }
 
-        /// <summary>
-        /// This method comminicates with ExpressionD to reserve certain variable names
-        /// </summary>
-        protected abstract void ReserveVariables();
-
-        /// <summary>
-        /// This method removes it's reserved variables from ExpressionD
-        /// </summary>
-        protected abstract void ReleaseVariables();
+        public void SetID() {
+            id = ID++;
+        }
 
         /// <summary>
         /// Need to perform recursive clone of vertecies PointMatrix, transforms and attributes
@@ -304,6 +263,7 @@ namespace Complexity.Objects {
             result.SetVertecies(_vertecies);
             result.SetTransformArray(_transforms);
             result.SetAttributes(_attributes);
+            result.SetID();
 
             return result;
         }

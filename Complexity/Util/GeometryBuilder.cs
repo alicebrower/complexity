@@ -46,6 +46,8 @@ namespace Complexity.Util {
         /// <param name="step">Theta resolution</param>
         /// <returns></returns>
         public static float[,] GraphPolar(ExpressionF expression, double start, double stop, double step) {
+            throw new NotImplementedException();
+
             if (start >= stop || step <= 0) {
                 throw new Exception("Cannot graph polar, invalid arguments");
             }
@@ -54,11 +56,11 @@ namespace Complexity.Util {
             ArrayList points = new ArrayList();
 
             //Perform calculations
-            ExpressionF.AddSymbol("i", 0);
+            //ExpressionF.AddSymbol("i", 0);
             int index = 0;
             float theta;
             for (double i = start; i < stop; i += step) {
-                ExpressionF.SetSymbolValue("i", (float)(i * Math.PI / 180.0));
+                //ExpressionF.SetSymbolValue("i", (float)(i * Math.PI / 180.0));
                 theta = (float)(i * Math.PI / 180.0);
 
                 points.Add(new Point3(
@@ -69,7 +71,7 @@ namespace Complexity.Util {
 
                 index++;
             }
-            ExpressionF.RemoveSymbol("i");
+            //ExpressionF.RemoveSymbol("i");
 
             //Convert
             result = new float[3, points.Count];

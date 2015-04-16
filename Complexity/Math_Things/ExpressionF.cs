@@ -1,4 +1,5 @@
-﻿using Complexity.Util;
+﻿using Complexity.Managers;
+using Complexity.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,166 +18,60 @@ namespace Complexity.Math_Things {
         private static readonly string OPS_REGEX;
         private static readonly string VAR_REGEX = "[a-zA-Z_]+[0-9]*[a-zA-Z_]*";
         private static readonly string DEL_REGEX = "[\\(\\)]";
-        private static Stack<Dictionary<string, SymbolF>> scope;
         private static HashSet<string> RESERVED;
-        private static Dictionary<string, SymbolF> SymbolFS, FUNCTIONS, OPERATORS;
+        private static Dictionary<string, Symbol> FUNCTIONS, OPERATORS;
 
         static ExpressionF() {
-            scope = new Stack<Dictionary<string, SymbolF>>(); 
+            FUNCTIONS = new Dictionary<string, Symbol>() {
+                {"sin", new Symbol("sin", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Sin(a[0]))},
+                {"cos", new Symbol("cos", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Cos(a[0]))},
+                {"tan", new Symbol("tan", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Tan(a[0]))},
+                {"asin", new Symbol("asin", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Asin(a[0]))},
+                {"acos", new Symbol("acos", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Acos(a[0]))},
+                {"atan", new Symbol("atan", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Atan(a[0]))},
+                {"sinh", new Symbol("sinh", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Sinh(a[0]))},
+                {"cosh", new Symbol("cosh", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Cosh(a[0]))},
+                {"tanh", new Symbol("tanh", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Tanh(a[0]))},
+                {"sqrt", new Symbol("sqrt", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Sqrt(a[0]))},
+                {"log", new Symbol("log", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Log(a[0]))},
 
-            SymbolFS = new Dictionary<string, SymbolF>() {
-                {"time", new SymbolF("time", false, 0, LEFT_ASSOC, 0, (a) => (float)Global.GetElapsedTime())},
-                {"pi", new SymbolF("pi", false, 0, LEFT_ASSOC, 0, (a) => (float)Math.PI)},
-                {"e", new SymbolF("e", false, 0, LEFT_ASSOC, 0, (a) => (float)Math.E)}
+                {"rad", new Symbol("rad", true, 1, LEFT_ASSOC, 10, (a) => (float)(a[0] * Math.PI / 180.0))},
+                {"deg", new Symbol("deg", true, 1, LEFT_ASSOC, 10, (a) => (float)(a[0] * 180.0 / Math.PI))},
+
+                {"abs", new Symbol("abs", true, 1, LEFT_ASSOC, 10, (a) => Math.Abs(a[0]))},
+                {"ceil", new Symbol("ceil", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Ceiling(a[0]))},
+                {"floor", new Symbol("floor", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Floor(a[0]))},
+                {"round", new Symbol("round", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Round(a[0]))},
+                {"sign", new Symbol("sign", true, 1, LEFT_ASSOC, 10, (a) => Math.Sign(a[0]))},
+                {"rand", new Symbol("rand", true, 1, LEFT_ASSOC, 10, (a) => (float)MathUtil.RandomFloat(a[0]))}
             };
 
-            RESERVED = new HashSet<string>();
-
-            FUNCTIONS = new Dictionary<string, SymbolF>() {
-                {"sin", new SymbolF("sin", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Sin(a[0]))},
-                {"cos", new SymbolF("cos", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Cos(a[0]))},
-                {"tan", new SymbolF("tan", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Tan(a[0]))},
-                {"asin", new SymbolF("asin", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Asin(a[0]))},
-                {"acos", new SymbolF("acos", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Acos(a[0]))},
-                {"atan", new SymbolF("atan", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Atan(a[0]))},
-                {"sinh", new SymbolF("sinh", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Sinh(a[0]))},
-                {"cosh", new SymbolF("cosh", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Cosh(a[0]))},
-                {"tanh", new SymbolF("tanh", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Tanh(a[0]))},
-                {"sqrt", new SymbolF("sqrt", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Sqrt(a[0]))},
-                {"log", new SymbolF("log", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Log(a[0]))},
-
-                {"rad", new SymbolF("rad", true, 1, LEFT_ASSOC, 10, (a) => (float)(a[0] * Math.PI / 180.0))},
-                {"deg", new SymbolF("deg", true, 1, LEFT_ASSOC, 10, (a) => (float)(a[0] * 180.0 / Math.PI))},
-
-                {"abs", new SymbolF("abs", true, 1, LEFT_ASSOC, 10, (a) => Math.Abs(a[0]))},
-                {"ceil", new SymbolF("ceil", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Ceiling(a[0]))},
-                {"floor", new SymbolF("floor", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Floor(a[0]))},
-                {"round", new SymbolF("round", true, 1, LEFT_ASSOC, 10, (a) => (float)Math.Round(a[0]))},
-                {"sign", new SymbolF("sign", true, 1, LEFT_ASSOC, 10, (a) => Math.Sign(a[0]))},
-                {"rand", new SymbolF("rand", true, 1, LEFT_ASSOC, 10, (a) => (float)MathUtil.RandomFloat(a[0]))}
-            };
-
-            OPERATORS = new Dictionary<string, SymbolF>() {
-                {"+", new SymbolF("+", true, 2, LEFT_ASSOC, 1, (a) => a[1] + a[0])},
-                {"-", new SymbolF("-", true, 2, LEFT_ASSOC, 1, (a) => a[1] - a[0])},
-                {"*", new SymbolF("*", true, 2, LEFT_ASSOC, 5, (a) => a[1] * a[0])},
-                {"/", new SymbolF("/", true, 2, LEFT_ASSOC, 5, (a) => a[1] / a[0])},
-                {"%", new SymbolF("%", true, 2, LEFT_ASSOC, 5, (a) => a[1] % a[0])},
-                {"^", new SymbolF("^", true, 2, RIGHT_ASSOC, 9, (a) => (float)Math.Pow((double)a[1],(double)a[0]))}
+            OPERATORS = new Dictionary<string, Symbol>() {
+                {"+", new Symbol("+", true, 2, LEFT_ASSOC, 1, (a) => a[1] + a[0])},
+                {"-", new Symbol("-", true, 2, LEFT_ASSOC, 1, (a) => a[1] - a[0])},
+                {"*", new Symbol("*", true, 2, LEFT_ASSOC, 5, (a) => a[1] * a[0])},
+                {"/", new Symbol("/", true, 2, LEFT_ASSOC, 5, (a) => a[1] / a[0])},
+                {"%", new Symbol("%", true, 2, LEFT_ASSOC, 5, (a) => a[1] % a[0])},
+                {"^", new Symbol("^", true, 2, RIGHT_ASSOC, 9, (a) => (float)Math.Pow((double)a[1],(double)a[0]))}
             };
 
             //Assemble operator regex
             OPS_REGEX = "";
-            foreach (KeyValuePair<string, SymbolF> entry in OPERATORS) {
+            foreach (KeyValuePair<string, Symbol> entry in OPERATORS) {
                 OPS_REGEX += Regex.Escape(entry.Key) + "|";
             }
             OPS_REGEX = OPS_REGEX.Substring(0, OPS_REGEX.Length - 1);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        public static void AddSymbol(string name, float value) {
-            if (RESERVED.Contains(name)) {
-                throw new Exception("Can not add Symbol " + name + ", it is reserved.");
-            }
-            SymbolFS.Add(name, new SymbolF(name, value));
-        }
-
-        public static void SetSymbolValue(string name, float value) {
-            SymbolFS[name] = new SymbolF(name, value);
-        }
-
-        public static float GetSymbolValue(string name) {
-            if (RESERVED.Contains(name)) {
-                return GetScopedSymbol(name);
-            } else {
-                return SymbolFS[name].eval(null);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        public static void RemoveSymbol(string name) {
-            SymbolFS.Remove(name);
-        }
-
-        public static void ReserveSymbol(string name) {
-            RESERVED.Add(name);
-        }
-
-        public static void AdvanceScope() {
-            scope.Push(new Dictionary<string, SymbolF>());
-        }
-
-        public static void DecreaseScope() {
-            scope.Pop();
-        }
-
-        public static void AddScopedSymbol(string name, float value) {
-            scope.Peek().Add(name, new SymbolF(value));
-        }
-
-        public static void SetScopedSymbol(string name, float value) {
-            bool found = false;
-            Stack<Dictionary<string, SymbolF>> _scope = new Stack<Dictionary<string, SymbolF>>();
-
-            while (scope.Peek() != null && !found) {
-                if (scope.Peek().ContainsKey(name)) {
-                    scope.Peek()[name] = new SymbolF(name, value);
-                    found = true;
-                } else {
-                    _scope.Push(scope.Pop());
-                }
-            }
-
-            //put all the dictionaries back on
-            while (_scope.Count > 0) {
-                scope.Push(_scope.Pop());
-            }
-
-            if (!found) {
-                throw new Exception("SymbolF " + name + " cannot be found");
-            }
-        }
-
-        public static float GetScopedSymbol(string name) {
-            bool found = false;
-            float value = 0;
-            Stack<Dictionary<string, SymbolF>> _scope = new Stack<Dictionary<string, SymbolF>>();
-
-            while (scope.Peek() != null && !found) {
-                if (scope.Peek().ContainsKey(name)) {
-                    value = scope.Peek()[name].eval(null);
-                    found = true;
-                } else {
-                    _scope.Push(scope.Pop());
-                }
-            }
-
-            //put all the dictionaries back on
-            while (_scope.Count > 0) {
-                scope.Push(_scope.Pop());
-            }
-
-            if (!found) {
-                throw new Exception("SymbolF " + name + " cannot be found");
-            }
-
-            return value;
-        }
-
         #endregion
 
-        private CloneableStack<SymbolF> expression;
+        private CloneableStack<Symbol> expression;
+        private Dictionary<string, Symbol> symbols;
         private string infix;
 
         public ExpressionF(string infix) {
             this.infix = infix;
+            symbols = new Dictionary<string, Symbol>();
             expression = InfixToRPN(Parse(infix));
         }
 
@@ -191,7 +86,7 @@ namespace Complexity.Math_Things {
                 throw new Exception("Invalid token: " + token);
             }
 
-            if (ToSymbolF(token).assoc == type) {
+            if (ToSymbol(token).assoc == type) {
                 return true;
             }
 
@@ -203,7 +98,7 @@ namespace Complexity.Math_Things {
             if (!IsOperator(token1) || !IsOperator(token2)) {
                 throw new Exception("Invalid tokens: " + token1 + " " + token2);
             }
-            return ToSymbolF(token1).precedence - ToSymbolF(token2).precedence;
+            return ToSymbol(token1).precedence - ToSymbol(token2).precedence;
         }
 
         /// <summary>
@@ -212,9 +107,9 @@ namespace Complexity.Math_Things {
         /// </summary>
         /// <param name="inputTokens"></param>
         /// <returns></returns>
-        private CloneableStack<SymbolF> InfixToRPN(string[] inputTokens) {
+        private CloneableStack<Symbol> InfixToRPN(string[] inputTokens) {
             //ArrayList outList = new ArrayList();
-            CloneableStack<SymbolF> result = new CloneableStack<SymbolF>(0);
+            CloneableStack<Symbol> result = new CloneableStack<Symbol>(0);
             Stack<string> stack = new Stack<string>();
 
             //for all the input tokens read the next token
@@ -224,7 +119,7 @@ namespace Complexity.Math_Things {
                     while (stack.Count != 0 && IsOperator(stack.Peek())) {
                         if ((IsAssociative(token, LEFT_ASSOC) && CmpPrecedence(token, stack.Peek()) <= 0)
                             || (IsAssociative(token, RIGHT_ASSOC) && CmpPrecedence(token, stack.Peek()) < 0)) {
-                            result.Push(ToSymbolF(stack.Pop()));
+                            result.Push(ToSymbol(stack.Pop()));
                             continue;
                         }
                         break;
@@ -235,19 +130,19 @@ namespace Complexity.Math_Things {
                     stack.Push(token);
                 } else if (token.Equals(")")) {
                     while (stack.Count != 0 && !stack.Peek().Equals("(")) {
-                        result.Push(ToSymbolF(stack.Pop()));
+                        result.Push(ToSymbol(stack.Pop()));
                     }
                     stack.Pop();
                 } else {
-                    result.Push(ToSymbolF(token));
+                    result.Push(ToSymbol(token));
                 }
             }
 
             while (stack.Count != 0) {
-                result.Push(ToSymbolF(stack.Pop()));
+                result.Push(ToSymbol(stack.Pop()));
             }
 
-            CloneableStack<SymbolF> actualResult = new CloneableStack<SymbolF>(result.Count());
+            CloneableStack<Symbol> actualResult = new CloneableStack<Symbol>(result.Count());
             while (result.Count() > 0) {
                 actualResult.Push(result.Pop());
             }
@@ -319,7 +214,7 @@ namespace Complexity.Math_Things {
                     if (i < tokens.Length - 1
                         && (tokens[i + 1].CompareTo("(") == 0 
                             || FUNCTIONS.ContainsKey(tokens[i + 1])
-                            || SymbolFS.ContainsKey(tokens[i + 1]))) {
+                            || symbols.ContainsKey(tokens[i + 1]))) {
 
                         _tokens.Add(tokens[i]);
                         _tokens.Add("*");
@@ -338,7 +233,7 @@ namespace Complexity.Math_Things {
                     _tokens.Add(tokens[i]);
                 } else if (tokens[i].CompareTo("") == 0) {
                 } else {
-                    throw new Exception("Undefined SymbolF " + tokens[i]);
+                    throw new Exception("Undefined Symbol " + tokens[i]);
                 }
             }
 
@@ -349,27 +244,58 @@ namespace Complexity.Math_Things {
             return (string[])_tokens.ToArray(typeof(string));
         }
 
-        /// <summary>
-        /// Attempts to either look up the SymbolF or convert it to one
-        /// </summary>
-        /// <param name="SymbolF"></param>
-        /// <returns></returns>
-        private SymbolF ToSymbolF(string SymbolF) {
-            if (SymbolFS.ContainsKey(SymbolF)) {
-                return SymbolFS[SymbolF];
-            } else if (OPERATORS.ContainsKey(SymbolF)) {
-                return OPERATORS[SymbolF];
-            } else if (FUNCTIONS.ContainsKey(SymbolF)) {
-                return FUNCTIONS[SymbolF];
-            } else if (IsNumeric(SymbolF)) {
-                return new SymbolF(float.Parse(SymbolF));
-            } else if (IsVariable(SymbolF)) {
-                return new SymbolF(SymbolF);
-            }
-
-            throw new Exception("ToSymbolF : " + SymbolF + " cannot be converted to a SymbolF");
+        private void AddSymbol(string symbol) {
+            symbols.Add(symbol, new Symbol(symbol));
         }
 
+        /*
+        private void AddSymbol(string symbol, float value) {
+            symbols.Add(symbol, new Symbol(symbol, value));
+        }
+
+        private void SetSymbolValue(string symbol, float value) {
+            symbols[symbol] = new Symbol(symbol, value);
+        }
+
+        private void RemoveSymbol(string symbol) {
+            symbols.Remove(symbol);
+        }
+        */
+
+        /// <summary>
+        /// Attempts to either look up the Symbol or convert it to one
+        /// </summary>
+        /// <param name="Symbol"></param>
+        /// <returns></returns>
+        private Symbol ToSymbol(string symbol) {
+            if (symbols.ContainsKey(symbol)) {
+                return symbols[symbol];
+            } else if (OPERATORS.ContainsKey(symbol)) {
+                return OPERATORS[symbol];
+            } else if (FUNCTIONS.ContainsKey(symbol)) {
+                return FUNCTIONS[symbol];
+            } else if (IsNumeric(symbol)) {
+                return new Symbol(float.Parse(symbol));
+            } else if (IsVariable(symbol)) {
+                return new Symbol(symbol);
+            }
+
+            throw new Exception("ToSymbol : " + symbol + " cannot be converted to a Symbol");
+        }
+
+        private Symbol GetSymbol(string symbol) {
+            if (symbols.ContainsKey(symbol)) {
+                return symbols[symbol];
+            } else if (symbols.ContainsKey(symbol)) {
+                return symbols[symbol];
+            } else {
+                throw new Exception("Undefined symbol, " + symbol);
+            }
+        }
+
+        private bool IsSymbol(string token) {
+            return (symbols.ContainsKey(token));
+        }
         /// <summary>
         /// Test if is an operator
         /// </summary>
@@ -417,14 +343,14 @@ namespace Complexity.Math_Things {
         }
 
         /// <summary>
-        /// Tests if a given input is contained in any of the predefined SymbolF Dictionaries
+        /// Tests if a given input is contained in any of the predefined Symbol Dictionaries
         /// </summary>
-        /// <param name="SymbolF"></param>
+        /// <param name="Symbol"></param>
         /// <returns></returns>
-        private bool IsDefined(string SymbolF) {
-            return (SymbolFS.ContainsKey(SymbolF)
-                || OPERATORS.ContainsKey(SymbolF)
-                || FUNCTIONS.ContainsKey(SymbolF));
+        private bool IsDefined(string Symbol) {
+            return (symbols.ContainsKey(Symbol)
+                || OPERATORS.ContainsKey(Symbol)
+                || FUNCTIONS.ContainsKey(Symbol));
         }
 
         /// <summary>
@@ -433,96 +359,94 @@ namespace Complexity.Math_Things {
         /// <returns>The result of evaluation</returns>
         public float Evaluate() {
             //Create a clone of expression because we don't want to mess with it
-            CloneableStack<SymbolF> expr = expression.Clone();
-            Stack<SymbolF> tempStack = new Stack<SymbolF>();
+            CloneableStack<Symbol> expr = expression.Clone();
+            Stack<Symbol> tempStack = new Stack<Symbol>();
             float[] values;
 
             while (expr.Count() > 0) {
                 if (!expr.Peek().isOperator) {
                     tempStack.Push(expr.Pop());
                 } else {
-                    //Pop values, tempStack should only be 0 op SymbolFs
+                    //Pop values, tempStack should only be 0 op SYMBOLS
                     values = new float[expr.Peek().nOps];
                     for (int i = 0; i < values.Length; i++) {
-                        values[i] = tempStack.Pop().eval(null);
+                        if (tempStack.Peek().isNumeric) {
+                            values[i] = tempStack.Pop().eval(null);
+                        } else {
+                            values[i] = ResourceManager.GetExprVal(tempStack.Pop().name);
+                        }
                     }
-                    tempStack.Push(new SymbolF(expr.Pop().eval(values)));
+                    tempStack.Push(new Symbol(expr.Pop().eval(values)));
                 }
             }
 
-            return tempStack.Pop().eval(null);
+            if (tempStack.Peek().isNumeric) {
+                return tempStack.Pop().eval(null);
+            } else {
+                return ResourceManager.GetExprVal(tempStack.Pop().name);
+            }
         }
 
         public string ToString() {
             return infix;
         }
-    }
 
-    public class SymbolF {
-        public readonly string name;
-        public readonly bool isOperator;
-        public readonly int nOps, assoc, precedence;
-        public readonly Eval eval;
+        protected class Symbol : VariableFloat {
+            public readonly bool isOperator;
+            public bool isNumeric = false;
+            public readonly int nOps, assoc, precedence;
 
-        /// <summary>
-        /// This is used to create a dynamic variable who's value and/or existence 
-        /// is not known until runtime
-        /// </summary>
-        /// <param name="name"></param>
-        public SymbolF(string name) {
-            this.name = name;
-            isOperator = false;
-            nOps = 0;
-            assoc = 0;
-            precedence = 0;
-            eval = (a) => ExpressionF.GetSymbolValue(name);
+            public Symbol(string name)
+                : base(name) {
+                isOperator = false;
+                nOps = 0;
+                assoc = 0;
+                precedence = 0;
+            }
+
+            /// <summary>
+            /// Simple constructor for numbers only
+            /// </summary>
+            /// <param name="value"></param>
+            public Symbol(float value)
+                : base(value) {
+                isOperator = false;
+                nOps = 0;
+                assoc = 0;
+                precedence = 0;
+                isNumeric = true;
+            }
+
+            /// <summary>
+            /// Convience constructor for creating variables with constant value
+            /// </summary>
+            /// <param name="name"></param>
+            /// <param name="value"></param>
+            public Symbol(string name, float value)
+                : base(name, value) {
+                isOperator = false;
+                isNumeric = true;
+                nOps = 0;
+                assoc = 0;
+                precedence = 0;
+            }
+
+            /// <summary>
+            /// General Constructor
+            /// </summary>
+            /// <param name="name"></param>
+            /// <param name="isOperator"></param>
+            /// <param name="noOps"></param>
+            /// <param name="assoc"></param>
+            /// <param name="precedence"></param>
+            /// <param name="eval"></param>
+            public Symbol(string name, bool isOperator, int noOps, int assoc, int precedence, Eval eval)
+                : base(name, eval) {
+                this.isOperator = isOperator;
+                this.nOps = noOps;
+                this.assoc = assoc;
+                this.precedence = precedence;
+            }
         }
-
-        /// <summary>
-        /// Simple constructor for numbers only
-        /// </summary>
-        /// <param name="value"></param>
-        public SymbolF(float value) {
-            name = "" + value;
-            isOperator = false;
-            nOps = 0;
-            assoc = 0;
-            precedence = 0;
-            eval = (a) => value;
-        }
-
-        /// <summary>
-        /// Convience constructor for creating variables with constant value
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        public SymbolF(string name, float value) {
-            this.name = name;
-            isOperator = false;
-            nOps = 0;
-            assoc = 0;
-            precedence = 0;
-            eval = (a) => value;
-        }
-
-        /// <summary>
-        /// General Constructor
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="isOperator"></param>
-        /// <param name="noOps"></param>
-        /// <param name="assoc"></param>
-        /// <param name="precedence"></param>
-        /// <param name="eval"></param>
-        public SymbolF(string name, bool isOperator, int noOps, int assoc, int precedence, Eval eval) {
-            this.name = name;
-            this.isOperator = isOperator;
-            this.nOps = noOps;
-            this.assoc = assoc;
-            this.precedence = precedence;
-            this.eval = eval;
-        }
-
-        public delegate float Eval(float[] args);
     }
 }

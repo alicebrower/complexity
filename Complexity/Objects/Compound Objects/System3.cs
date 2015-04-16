@@ -1,4 +1,7 @@
-﻿using Complexity.Math_Things;
+﻿using Complexity.Managers;
+using Complexity.Math_Things;
+using Complexity.Objects.Base;
+using Complexity.Objects.Vertex;
 using Complexity.Util;
 using System;
 using System.Collections;
@@ -12,23 +15,10 @@ namespace Complexity.Objects {
     /// Represents a system of objects and/or systems in 3 Dimensions
     /// </summary>
     public class System3 : ComplexObject3 {
-        protected const string DIST = "dist";
-        protected const string LENGTH = "length";
-
-        static System3() {
-            ExpressionF.ReserveSymbol(DIST);
-            ExpressionF.ReserveSymbol(LENGTH);
-        }
-
+        public const string DIST = "dist";
+        public const string LENGTH = "length";
         protected Object3 masterObj;
         protected int count;
-
-        protected class SysVertex : Point3 {
-            public SysVertex(float x, float y, float z)
-                : base(x, y, z) { }
-            public Object3 obj;
-            public float distance;
-        }
 
         /// <summary>
         /// 
@@ -61,6 +51,7 @@ namespace Complexity.Objects {
 
             result.SetTransformArray(_transforms);
             result.SetAttributes(_attributes);
+            result.SetID();
 
             return result;
         }
@@ -69,7 +60,7 @@ namespace Complexity.Objects {
         /// 
         /// </summary>
         public override void Draw() {
-            foreach (SysVertex vert in vertecies) {
+            foreach (VertexSystem vert in vertecies) {
                 vert.obj.Draw();
             }
         }
@@ -78,16 +69,18 @@ namespace Complexity.Objects {
         /// 
         /// </summary>
         public override void Recalculate() {
+            ResourceManager.AdvanceScope();
+            ResourceManager.AddExprVal(DIST, new VariableFloat(DIST, 0));
+            ResourceManager.AddExprVal(LENGTH, new VariableFloat(LENGTH, count));
+
             base.Recalculate();
 
-            ReserveVariables();
             masterObj.Recalculate();
-            foreach (SysVertex vert in vertecies) {
-                SetVariables(vert);
-                vert.obj.Recalculate();
+            foreach (VertexSystem vert in vertecies) {
+                vert.Recalculate();
             }
 
-            ReleaseVariables();
+            ResourceManager.DecreaseScope();
         }
 
         protected override PointMatrixF ConvertGeometry(float[,] _geometry) {
@@ -101,8 +94,8 @@ namespace Complexity.Objects {
             return new PointMatrixF(_vertecies);
         }
 
-        protected SysVertex CreateVertex(double x, double y, double z, double index) {
-            SysVertex vert = new SysVertex((float)x, (float)y, (float)z);
+        protected VertexSystem CreateVertex(double x, double y, double z, double index) {
+            VertexSystem vert = new VertexSystem((float)x, (float)y, (float)z);
             vert.distance = (float)index;
 
             Object3 obj = masterObj.Clone();
@@ -112,39 +105,27 @@ namespace Complexity.Objects {
             return vert;
         }
 
-        protected override void ReserveVariables() {
-            ExpressionF.AdvanceScope();
-            ExpressionF.AddScopedSymbol(DIST, 0);
-            ExpressionF.AddScopedSymbol(LENGTH, count);
-        }
-
-        protected override void ReleaseVariables() {
-            ExpressionF.DecreaseScope();
-        }
-
         /// <summary>
         /// Sets up the masterObj object
         /// </summary>
         /// <param name="obj"></param>
         protected virtual void SetMasterObj(Object3 obj) {
             masterObj = obj;
-
-            //Add transforms based on inheritence
         }
 
         protected void SetPointMatrix(PointMatrixF vertecies) {
             this.vertecies = vertecies;
         }
 
-        protected void SetVariables(SysVertex vert) {
-            ExpressionF.SetScopedSymbol(DIST, vert.distance);
+        protected void SetVariables(VertexSystem vert) {
+            //ExpressionF.SetScopedSymbol(DIST, vert.distance);
         }
 
         /// <summary>
         /// Sets the vertecies
         /// </summary>
         /// <param name="clones"></param>
-        protected void SetVertecies(SysVertex[] verts) {
+        protected void SetVertecies(VertexSystem[] verts) {
             vertecies.SetFromArray(verts);
         }
     }

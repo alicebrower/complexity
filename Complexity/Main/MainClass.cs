@@ -14,30 +14,30 @@ namespace Complexity {
     /// <summary>
     /// For testing. When this is compiled as a library, this will be removed.
     /// </summary>
-    class MainClass {
-
+    public class MainClass {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
         static int Main(string[] args) {
-            //ExpressionF expr = new ExpressionF("(1+0)(1+1)sin(time-1)");
+            //ExpressionF expr = new ExpressionF("0+0");
+            //Console.WriteLine(expr.Evaluate());
+
             #region Objects
             //Create all the things
             Console.Write("Creating Objects... ");
 
-            SimpleDot3 centerDot = new SimpleDot3(30);
-            
-            centerDot.SetScale("(1+0)time(1-.9)");
-            centerDot.SetColor(new string[] { "1", "1", "1", "1" });
+            SimpleDot3 centerDot = new SimpleDot3(4);
+            centerDot.SetScale(".05sin(dist/length+time)^2");
+            centerDot.SetRotate(new string[] {"0", "0", "time" });
 
-            System3 sys = new System3(new float[,] {
-               {-1f,    0f,     1f,     -1f,    1f},
-               {1f,     0f,     1f,     -1f,    -1f},
-               {0f,     0f,     0f,     0f,     0f}
-            }, centerDot);
-            sys.SetScale(".2");
+            System3 sys = new System3(GeometryBuilder.Grid(10, 10), centerDot);
+            System3 sys2 = new System3(new float[,] {
+                {-1,    1},
+                {0,     0},
+                {0,     0}
+            }, sys);
 
             /*
             SimpleDot3 sysDot = new SimpleDot3(20);
@@ -54,9 +54,8 @@ namespace Complexity {
             */
 
             Scene scene = new Scene();
-            scene.Add(sys);
             //scene.Add(centerDot);
-            //scene.Add(sys2);
+            scene.Add(sys2);
 
             Console.WriteLine("Done.");
             #endregion

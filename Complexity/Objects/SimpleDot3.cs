@@ -7,9 +7,11 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Complexity.Util;
+using System.Collections;
 
 namespace Complexity.Objects {
     public class SimpleDot3 : Object3 {
+
         public SimpleDot3(int resolution)
             : base(GeometryBuilder.Circle(resolution)) {
         }
@@ -35,20 +37,6 @@ namespace Complexity.Objects {
 
             attributes["color"].value.Recalculate();
             color = attributes["color"].value.Values();
-        }
-
-        /// <summary>
-        /// This method comminicates with ExpressionD to reserve certain variable names
-        /// </summary>
-        protected override void ReserveVariables() {
-
-        }
-
-        /// <summary>
-        /// This method removes it's reserved variables from ExpressionD
-        /// </summary>
-        protected override void ReleaseVariables() {
-
         }
     }
 }

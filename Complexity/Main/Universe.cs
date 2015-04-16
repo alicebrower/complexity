@@ -7,6 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Complexity.Main {
+    /// <summary>
+    /// This class is responsible for maintaining an entire game state.
+    /// </summary>
     public class Universe {
         private static Scene activeScene;
         private static ArrayList scenes;
@@ -29,10 +32,17 @@ namespace Complexity.Main {
         /// Let there be light
         /// </summary>
         public void Begin() {
-            //Render Thread
-            Thread thread = new Thread(new ThreadStart(RunRenderWindow));
-            thread.Start();
+            //Render Thread, this is just preliminary stuff.
+            //Hard coded for only one scene and one game window.
+            //Logic to handle this can be added later
+            if (scenes.Count > 0) {
+                Thread thread = new Thread(new ThreadStart(RunRenderWindow));
+                thread.Start();
+            } else {
+                Console.WriteLine("Universe: No scenes to render!");
+            }
 
+            //There is a better way to do this
             Global.Begin();
         }
 

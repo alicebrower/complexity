@@ -36,18 +36,24 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\Recalculatable.cs" />
+    <Compile Include="Managers\ScopedManager.cs" />
     <Compile Include="Managers\ExpressisonManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Main\RenderWindow.cs" />
     <Compile Include="Main\Universe.cs" />
     <Compile Include="Managers\ObjectManager.cs" />
+    <Compile Include="Managers\ResourceManager.cs" />
     <Compile Include="Math_Things\Evaluateable.cs" />
     <Compile Include="Math_Things\ExpressionF.cs" />
     <Compile Include="Math_Things\Linear Algebra\MatrixF.cs" />
     <Compile Include="Math_Things\Linear Algebra\PointMatrixF.cs" />
     <Compile Include="Math_Things\Linear Algebra\VectorExpr.cs" />
     <Compile Include="Math_Things\Linear Algebra\VectorF.cs" />
-    <Compile Include="Objects\Compound Objects\Pen3.cs" />
+    <Compile Include="Objects\Vertex\VertexSystem.cs" />
+    <Compile Include="Variable\VariableFloat.cs" />
+    <Compile Include="Variable\Variable.cs" />
+    <Compile Include="Variable\ObjectAttribute.cs" />
     <Compile Include="Objects\SimpleDot3.cs" />
     <Compile Include="Objects\Complex Objects\ComplexObject3.cs" />
     <Compile Include="Objects\Base\Renderable.cs" />

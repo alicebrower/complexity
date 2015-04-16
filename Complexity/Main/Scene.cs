@@ -5,6 +5,7 @@ using Complexity.Objects;
 using System.Collections;
 using System.Threading;
 using Complexity.Managers;
+using Complexity.Interfaces;
 
 namespace Complexity {
     /// <summary>
@@ -20,7 +21,7 @@ namespace Complexity {
         /// </summary>
         /// <param name="args"></param>
         public Scene() {
-                Init();
+            Init();
         }
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace Complexity {
         /// </summary>
         private void Init() {
             objects = new ArrayList();
-            
+
             position = new double[] { 0, 0, 0 };
         }
 

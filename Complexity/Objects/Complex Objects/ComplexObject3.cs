@@ -1,4 +1,5 @@
-﻿using Complexity.Math_Things;
+﻿using Complexity.Managers;
+using Complexity.Math_Things;
 using Complexity.Util;
 using System;
 using System.Collections.Generic;
@@ -24,21 +25,21 @@ namespace Complexity.Objects {
 
         public ComplexObject3() : base() {
             position = new double[] { 0, 0, 0 };
-            scale = new ExpressionF("1");
-            trans = new VectorExpr(new string[] { "0", "0", "0" });
-            color = new VectorExpr(new string[] { "1", "0", "1", "0" });
-            origin = new VectorExpr(new string[] { "0", "0", "0" });
-            rot = new VectorExpr(new string[] { "0", "0", "0" });
+            scale   = new ExpressionF("1");
+            trans   = new VectorExpr(new string[] { "0", "0", "0" });
+            color   = new VectorExpr(new string[] { "1", "0", "1", "0" });
+            origin  = new VectorExpr(new string[] { "0", "0", "0" });
+            rot     = new VectorExpr(new string[] { "0", "0", "0" });
         }
 
         public ComplexObject3(float[,] geometry) : base(geometry) {
         }
 
         new public void SetColor(double[] color) {
-            this.color.SetExprAt(0, "" + color[0]);
-            this.color.SetExprAt(1, "" + color[1]);
-            this.color.SetExprAt(2, "" + color[2]);
-            this.color.SetExprAt(3, "" + color[3]);
+            //this.color.SetExprAt(0, "" + color[0]);
+            //this.color.SetExprAt(1, "" + color[1]);
+            //this.color.SetExprAt(2, "" + color[2]);
+            //this.color.SetExprAt(3, "" + color[3]);
         }
 
         public void _Recalculate() {
@@ -69,6 +70,7 @@ namespace Complexity.Objects {
         public override void SetAttributes_OLD(Dictionary<string, string> args) {
             base.SetAttributes_OLD(args);
 
+            /*
             #region Set Rotational Values
             if (args.ContainsKey("rotation")) {
                 rot = new VectorExpr(new string[] {
@@ -115,6 +117,7 @@ namespace Complexity.Objects {
             if (args.ContainsKey("scale")) {
                 scale = new ExpressionF(args["scale"]);
             }
+             * */
         }
 
         /// <summary>

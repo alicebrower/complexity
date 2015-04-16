@@ -15,7 +15,7 @@ using Complexity.Managers;
 namespace Complexity.Main {
     /// <summary>
     /// Creates a window for drawing and handles all things related to that.
-    /// All data and logic are stored in scenes, this is just the GUI window.
+    /// All data and logic are stored in the universe and it's constiuents, this is just the GUI window.
     /// </summary>
     public class RenderWindow : GameWindow {
         private Matrix4 matrixProjection, matrixModelview;
