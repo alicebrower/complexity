@@ -18,7 +18,6 @@ namespace Complexity.Math_Things {
         private static readonly string OPS_REGEX;
         private static readonly string VAR_REGEX = "[a-zA-Z_]+[0-9]*[a-zA-Z_]*";
         private static readonly string DEL_REGEX = "[\\(\\)]";
-        private static HashSet<string> RESERVED;
         private static Dictionary<string, Symbol> FUNCTIONS, OPERATORS;
 
         static ExpressionF() {
@@ -244,8 +243,20 @@ namespace Complexity.Math_Things {
             return (string[])_tokens.ToArray(typeof(string));
         }
 
-        private void AddSymbol(string symbol) {
+        public void AddSymbol(string symbol) {
             symbols.Add(symbol, new Symbol(symbol));
+        }
+
+        public void AddSymbol(string symbol, float value) {
+            symbols.Add(symbol, new Symbol(symbol, value));
+        }
+
+        public void SetSymbol(string symbol, float value) {
+            symbols[symbol] = new Symbol(symbol, value);
+        }
+
+        public void RemoveSymbol(string symbol) {
+            symbols.Remove(symbol);
         }
 
         /*
@@ -293,9 +304,16 @@ namespace Complexity.Math_Things {
             }
         }
 
-        private bool IsSymbol(string token) {
-            return (symbols.ContainsKey(token));
+        private float GetSymbolValue(Symbol symbol) {
+            if (symbol.isNumeric) {
+                return symbol.eval(null);
+            } else if (symbols.ContainsKey(symbol.name)) {
+                return symbols[symbol.name].eval(null);
+            } else {
+                return ResourceManager.GetExprVal(symbol.name);
+            }
         }
+
         /// <summary>
         /// Test if is an operator
         /// </summary>
@@ -370,21 +388,13 @@ namespace Complexity.Math_Things {
                     //Pop values, tempStack should only be 0 op SYMBOLS
                     values = new float[expr.Peek().nOps];
                     for (int i = 0; i < values.Length; i++) {
-                        if (tempStack.Peek().isNumeric) {
-                            values[i] = tempStack.Pop().eval(null);
-                        } else {
-                            values[i] = ResourceManager.GetExprVal(tempStack.Pop().name);
-                        }
+                        values[i] = GetSymbolValue(tempStack.Pop());
                     }
                     tempStack.Push(new Symbol(expr.Pop().eval(values)));
                 }
             }
 
-            if (tempStack.Peek().isNumeric) {
-                return tempStack.Pop().eval(null);
-            } else {
-                return ResourceManager.GetExprVal(tempStack.Pop().name);
-            }
+            return GetSymbolValue(tempStack.Pop());
         }
 
         public string ToString() {

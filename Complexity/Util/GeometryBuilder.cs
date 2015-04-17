@@ -1,4 +1,5 @@
-﻿using Complexity.Math_Things;
+﻿using Complexity.Managers;
+using Complexity.Math_Things;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Complexity.Util {
     public static class GeometryBuilder {
-
+        public static string POLAR_THETA = ResourceManager.GetRandomVarName();
         /// <summary>
         /// Creates a geometry that represents a circle. Z values are set to 0.
         /// </summary>
@@ -46,8 +47,6 @@ namespace Complexity.Util {
         /// <param name="step">Theta resolution</param>
         /// <returns></returns>
         public static float[,] GraphPolar(ExpressionF expression, double start, double stop, double step) {
-            throw new NotImplementedException();
-
             if (start >= stop || step <= 0) {
                 throw new Exception("Cannot graph polar, invalid arguments");
             }
@@ -56,22 +55,35 @@ namespace Complexity.Util {
             ArrayList points = new ArrayList();
 
             //Perform calculations
-            //ExpressionF.AddSymbol("i", 0);
+            expression.AddSymbol(POLAR_THETA, 0);
             int index = 0;
             float theta;
+            double x, y, bigX, bigY, scale;
+            bigX = bigY = 1.0;
             for (double i = start; i < stop; i += step) {
-                //ExpressionF.SetSymbolValue("i", (float)(i * Math.PI / 180.0));
+                expression.SetSymbol(POLAR_THETA, (float)(i * Math.PI / 180.0));
                 theta = (float)(i * Math.PI / 180.0);
 
+                x = expression.Evaluate() * Math.Sin(theta);
+                y = expression.Evaluate() * Math.Cos(theta);
+                bigX = (bigX > x) ? bigX : x;
+                bigY = (bigY > y) ? bigY : y;
                 points.Add(new Point3(
-                    expression.Evaluate() * Math.Sin(theta),
-                    expression.Evaluate() * Math.Cos(theta),
+                    x,
+                    y,
                     0
                 ));
 
                 index++;
             }
-            //ExpressionF.RemoveSymbol("i");
+            expression.RemoveSymbol(POLAR_THETA);
+
+            //Scale
+            scale = (bigX > bigY) ? 1.0 / bigX : 1.0 / bigY;
+            foreach (Point3 point in points) {
+                point.x *= (float)(scale);
+                point.y *= (float)(scale);
+            }
 
             //Convert
             result = new float[3, points.Count];
