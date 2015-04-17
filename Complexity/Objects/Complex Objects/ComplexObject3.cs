@@ -67,59 +67,6 @@ namespace Complexity.Objects {
             //vertexColor = _col.ToColumnWiseArray();
         }
 
-        public override void SetAttributes_OLD(Dictionary<string, string> args) {
-            base.SetAttributes_OLD(args);
-
-            /*
-            #region Set Rotational Values
-            if (args.ContainsKey("rotation")) {
-                rot = new VectorExpr(new string[] {
-                args["rotation"], args["rotation"], args["rotation"] });
-            }
-
-            if (args.ContainsKey("xrotation")) {
-                rot.SetExprAt(0, args["xrotation"]);
-            }
-
-            if (args.ContainsKey("yrotation")) {
-                rot.SetExprAt(1, args["yrotation"]);
-            }
-
-            if (args.ContainsKey("zrotation")) {
-                rot.SetExprAt(2, args["zrotation"]);
-            }
-            #endregion
-
-            #region Set Color Values
-            if (args.ContainsKey("color")) {
-                color = new VectorExpr(new string[] {
-                    args["color"], args["color"], args["color"], args["color"]
-                });
-            }
-
-            if (args.ContainsKey("rcolor")) {
-                color.SetExprAt(0, args["rcolor"]);
-            }
-
-            if (args.ContainsKey("gcolor")) {
-                color.SetExprAt(1, args["gcolor"]);
-            }
-
-            if (args.ContainsKey("bcolor")) {
-                color.SetExprAt(2, args["bcolor"]);
-            }
-
-            if (args.ContainsKey("acolor")) {
-                color.SetExprAt(3, args["acolor"]);
-            }
-            #endregion
-
-            if (args.ContainsKey("scale")) {
-                scale = new ExpressionF(args["scale"]);
-            }
-             * */
-        }
-
         /// <summary>
         /// 
         /// </summary>

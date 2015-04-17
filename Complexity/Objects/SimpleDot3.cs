@@ -35,8 +35,8 @@ namespace Complexity.Objects {
         public override void Recalculate() {
             base.Recalculate();
 
-            attributes["color"].value.Recalculate();
-            color = attributes["color"].value.Values();
+            GetAttribute("color").value.Recalculate();
+            color = GetAttribute("color").value.Values();
         }
     }
 }

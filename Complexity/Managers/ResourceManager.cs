@@ -68,6 +68,14 @@ namespace Complexity.Managers {
             return result;
         }
 
+        public static bool ContainsAttribute(string name) {
+            return attributes.Contains(name);
+        }
+
+        public static ObjectAttribute GetAttribute(string name) {
+            return attributes.GetAttribute(name);
+        }
+
         public static void AddExprVal(string name, VariableFloat val) {
             exprVals.AddAttribute(name, val);
         }

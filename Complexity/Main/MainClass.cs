@@ -22,20 +22,13 @@ namespace Complexity {
         /// <param name="args"></param>
         /// <returns></returns>
         static int Main(string[] args) {
-            //ExpressionF expr = new ExpressionF("0+0");
-            //Console.WriteLine(expr.Evaluate());
-
-            for (int i = 0; i < 10; i++) {
-                Console.WriteLine(ResourceManager.GetRandomVarName());
-            }
-
             #region Objects
             //Create all the things
             Console.Write("Creating Objects... ");
 
             SimpleDot3 centerDot = new SimpleDot3(4);
             centerDot.SetScale(".05");
-            centerDot.SetRotate(new string[] { "0", "0", "time" });
+            centerDot.SetRotate("0", "0", "time");
 
             string t = GeometryBuilder.POLAR_THETA;
             System3 sys = new System3(GeometryBuilder.GraphPolar(

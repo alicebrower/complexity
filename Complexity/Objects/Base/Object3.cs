@@ -14,12 +14,47 @@ using Complexity.Objects.Base;
 using Complexity.Interfaces;
 
 namespace Complexity.Objects {
+    //CONSTRUCTORS
     /// <summary>
     /// Represents a 3 Dimentional Object that can be rendered.
     /// SimpleObject -> Does not recalculate, must be modified externally.
     /// ComplexObject -> Has a Recalculate method and can update itself
     /// </summary>
-    public abstract class Object3 : Renderable, Recalculatable {
+    public abstract partial class Object3 : Renderable, Recalculatable {
+        static Object3() {
+            ATTRIBUTES = new Dictionary<string, ObjectAttribute>() {
+                {ORIGIN, new ObjectAttributeT<MatrixTranslateAction>()},
+                {SCALE, new ObjectAttributeT<MatrixScaleAction>()},
+                {ROTATE, new ObjectAttributeT<MatrixRotateAction>()},
+                {TRANSLATE, new ObjectAttributeT<MatrixTranslateAction>()},
+                {COLOR, new ObjectAttributeT<VectorExpr>()}
+            };
+            ATTRIBUTES[COLOR].value = new VectorExpr(MathUtil.FloatToString(new float[] { 1, 0, 1, 1 }));
+        }
+
+        protected Object3() {
+            attributes = new Dictionary<string, ObjectAttribute>();
+
+            //Initialize the transform list, leave entries blank
+            //they will be checked for null
+            transforms = new ArrayList(4);
+            transforms.Add(GetAttribute(ORIGIN).value);
+            transforms.Add(GetAttribute(SCALE).value);
+            transforms.Add(GetAttribute(ROTATE).value);
+            transforms.Add(GetAttribute(TRANSLATE).value);
+
+            SetID();
+        }
+
+        public Object3(float[,] geometry)
+            : this() {
+            vertecies = ConvertGeometry(geometry);
+            originalGeo = MatrixF.OfArray(geometry);
+        }
+    }
+
+    //METHODS, NO ATTRIBUTES
+    public abstract partial class Object3 {
         public readonly float[] DEFAULT_COLOR = new float[] { 1, 0, 1, 1 };
         protected const int ORIGIN_T = 0;
         protected const int SCALE_T = 1;
@@ -33,69 +68,6 @@ namespace Complexity.Objects {
         protected ArrayList transforms;
         protected PointMatrixF vertecies;
         protected MatrixF originalGeo;
-        protected Dictionary<string, ObjectAttribute> attributes;
-
-        protected Object3() {
-            id = ID++;
-            attributes = new Dictionary<string, ObjectAttribute>() {
-                {"origin", new ObjectAttributeT<MatrixTranslateAction>()},
-                {"scale", new ObjectAttributeT<MatrixScaleAction>()},
-                {"rotate", new ObjectAttributeT<MatrixRotateAction>()},
-                {"translate", new ObjectAttributeT<MatrixTranslateAction>()},
-                {"color", new ObjectAttributeT<VectorExpr>()}
-            };
-            attributes["color"].value = new VectorExpr(MathUtil.FloatToString(DEFAULT_COLOR));
-
-            //Initialize the transform list, leave entries blank
-            //they will be checked for null
-            transforms = new ArrayList(4);
-            transforms.Add(attributes["origin"].value);
-            transforms.Add(attributes["scale"].value);
-            transforms.Add(attributes["rotate"].value);
-            transforms.Add(attributes["translate"].value);
-        }
-
-        public Object3(float[,] geometry) : this() {
-            vertecies = ConvertGeometry(geometry);
-            originalGeo = MatrixF.OfArray(geometry);
-        }
-
-        public void SetInherit(string name, bool inherit) {
-            attributes[name].inherit = inherit;
-        }
-
-        protected void SetAttributes(Dictionary<string, ObjectAttribute> attributes) {
-            this.attributes = attributes;
-        }
-
-        public void AddAttribute(string name, dynamic value, bool inherit) {
-            attributes.Add(name, new ObjectAttribute(value, inherit, false));
-        }
-
-        public void SetAttribute(string name, dynamic value) {
-            attributes[name].value = value;
-        }
-
-        public void RemoveAttribute(string name) {
-            if (attributes[name].removable) {
-                attributes.Remove(name);
-            } else {
-                attributes[name].value = null;
-            }
-        }
-
-        /// <summary>
-        /// Set object attributes from a Dictionary. 
-        /// </summary>
-        /// <param name="args"></param>
-        [Obsolete("Object properties are being moved an attributes array and this method will no longer work.")]
-        public virtual void SetAttributes_OLD(Dictionary<string, string> args) {
-            if (args.ContainsKey("name")) {
-                //name = args["name"];
-            }
-        }
-
-        #region Transforms ----------
 
         public void SetTransformArray(ArrayList trans) {
             transforms = trans;
@@ -118,65 +90,6 @@ namespace Complexity.Objects {
             transforms[index] = trans;
         }
 
-        public void SetScale(string scale) {
-            SetScale(new string[] {
-                scale, scale, scale
-            });
-        }
-
-        public void SetScale(string[] args) {
-            if (args.Length != 3) {
-                throw new ArgumentException("Scale array must have three cells, one for each dimension.");
-            }
-            SetScale(new VectorExpr(args));
-        }
-
-        public void SetRotate(string[] args) {
-            if (args.Length != 3) {
-                throw new ArgumentException("Rotate array must have three cells, one for each dimension.");
-            }
-            SetRotate(new VectorExpr(args));
-        }
-
-        public void SetTranslate(string[] args) {
-            if (args.Length != 3) {
-                throw new ArgumentException("Translate array must have three cells, one for each dimension.");
-            }
-            SetTranslate(new VectorExpr(args));
-        }
-
-        public void SetOrigin(VectorExpr origin) {
-            if (origin.Size() != 3) {
-                throw new ArgumentException("Origin vector must have three cells, one for each dimension.");
-            }
-            attributes["origin"].value = new MatrixTranslateAction(origin);
-            transforms[ORIGIN_T] = attributes["origin"].value;
-        }
-
-        public void SetScale(VectorExpr scale) {
-            if (scale.Size() != 3) {
-                throw new ArgumentException("Scale vector must have three cells, one for each dimension.");
-            }
-            attributes["scale"].value = new MatrixScaleAction(scale);
-            transforms[SCALE_T] = attributes["scale"].value;
-        }
-
-        public void SetRotate(VectorExpr rotate) {
-            if (rotate.Size() != 3) {
-                throw new ArgumentException("Rotate vector must have three cells, one for each dimension.");
-            }
-            attributes["rotate"].value = new MatrixRotateAction(rotate);
-            transforms[ROTATE_T] = attributes["rotate"].value;
-        }
-
-        public void SetTranslate(VectorExpr trans) {
-            if (trans.Size() != 3) {
-                throw new ArgumentException("Trans vector must have three cells, one for each dimension.");
-            }
-            attributes["translate"].value = new MatrixTranslateAction(trans);
-            transforms[TRANSLATE_T] = attributes["translate"].value;
-        }
-
         /// <summary>
         /// Removes a transform at a given index.
         /// </summary>
@@ -195,27 +108,12 @@ namespace Complexity.Objects {
             }
         }
 
-        #endregion
-
         public PointMatrixF GetVertecies() {
             return vertecies;
         }
 
-        /*
-        public void ScaleGeo(double scale) {
-            vertecies.Scale(scale);
-        }
-
-        public void TranslateGeo(double x, double y, double z) {
-            vertecies.Translate(x, y, z);
-        }
-        */
-
-        public void SetColor(string[] color) {
-            if (color.Length != 4) {
-                throw new ArgumentException("Color array must have four cells, r, g, b & a.");
-            }
-            attributes["color"].value = new VectorExpr(color);
+        public void SetVertecies(PointMatrixF vertecies) {
+            this.vertecies = vertecies;
         }
 
         /// <summary>
@@ -268,10 +166,6 @@ namespace Complexity.Objects {
             return result;
         }
 
-        public void SetVertecies(PointMatrixF vertecies) {
-            this.vertecies = vertecies;
-        }
-
         /// <summary>
         /// Note, there is something called a VertexBuffer that could potentially
         /// be used to improve efficiency.
@@ -285,6 +179,122 @@ namespace Complexity.Objects {
         /// <param name="geometry"></param>
         protected virtual PointMatrixF ConvertGeometry(float[,] geometry) {
             return new PointMatrixF(geometry);
+        }
+    }
+
+    //ATTRIBUTE METHODS
+    public abstract partial class Object3 {
+        protected const string ORIGIN    = "origin";
+        protected const string SCALE     = "scale";
+        protected const string ROTATE    = "rotate";
+        protected const string TRANSLATE = "translate";
+        protected const string COLOR     = "color";
+        protected static Dictionary<string, ObjectAttribute> ATTRIBUTES;
+        protected Dictionary<string, ObjectAttribute> attributes;
+
+        public void SetInherit(string name, bool inherit) {
+            attributes[name].inherit = inherit;
+        }
+
+        protected void SetAttributes(Dictionary<string, ObjectAttribute> attributes) {
+            this.attributes = attributes;
+        }
+
+        public ObjectAttribute GetAttribute(string name) {
+            if (attributes.ContainsKey(name)) {
+                return attributes[name];
+            } else if (ResourceManager.ContainsAttribute(name)) {
+                return ResourceManager.GetAttribute(name);
+            } else if (ATTRIBUTES.ContainsKey(name)) {
+                return ATTRIBUTES[name];
+            } else {
+                throw new Exception("Attribute not defined, " + name);
+            }
+        }
+
+        public void AddAttribute(string name, dynamic value, bool inherit) {
+            attributes.Add(name, new ObjectAttribute(value, inherit, false));
+        }
+
+        public void SetAttribute(string name, dynamic value) {
+            attributes[name].value = value;
+        }
+
+        public void SetAttribute(string attr, ObjectAttribute value) {
+            if (attributes.ContainsKey(attr)) {
+                attributes[attr] = value;
+            } else {
+                attributes.Add(attr, value);
+            }
+        }
+
+        public void RemoveAttribute(string name) {
+            if (attributes[name].removable) {
+                attributes.Remove(name);
+            } else {
+                attributes[name].value = null;
+            }
+        }
+
+        public void SetScale(string scale) {
+            SetScale(scale, scale, scale);
+        }
+
+        public void SetScale(string x, string y, string z) {
+            SetScale(new VectorExpr(new string[]{x, y, z}));
+        }
+
+        public void SetScale(VectorExpr scale) {
+            if (scale.Size() != 3) {
+                throw new ArgumentException("Scale vector must have three components, one for each dimension.");
+            }
+
+            ObjectAttribute objAttr = new ObjectAttribute(new MatrixScaleAction(scale), false, false);
+            SetAttribute(SCALE, objAttr);
+            transforms[SCALE_T] = attributes[SCALE].value;
+        }
+
+        public void SetRotate(string x, string y, string z) {
+            SetRotate(new VectorExpr(new string[]{x, y, z}));
+        }
+
+        public void SetRotate(VectorExpr rotate) {
+            if (rotate.Size() != 3) {
+                throw new ArgumentException("Rotate vector must have three components, one for each dimension.");
+            }
+
+            ObjectAttribute objAttr = new ObjectAttribute(new MatrixRotateAction(rotate), false, false);
+            SetAttribute(ROTATE, objAttr);
+            transforms[ROTATE_T] = attributes[ROTATE].value;
+        }
+
+        public void SetTranslate(string x, string y, string z) {
+            SetTranslate(new VectorExpr(new string[]{x, y, z}));
+        }
+
+        public void SetTranslate(VectorExpr trans) {
+            if (trans.Size() != 3) {
+                throw new ArgumentException("Trans vector must have three components, one for each dimension.");
+            }
+
+            ObjectAttribute objattr = new ObjectAttribute(new MatrixTranslateAction(trans), false, false);
+            SetAttribute(TRANSLATE, objattr);
+            transforms[TRANSLATE_T] = attributes[TRANSLATE].value;
+        }
+
+        public void SetOrigin(VectorExpr origin) {
+            if (origin.Size() != 3) {
+                throw new ArgumentException("Origin vector must have three cells, one for each dimension.");
+            }
+
+            ObjectAttribute objAttr = new ObjectAttribute(new MatrixTranslateAction(origin), false, false);
+            SetAttribute(ORIGIN, objAttr);
+            transforms[ORIGIN_T] = attributes[ORIGIN].value;
+        }
+
+        public void SetColor(string r, string g, string b, string a) {
+            ObjectAttribute objAttr = new ObjectAttribute(new VectorExpr(new string[]{r, g, b, a}), false, false);
+            SetAttribute(COLOR, objAttr);
         }
     }
 }
