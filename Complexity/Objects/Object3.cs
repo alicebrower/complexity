@@ -29,7 +29,7 @@ namespace Complexity.Objects {
                 {TRANSLATE, new ObjectAttributeT<MatrixTranslateAction>()},
                 {COLOR, new ObjectAttributeT<VectorExpr>()}
             };
-            ATTRIBUTES[COLOR].value = new VectorExpr(MathUtil.FloatToString(new float[] { 1, 0, 1, 1 }));
+            ATTRIBUTES[COLOR].value = new VectorExpr(new string[]{"1", "0", "1", "1"});
         }
 
         protected Object3() {
@@ -55,7 +55,6 @@ namespace Complexity.Objects {
 
     //METHODS, NO ATTRIBUTES
     public abstract partial class Object3 {
-        public readonly float[] DEFAULT_COLOR = new float[] { 1, 0, 1, 1 };
         protected const int ORIGIN_T = 0;
         protected const int SCALE_T = 1;
         protected const int ROTATE_T = 2;
@@ -64,7 +63,6 @@ namespace Complexity.Objects {
 
         //Don't forget that collections need special handling in the clone method!
         protected ulong id;
-        protected float[] color;
         protected ArrayList transforms;
         protected PointMatrixF vertecies;
         protected MatrixF originalGeo;
@@ -120,11 +118,8 @@ namespace Complexity.Objects {
         /// 
         /// </summary>
         public virtual void Recalculate() {
-            //When recalculating, first check if the attribute is locally defined.
-            //if it is, use it and set a corresponding value in resourceMgr if it is 
-            //inheritable. Else if there is no local value check the resourceMgr.
-            //Else, use a default value
             vertecies.SetFromMatrix(originalGeo);
+            GetAttribute(COLOR).value.Recalculate();
 
             foreach (MatrixTransformAction mta in transforms) {
                 if (mta != null) {
@@ -295,6 +290,10 @@ namespace Complexity.Objects {
         public void SetColor(string r, string g, string b, string a) {
             ObjectAttribute objAttr = new ObjectAttribute(new VectorExpr(new string[]{r, g, b, a}), false, false);
             SetAttribute(COLOR, objAttr);
+        }
+
+        public float[] GetColor() {
+            return GetAttribute(COLOR).value.Values();
         }
     }
 }

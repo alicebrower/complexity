@@ -14,7 +14,7 @@ namespace Complexity.Objects {
     /// <summary>
     /// Represents a system of objects and/or systems in 3 Dimensions
     /// </summary>
-    public class System3 : ComplexObject3 {
+    public class System3 : Object3 {
         public const string DIST = "dist";
         public const string LENGTH = "length";
         protected Object3 masterObj;

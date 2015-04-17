@@ -19,11 +19,7 @@ namespace Complexity.Objects {
         public override void Draw() {
             GL.Begin(BeginMode.TriangleFan);
 
-            if (color != null) {
-                GL.Color4(color);
-            } else {
-                GL.Color4(DEFAULT_COLOR);
-            }
+            GL.Color4(GetColor());
             
             foreach (Point3 p in vertecies) {
                 GL.Vertex3(p.x, p.y, p.z);
@@ -35,8 +31,8 @@ namespace Complexity.Objects {
         public override void Recalculate() {
             base.Recalculate();
 
-            GetAttribute("color").value.Recalculate();
-            color = GetAttribute("color").value.Values();
+            //GetAttribute("color").value.Recalculate();
+            //color = GetAttribute("color").value.Values();
         }
     }
 }

@@ -26,17 +26,13 @@ namespace Complexity {
             //Create all the things
             Console.Write("Creating Objects... ");
 
-            SimpleDot3 centerDot = new SimpleDot3(4);
-            centerDot.SetScale(".05");
-            centerDot.SetRotate("0", "0", "time");
-
-            string t = GeometryBuilder.POLAR_THETA;
-            System3 sys = new System3(GeometryBuilder.GraphPolar(
-                new ExpressionF("sin(" + t + "*2)"), 0, 360, 1), centerDot);
+            Cube cube = new Cube();
+            cube.SetColor("sin(time)^2", "0", "sin(time+pi/2)^2", "1");
+            cube.SetRotate("rad(0-20)", "rad(45)+time", "0");
+            cube.SetScale("sin(time)+1", "1", "1");
 
             Scene scene = new Scene();
-            //scene.Add(centerDot);
-            scene.Add(sys);
+            scene.Add(cube);
 
             Console.WriteLine("Done.");
             #endregion
