@@ -16,7 +16,7 @@ namespace Complexity.Math_Things {
         private static readonly int RIGHT_ASSOC = 1;
 
         private static readonly string OPS_REGEX;
-        private static readonly string VAR_REGEX = "[a-zA-Z_]+[0-9]*[a-zA-Z_]*";
+        private static readonly string VAR_REGEX = "[a-zA-Z_]+([0-9]|[a-zA-Z_])*";
         private static readonly string DEL_REGEX = "[\\(\\)]";
         private static Dictionary<string, Symbol> FUNCTIONS, OPERATORS;
 
@@ -207,7 +207,12 @@ namespace Complexity.Math_Things {
                         _tokens.Add(tokens[i]);
                     }
                 } else if (tokens[i].CompareTo("(") == 0) {
-                    _tokens.Add(tokens[i]);
+                    if (tokens[i + 1].CompareTo("-") == 0) {
+                        _tokens.Add(tokens[i]);
+                        _tokens.Add("0");
+                    } else {
+                        _tokens.Add(tokens[i]);
+                    }
                     parens++;
                 } else if (tokens[i].CompareTo(")") == 0) {
                     if (i < tokens.Length - 1
@@ -353,7 +358,8 @@ namespace Complexity.Math_Things {
             if (s.CompareTo("") == 0) {
                 return false;
             }
-            return ( (Regex.Match(s, "^" + VAR_REGEX + "$") != null) && !FUNCTIONS.ContainsKey(s));
+
+            return ( Regex.IsMatch(s, "^" + VAR_REGEX + "$") && !FUNCTIONS.ContainsKey(s));
         }
 
         private bool IsFunction(string token) {
