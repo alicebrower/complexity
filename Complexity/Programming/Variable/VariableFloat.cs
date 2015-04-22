@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Complexity.Math_Things {
-    public class VariableFloat : Variable {
+    public class VariableFloat {
         public readonly string name;
         public Eval eval;
 

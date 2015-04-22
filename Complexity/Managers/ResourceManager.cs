@@ -1,5 +1,6 @@
 ﻿using Complexity.Math_Things;
 using Complexity.Objects.Base;
+using Complexity.Programming;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace Complexity.Managers {
     public class ResourceManager {
         private static ScopedManager<ObjectAttribute> attributes;
         private static ScopedManager<VariableFloat> exprVals;
+        private static ScopedManager<Variable> variables;
+        private static ScopedManager<Function> functions;
         private static Random random;
 
         static ResourceManager() {
@@ -23,8 +26,24 @@ namespace Complexity.Managers {
                 {"e", new VariableFloat("e", (a) => (float)Math.E)}
             };
 
+            Dictionary<string, Variable> variableValues = new Dictionary<string, Variable>() {
+                {"abcd", new Variable("abcd", 7.0)},
+                {"parent", new Variable("parent", "object")},
+                {"color", new Variable("color", "red")},
+                {"time", new Variable("time", 0)},
+                {"pi", new Variable("pi", (float)Math.PI)},
+                {"e", new Variable("e", (float)Math.E)}
+            };
+
+            Dictionary<string, Function>functionValues = new Dictionary<string, Function>() {
+                {"sin", new Function(TypeCPX.DOUBLE, "sin", 1, (a) => new Variable("", Math.Sin((double)a[0].value)))},
+                {"PerformAction", new Function(TypeCPX.DOUBLE, "PerformAction", 4, (a) => new Variable("", 4.0))}
+            };
+
             attributes = new ScopedManager<ObjectAttribute>();
             exprVals = new ScopedManager<VariableFloat>(exprValues);
+            variables = new ScopedManager<Variable>(variableValues);
+            functions = new ScopedManager<Function>(functionValues);
 
             random = new Random();
         }
@@ -32,11 +51,13 @@ namespace Complexity.Managers {
         public static void AdvanceScope() {
             attributes.AdvanceScope();
             exprVals.AdvanceScope();
+            variables.AdvanceScope();
         }
 
         public static void DecreaseScope() {
             attributes.DecreaseScope();
             exprVals.DecreaseScope();
+            variables.DecreaseScope();
         }
 
         public static bool IsDefined(string name) {
@@ -80,6 +101,10 @@ namespace Complexity.Managers {
             exprVals.AddAttribute(name, val);
         }
 
+        public static bool ContainsExprVal(string name) {
+            return exprVals.Contains(name);
+        }
+
         public static void ModifyExprVal(string name, VariableFloat val) {
             exprVals.ModifyAttribute(name, val);
         }
@@ -90,6 +115,22 @@ namespace Complexity.Managers {
 
         public static float GetExprVal(string name) {
             return exprVals.GetAttribute(name).eval(null);
+        }
+
+        public static bool ContainsVariable(string name) {
+            return variables.Contains(name);
+        }
+
+        public static Variable GetVariable(string name) {
+            return variables.GetAttribute(name);
+        }
+
+        public static bool ContainsFunction(string name) {
+            return functions.Contains(name);
+        }
+
+        public static Function GetFunction(string name) {
+            return functions.GetAttribute(name);
         }
     }
 }

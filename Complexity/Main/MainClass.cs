@@ -10,6 +10,7 @@ using Complexity.Main;
 using Complexity.Util;
 using Complexity.Math_Things;
 using Complexity.Managers;
+using Complexity.Programming;
 
 namespace Complexity {
     /// <summary>
@@ -22,7 +23,9 @@ namespace Complexity {
         /// <param name="args"></param>
         /// <returns></returns>
         static int Main(string[] args) {
-            ExpressionF expr = new ExpressionF("parent.color");
+            Program p = Compiler.Compile("(1+1)PerformAction(1,2,3,4)");
+            Variable v = p.Run();
+            //ExpressionF expr = new ExpressionF("parent.color*sin(7+1.1/abcd)-PerformAction(1,2,3,4)");
 
             #region Objects
             //Create all the things
