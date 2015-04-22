@@ -7,7 +7,7 @@ using System.Threading;
 using Complexity.Managers;
 using Complexity.Interfaces;
 
-namespace Complexity {
+namespace Complexity.Main {
     /// <summary>
     /// Contains all the information that a render window needs to draw.
     /// </summary>
@@ -53,6 +53,8 @@ namespace Complexity {
         /// Recalculate the properties of all objects in the scene
         /// </summary>
         public void Recalculate() {
+            ResourceManager.ModifyVariable("time", Universe.GetElapsedTime());
+
             foreach (Object3 obj in objects) {
                 obj.Recalculate();
             }

@@ -1,6 +1,7 @@
 ﻿using Complexity.Math_Things;
 using Complexity.Objects.Base;
 using Complexity.Programming;
+using Complexity.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,18 +15,11 @@ namespace Complexity.Managers {
     /// </summary>
     public class ResourceManager {
         private static ScopedManager<ObjectAttribute> attributes;
-        private static ScopedManager<VariableFloat> exprVals;
         private static ScopedManager<Variable> variables;
         private static ScopedManager<Function> functions;
         private static Random random;
 
         static ResourceManager() {
-            Dictionary<string, VariableFloat> exprValues = new Dictionary<string, VariableFloat>() {
-                {"time", new VariableFloat("time", (a) => (float)Global.GetElapsedTime())},
-                {"pi", new VariableFloat("pi", (a) => (float)Math.PI)},
-                {"e", new VariableFloat("e", (a) => (float)Math.E)}
-            };
-
             Dictionary<string, Variable> variableValues = new Dictionary<string, Variable>() {
                 {"abcd", new Variable("abcd", 7.0)},
                 {"parent", new Variable("parent", "object")},
@@ -37,11 +31,31 @@ namespace Complexity.Managers {
 
             Dictionary<string, Function>functionValues = new Dictionary<string, Function>() {
                 {"sin", new Function(TypeCPX.DOUBLE, "sin", 1, (a) => new Variable("", Math.Sin((double)a[0].value)))},
-                {"PerformAction", new Function(TypeCPX.DOUBLE, "PerformAction", 4, (a) => new Variable("", 4.0))}
+                {"cos", new Function(TypeCPX.DOUBLE, "cos", 1, (a) => new Variable("", Math.Cos((double)a[0].value)))},
+                {"tan", new Function(TypeCPX.DOUBLE, "tan", 1, (a) => new Variable("", Math.Tan((double)a[0].value)))},
+                {"asin", new Function(TypeCPX.DOUBLE, "asin", 1, (a) => new Variable("", Math.Asin((double)a[0].value)))},
+                {"acos", new Function(TypeCPX.DOUBLE, "acos", 1, (a) => new Variable("", Math.Acos((double)a[0].value)))},
+                {"atan", new Function(TypeCPX.DOUBLE, "atan", 1, (a) => new Variable("", Math.Atan((double)a[0].value)))},
+                {"sinh", new Function(TypeCPX.DOUBLE, "sinh", 1, (a) => new Variable("", Math.Sinh((double)a[0].value)))},
+                {"cosh", new Function(TypeCPX.DOUBLE, "cosh", 1, (a) => new Variable("", Math.Cosh((double)a[0].value)))},
+                {"tanh", new Function(TypeCPX.DOUBLE, "tanh", 1, (a) => new Variable("", Math.Tanh((double)a[0].value)))},
+                {"sqrt", new Function(TypeCPX.DOUBLE, "sqrt", 1, (a) => new Variable("", Math.Sqrt((double)a[0].value)))},
+                {"log", new Function(TypeCPX.DOUBLE, "log", 1, (a) => new Variable("", Math.Log((double)a[0].value)))},
+                {"rad", new Function(TypeCPX.DOUBLE, "rad", 1, (a) => new Variable("", a[0].value * Math.PI / 180.0))},
+                {"deg", new Function(TypeCPX.DOUBLE, "deg", 1, (a) => new Variable("", a[0].value * 180.0 / Math.PI))},
+
+                {"abs", new Function(TypeCPX.DOUBLE, "abs", 1, (a) => new Variable("", Math.Abs(a[0].value)))},
+                {"ceil", new Function(TypeCPX.DOUBLE, "ceil", 1, (a) => new Variable("", Math.Ceiling(a[0].value)))},
+                {"floor", new Function(TypeCPX.DOUBLE, "floor", 1, (a) => new Variable("", Math.Floor(a[0].value)))},
+                {"round", new Function(TypeCPX.DOUBLE, "round", 1, (a) => new Variable("", Math.Round(a[0].value)))},
+                {"sign", new Function(TypeCPX.DOUBLE, "sign", 1, (a) => new Variable("", Math.Sign(a[0].value)))},
+                {"rand", new Function(TypeCPX.FLOAT, "rand", 1, (a) => new Variable("", MathUtil.RandomFloat(a[0].value)))},
+
+                {"PerformAction", new Function(TypeCPX.DOUBLE, "PerformAction", 4, (a) => 
+                    new Variable("", a[0].value + a[1].value + a[2].value + a[3].value))}
             };
 
             attributes = new ScopedManager<ObjectAttribute>();
-            exprVals = new ScopedManager<VariableFloat>(exprValues);
             variables = new ScopedManager<Variable>(variableValues);
             functions = new ScopedManager<Function>(functionValues);
 
@@ -50,18 +64,20 @@ namespace Complexity.Managers {
 
         public static void AdvanceScope() {
             attributes.AdvanceScope();
-            exprVals.AdvanceScope();
             variables.AdvanceScope();
+            functions.AdvanceScope();
         }
 
         public static void DecreaseScope() {
             attributes.DecreaseScope();
-            exprVals.DecreaseScope();
             variables.DecreaseScope();
+            functions.DecreaseScope();
         }
 
         public static bool IsDefined(string name) {
-            return (attributes.Contains(name) || exprVals.Contains(name));
+            return (attributes.Contains(name)
+                || variables.Contains(name)
+                || functions.Contains(name));
         }
 
         public static string GetRandomVarName() {
@@ -97,28 +113,20 @@ namespace Complexity.Managers {
             return attributes.GetAttribute(name);
         }
 
-        public static void AddExprVal(string name, VariableFloat val) {
-            exprVals.AddAttribute(name, val);
-        }
-
-        public static bool ContainsExprVal(string name) {
-            return exprVals.Contains(name);
-        }
-
-        public static void ModifyExprVal(string name, VariableFloat val) {
-            exprVals.ModifyAttribute(name, val);
-        }
-
-        public static void ModifyExprVal(string name, float val) {
-            exprVals.ModifyAttribute(name, new VariableFloat(val));
-        }
-
-        public static float GetExprVal(string name) {
-            return exprVals.GetAttribute(name).eval(null);
-        }
-
         public static bool ContainsVariable(string name) {
             return variables.Contains(name);
+        }
+
+        public static void AddVariable(string name, dynamic value) {
+            if (variables.Contains(name)) {
+                throw new Exception("Variable " + name + " is already defined");
+            }
+
+            variables.AddAttribute(name, new Variable("", value));
+        }
+
+        public static void ModifyVariable(string name, dynamic value) {
+            variables.ModifyAttribute(name, new Variable("", value));
         }
 
         public static Variable GetVariable(string name) {

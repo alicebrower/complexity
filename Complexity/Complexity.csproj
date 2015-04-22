@@ -58,7 +58,6 @@
     <Compile Include="Programming\Program.cs" />
     <Compile Include="Programming\Symbol.cs" />
     <Compile Include="Programming\Type.cs" />
-    <Compile Include="Programming\Variable\VariableFloat.cs" />
     <Compile Include="Programming\Variable\Variable.cs" />
     <Compile Include="Programming\Variable\ObjectAttribute.cs" />
     <Compile Include="Objects\SimpleDot3.cs" />
@@ -67,7 +66,6 @@
     <Compile Include="Util\CloneableStack.cs" />
     <Compile Include="Math_Things\Linear Algebra\MatrixTransformAction.cs" />
     <Compile Include="Util\GeometryBuilder.cs" />
-    <Compile Include="Util\Global.cs" />
     <Compile Include="Main\MainClass.cs" />
     <Compile Include="Objects\Cube.cs" />
     <Compile Include="Objects\Object3.cs" />

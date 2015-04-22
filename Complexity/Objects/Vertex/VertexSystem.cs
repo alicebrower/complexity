@@ -17,7 +17,7 @@ namespace Complexity.Objects.Vertex {
             : base(x, y, z) { }
 
         public void Recalculate() {
-            ResourceManager.ModifyExprVal(System3.DIST, distance);
+            ResourceManager.ModifyVariable(System3.DIST, distance);
             obj.Recalculate();
         }
     }

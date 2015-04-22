@@ -317,8 +317,8 @@ namespace Complexity.Programming {
         /// <returns></returns>
         private static int CmpPrec(ExpressionPart token1, ExpressionPart token2) {
             if (!(token1.Is(OPERATOR) || token1.Is(FUNCTION))
-                || !(token2.Is(OPERATOR)) || token2.Is(FUNCTION)) {
-                throw new Exception("Invalid tokens: " + token1 + " " + token2);
+                || !(token2.Is(OPERATOR) || token2.Is(FUNCTION))) {
+                throw new Exception("Invalid tokens: " + token1 + ", " + token2);
             }
             return ((ExpressionOperator)token1).precedence - ((ExpressionOperator)token2).precedence;
         }

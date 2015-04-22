@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -14,6 +15,7 @@ namespace Complexity.Main {
         private static Scene activeScene;
         private static ArrayList scenes;
         private static RenderWindow renderWin;
+        private static Stopwatch time = new Stopwatch();
 
         /// <summary>
         /// 
@@ -42,8 +44,7 @@ namespace Complexity.Main {
                 Console.WriteLine("Universe: No scenes to render!");
             }
 
-            //There is a better way to do this
-            Global.Begin();
+            time.Start();
         }
 
         /// <summary>
@@ -61,6 +62,14 @@ namespace Complexity.Main {
         /// <param name="index"></param>
         public void SetActiveScene(int index) {
             activeScene = (Scene) scenes[index];
+        }
+
+        /// <summary>
+        /// Returns time elapsed in seconds
+        /// </summary>
+        /// <returns></returns>
+        public static double GetElapsedTime() {
+            return ((double)time.ElapsedMilliseconds) / 1000.0;
         }
     }
 }

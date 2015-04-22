@@ -70,8 +70,8 @@ namespace Complexity.Objects {
         /// </summary>
         public override void Recalculate() {
             ResourceManager.AdvanceScope();
-            ResourceManager.AddExprVal(DIST, new VariableFloat(DIST, 0));
-            ResourceManager.AddExprVal(LENGTH, new VariableFloat(LENGTH, count));
+            ResourceManager.AddVariable(DIST, 0);
+            ResourceManager.AddVariable(LENGTH, count);
 
             base.Recalculate();
 
