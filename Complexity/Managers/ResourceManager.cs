@@ -14,48 +14,46 @@ namespace Complexity.Managers {
     /// program's execution.
     /// </summary>
     public class ResourceManager {
-        private static ScopedManager<ObjectAttribute> attributes;
         private static ScopedManager<Variable> variables;
         private static ScopedManager<Function> functions;
         private static Random random;
 
         static ResourceManager() {
             Dictionary<string, Variable> variableValues = new Dictionary<string, Variable>() {
-                {"abcd", new Variable("abcd", 7.0)},
-                {"parent", new Variable("parent", "object")},
-                {"color", new Variable("color", "red")},
-                {"time", new Variable("time", 0)},
-                {"pi", new Variable("pi", (float)Math.PI)},
-                {"e", new Variable("e", (float)Math.E)}
+                {"abcd", new Variable(Variable.DOUBLE, 7.0)},
+                {"parent", new Variable(Variable.STRING, "object")},
+                {"color", new Variable(Variable.STRING, "red")},
+                {"time", new Variable(Variable.DOUBLE, 0)},
+                {"pi", new Variable(Variable.DOUBLE, Math.PI)},
+                {"e", new Variable(Variable.DOUBLE, Math.E)}
             };
 
             Dictionary<string, Function>functionValues = new Dictionary<string, Function>() {
-                {"sin", new Function(TypeCPX.DOUBLE, "sin", 1, (a) => new Variable("", Math.Sin((double)a[0].value)))},
-                {"cos", new Function(TypeCPX.DOUBLE, "cos", 1, (a) => new Variable("", Math.Cos((double)a[0].value)))},
-                {"tan", new Function(TypeCPX.DOUBLE, "tan", 1, (a) => new Variable("", Math.Tan((double)a[0].value)))},
-                {"asin", new Function(TypeCPX.DOUBLE, "asin", 1, (a) => new Variable("", Math.Asin((double)a[0].value)))},
-                {"acos", new Function(TypeCPX.DOUBLE, "acos", 1, (a) => new Variable("", Math.Acos((double)a[0].value)))},
-                {"atan", new Function(TypeCPX.DOUBLE, "atan", 1, (a) => new Variable("", Math.Atan((double)a[0].value)))},
-                {"sinh", new Function(TypeCPX.DOUBLE, "sinh", 1, (a) => new Variable("", Math.Sinh((double)a[0].value)))},
-                {"cosh", new Function(TypeCPX.DOUBLE, "cosh", 1, (a) => new Variable("", Math.Cosh((double)a[0].value)))},
-                {"tanh", new Function(TypeCPX.DOUBLE, "tanh", 1, (a) => new Variable("", Math.Tanh((double)a[0].value)))},
-                {"sqrt", new Function(TypeCPX.DOUBLE, "sqrt", 1, (a) => new Variable("", Math.Sqrt((double)a[0].value)))},
-                {"log", new Function(TypeCPX.DOUBLE, "log", 1, (a) => new Variable("", Math.Log((double)a[0].value)))},
-                {"rad", new Function(TypeCPX.DOUBLE, "rad", 1, (a) => new Variable("", a[0].value * Math.PI / 180.0))},
-                {"deg", new Function(TypeCPX.DOUBLE, "deg", 1, (a) => new Variable("", a[0].value * 180.0 / Math.PI))},
+                {"sin", new Function(Variable.DOUBLE, "sin", 1, (a) => new Variable(Variable.DOUBLE, Math.Sin((double)a[0].Value())))},
+                {"cos", new Function(Variable.DOUBLE, "cos", 1, (a) => new Variable(Variable.DOUBLE, Math.Cos((double)a[0].Value())))},
+                {"tan", new Function(Variable.DOUBLE, "tan", 1, (a) => new Variable(Variable.DOUBLE, Math.Tan((double)a[0].Value())))},
+                {"asin", new Function(Variable.DOUBLE, "asin", 1, (a) => new Variable(Variable.DOUBLE, Math.Asin((double)a[0].Value())))},
+                {"acos", new Function(Variable.DOUBLE, "acos", 1, (a) => new Variable(Variable.DOUBLE, Math.Acos((double)a[0].Value())))},
+                {"atan", new Function(Variable.DOUBLE, "atan", 1, (a) => new Variable(Variable.DOUBLE, Math.Atan((double)a[0].Value())))},
+                {"sinh", new Function(Variable.DOUBLE, "sinh", 1, (a) => new Variable(Variable.DOUBLE, Math.Sinh((double)a[0].Value())))},
+                {"cosh", new Function(Variable.DOUBLE, "cosh", 1, (a) => new Variable(Variable.DOUBLE, Math.Cosh((double)a[0].Value())))},
+                {"tanh", new Function(Variable.DOUBLE, "tanh", 1, (a) => new Variable(Variable.DOUBLE, Math.Tanh((double)a[0].Value())))},
+                {"sqrt", new Function(Variable.DOUBLE, "sqrt", 1, (a) => new Variable(Variable.DOUBLE, Math.Sqrt((double)a[0].Value())))},
+                {"log", new Function(Variable.DOUBLE, "log", 1, (a) => new Variable(Variable.DOUBLE, Math.Log((double)a[0].Value())))},
+                {"rad", new Function(Variable.DOUBLE, "rad", 1, (a) => new Variable(Variable.DOUBLE, a[0].Value() * Math.PI / 180.0))},
+                {"deg", new Function(Variable.DOUBLE, "deg", 1, (a) => new Variable(Variable.DOUBLE, a[0].Value() * 180.0 / Math.PI))},
 
-                {"abs", new Function(TypeCPX.DOUBLE, "abs", 1, (a) => new Variable("", Math.Abs(a[0].value)))},
-                {"ceil", new Function(TypeCPX.DOUBLE, "ceil", 1, (a) => new Variable("", Math.Ceiling(a[0].value)))},
-                {"floor", new Function(TypeCPX.DOUBLE, "floor", 1, (a) => new Variable("", Math.Floor(a[0].value)))},
-                {"round", new Function(TypeCPX.DOUBLE, "round", 1, (a) => new Variable("", Math.Round(a[0].value)))},
-                {"sign", new Function(TypeCPX.DOUBLE, "sign", 1, (a) => new Variable("", Math.Sign(a[0].value)))},
-                {"rand", new Function(TypeCPX.FLOAT, "rand", 1, (a) => new Variable("", MathUtil.RandomFloat(a[0].value)))},
+                {"abs", new Function(Variable.DOUBLE, "abs", 1, (a) => new Variable(Variable.DOUBLE, Math.Abs(a[0].Value())))},
+                {"ceil", new Function(Variable.DOUBLE, "ceil", 1, (a) => new Variable(Variable.DOUBLE, Math.Ceiling(a[0].Value())))},
+                {"floor", new Function(Variable.DOUBLE, "floor", 1, (a) => new Variable(Variable.DOUBLE, Math.Floor(a[0].Value())))},
+                {"round", new Function(Variable.DOUBLE, "round", 1, (a) => new Variable(Variable.DOUBLE, Math.Round(a[0].Value())))},
+                {"sign", new Function(Variable.DOUBLE, "sign", 1, (a) => new Variable(Variable.DOUBLE, Math.Sign(a[0].Value())))},
+                {"rand", new Function(Variable.FLOAT, "rand", 1, (a) => new Variable(Variable.DOUBLE, MathUtil.RandomFloat(a[0].Value())))},
 
-                {"PerformAction", new Function(TypeCPX.DOUBLE, "PerformAction", 4, (a) => 
-                    new Variable("", a[0].value + a[1].value + a[2].value + a[3].value))}
+                {"PerformAction", new Function(Variable.DOUBLE, "PerformAction", 4, (a) => 
+                    new Variable(Variable.DOUBLE, a[0].Value() + a[1].Value() + a[2].Value() + a[3].Value()))}
             };
 
-            attributes = new ScopedManager<ObjectAttribute>();
             variables = new ScopedManager<Variable>(variableValues);
             functions = new ScopedManager<Function>(functionValues);
 
@@ -63,21 +61,22 @@ namespace Complexity.Managers {
         }
 
         public static void AdvanceScope() {
-            attributes.AdvanceScope();
             variables.AdvanceScope();
             functions.AdvanceScope();
         }
 
+        public static void AdvanceScope(Dictionary<string, Variable> vars, Dictionary<string, Function> funcs) {
+            variables.AdvanceScope(vars);
+            functions.AdvanceScope(funcs);
+        }
+
         public static void DecreaseScope() {
-            attributes.DecreaseScope();
             variables.DecreaseScope();
             functions.DecreaseScope();
         }
 
         public static bool IsDefined(string name) {
-            return (attributes.Contains(name)
-                || variables.Contains(name)
-                || functions.Contains(name));
+            return (variables.Contains(name) || functions.Contains(name));
         }
 
         public static string GetRandomVarName() {
@@ -105,28 +104,20 @@ namespace Complexity.Managers {
             return result;
         }
 
-        public static bool ContainsAttribute(string name) {
-            return attributes.Contains(name);
-        }
-
-        public static ObjectAttribute GetAttribute(string name) {
-            return attributes.GetAttribute(name);
-        }
-
         public static bool ContainsVariable(string name) {
             return variables.Contains(name);
         }
 
-        public static void AddVariable(string name, dynamic value) {
+        public static void AddVariable(string name, Variable variable) {
             if (variables.Contains(name)) {
                 throw new Exception("Variable " + name + " is already defined");
             }
 
-            variables.AddAttribute(name, new Variable("", value));
+            variables.AddAttribute(name, variable);
         }
 
         public static void ModifyVariable(string name, dynamic value) {
-            variables.ModifyAttribute(name, new Variable("", value));
+            variables.GetAttribute(name).SetValue(value);
         }
 
         public static Variable GetVariable(string name) {

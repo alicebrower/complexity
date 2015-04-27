@@ -21,6 +21,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -45,19 +46,18 @@
     <Compile Include="Managers\ObjectManager.cs" />
     <Compile Include="Managers\ResourceManager.cs" />
     <Compile Include="Math_Things\Evaluateable.cs" />
-    <Compile Include="Programming\ClassCPX.cs" />
+    <Compile Include="Util\Geometry.cs" />
     <Compile Include="Programming\Compiler.cs" />
     <Compile Include="Math_Things\ExpressionF.cs" />
     <Compile Include="Math_Things\Linear Algebra\MatrixF.cs" />
-    <Compile Include="Math_Things\Linear Algebra\PointMatrixF.cs" />
+    <Compile Include="Math_Things\Linear Algebra\PointMatrix.cs" />
     <Compile Include="Math_Things\Linear Algebra\VectorExpr.cs" />
     <Compile Include="Math_Things\Linear Algebra\VectorF.cs" />
     <Compile Include="Objects\Vertex\VertexSystem.cs" />
     <Compile Include="Programming\Function.cs" />
-    <Compile Include="Programming\ObjectCPX.cs" />
+    <Compile Include="Programming\ProgrammableObject.cs" />
     <Compile Include="Programming\Program.cs" />
     <Compile Include="Programming\Symbol.cs" />
-    <Compile Include="Programming\Type.cs" />
     <Compile Include="Programming\Variable\Variable.cs" />
     <Compile Include="Programming\Variable\ObjectAttribute.cs" />
     <Compile Include="Objects\SimpleDot3.cs" />

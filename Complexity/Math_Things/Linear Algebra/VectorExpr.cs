@@ -31,7 +31,7 @@ namespace Complexity.Math_Things {
         public void Recalculate() {
             values = new VectorF(expressions.Length);
             for (int i = 0; i < expressions.Length; i++) {
-                values.At(i, expressions[i].Evaluate());
+                //values.At(i, expressions[i].Evaluate());
             }
         }
 

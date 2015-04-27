@@ -8,6 +8,8 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Complexity.Util;
 using Complexity.Objects.Base;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace Complexity.Objects {
     /// <summary>
@@ -46,7 +48,7 @@ namespace Complexity.Objects {
 			    col[0], col[1], col[2], col[3]
 		    };
 
-                GL.VertexPointer(3, VertexPointerType.Float, 0, vertecies.ToColumnWiseArray());
+            GL.VertexPointer(3, VertexPointerType.Float, 0, vertecies.ToRowWiseArray());
             GL.ColorPointer(4, ColorPointerType.Float, 0, cubeColors);
             GL.DrawElements(BeginMode.Triangles, 36, DrawElementsType.UnsignedByte, triangles);
         }

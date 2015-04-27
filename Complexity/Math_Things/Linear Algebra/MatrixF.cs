@@ -199,42 +199,8 @@ namespace Complexity.Math_Things {
 
         #region Calculations
 
-        /// <summary>
-        /// Returns the result of multiplying matrix A by scale
-        /// </summary>
-        /// <param name="scale"></param>
-        /// <param name="A"></param>
-        /// <returns></returns>
-        public void Scale(float x, float y, float z) {
-            SetRow(0, (Row(0) * x).ToArray());
-            SetRow(1, (Row(1) * y).ToArray());
-            SetRow(2, (Row(2) * z).ToArray());
-        }
-
         public void Rotate(float x, float y, float z) {
             SetSubMatrix(0, 0, (DenseMatrix)(RotX(x) * RotY(y) * RotZ(z) * this));
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <param name="A"></param>
-        /// <returns></returns>
-        public void Translate(float x, float y, float z) {
-            //Prepare translation matrix
-            Matrix<float> trans = Matrix<float>.Build.Dense(RowCount, ColumnCount, 0);
-            trans.SetRow(0, Vector<float>.Build.Dense(ColumnCount, x));
-            trans.SetRow(1, Vector<float>.Build.Dense(ColumnCount, y));
-            trans.SetRow(2, Vector<float>.Build.Dense(ColumnCount, z));
-
-            SetSubMatrix(0, 0, trans + this);
-        }
-
-        public void Scale(float[] values) {
-            Scale(values[0], values[1], values[2]);
         }
 
         public void Rotate(float[] values) {
@@ -250,11 +216,7 @@ namespace Complexity.Math_Things {
                 throw new ArgumentException("MatrixF.Rotate : Must provide an array of length 3 for rotation.");
             }
 
-            Translate(values[0], values[1], values[2]);
-        }
-
-        public void Scale(VectorF scale) {
-            Scale(scale.At(0), scale.At(1), scale.At(2));
+            //Translate(values[0], values[1], values[2]);
         }
 
         public void Rotate(VectorF rot) {

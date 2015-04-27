@@ -12,15 +12,13 @@ using System.Threading.Tasks;
 namespace Complexity.Math_Things {
     public class ExpressionF {
         private Program program;
-        private string infix;
+        private float value;
 
         public ExpressionF(string infix) {
-            this.infix = infix;
             program = Compiler.Compile(infix);
         }
 
-        public void SetInfix(string infix) {
-            this.infix = infix;
+        public void Set(string infix) {
             program = Compiler.Compile(infix);
         }
 
@@ -28,12 +26,12 @@ namespace Complexity.Math_Things {
         /// Evaluates the expression
         /// </summary>
         /// <returns>The result of evaluation</returns>
-        public float Evaluate() {
-            return (float)program.Run().value;
+        public void Evaluate() {
+            value = (float)program.Run().Value();
         }
 
-        public override string ToString() {
-            return infix;
+        public float Value() {
+            return value;
         }
     }
 }

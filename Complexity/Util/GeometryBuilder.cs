@@ -16,26 +16,31 @@ namespace Complexity.Util {
         /// <param name="points">The number of points to be calculated.
         /// Points are evenly spaced.</param>
         /// <returns></returns>
-        public static float[,] Circle(int points) {
-            float[,] result = new float[3, points];
+        public static Geometry Circle(int noPoints) {
+            float[,] points = new float[noPoints, 3];
             float t;
 
-            for (int i = 0; i < points; i++) {
-                t = ((float)i) / ((float)points);
-                result[0, i] = (float)(Math.Sin(t * Math.PI * 2) / 2.0);
-                result[1, i] = (float)(Math.Cos(t * Math.PI * 2) / 2.0);
-                result[2, i] = 0;
+            for (int i = 0; i < noPoints; i++) {
+                t = ((float)i) / ((float)noPoints);
+                points[i, 0] = (float)(Math.Sin(t * Math.PI * 2) / 2.0);
+                points[i, 1] = (float)(Math.Cos(t * Math.PI * 2) / 2.0);
+                points[i, 2] = 0;
             }
 
-            return result;
+            return new Geometry(points);
         }
 
-        public static float[,] Cube() {
-            return new float[,] {
-                {-0.5f, 0.5f,  0.5f, -0.5f, -0.5f,  0.5f,  0.5f, -0.5f},
-                { 0.5f, 0.5f, -0.5f, -0.5f,  0.5f,  0.5f, -0.5f, -0.5f},
-                { 0.5f, 0.5f,  0.5f,  0.5f, -0.5f, -0.5f, -0.5f, -0.5f}
-            };
+        public static Geometry Cube() {
+            return new Geometry(new float[,] {
+                {-0.5f, 0.5f,   0.5f},
+                {0.5f,  0.5f,   0.5f},
+                {0.5f,  -0.5f,  0.5f},
+                {-0.5f, -0.5f,  0.5f},
+                {-0.5f, 0.5f,   -0.5f},
+                {0.5f,  0.5f,   -0.5f},
+                {0.5f,  -0.5f,  -0.5f},
+                {-0.5f, -0.5f,  -0.5f}
+            });
         }
 
         /// <summary>
@@ -108,21 +113,20 @@ namespace Complexity.Util {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public static float[,] Grid(int x, int y) {
-            float[,] result = new float[3, x * y];
-            //ArrayList points = new ArrayList();
+        public static Geometry Grid(int x, int y) {
+            float[,] points = new float[3, x * y];
 
             double xOff = (((double)x - 1) / 2.0);
             double yOff = (((double)y - 1) / 2.0);
             for (int j = 0; j < y; j++) {
                 for (int i = 0; i < x; i++) {
-                    result[0, i + j * x] = (float)((i - xOff) / (double)x * 2.0);
-                    result[1, i + j * x] = (float)((j - yOff) / (double)y * 2.0);
-                    result[2, i + j * x] = 0;
+                    points[i + j * x, 0] = (float)((i - xOff) / (double)x * 2.0);
+                    points[i + j * x, 1] = (float)((j - yOff) / (double)y * 2.0);
+                    points[i + j * x, 2] = 0;
                 }
             }
 
-            return result;
+            return new Geometry(points);
         }
     }
 }

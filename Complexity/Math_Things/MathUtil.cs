@@ -1,5 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.LinearAlgebra.Single;
 using MathNet.Symbolics;
 using System;
 using System.Numerics;
@@ -16,6 +16,45 @@ namespace Complexity.Util {
     /// Utility math methods
     /// </summary>
     public static class MathUtil {
+        /// <summary>
+        /// Create a matrix to rotate a geometry of 3D points about the x axis
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static Matrix<float> RotationalMatrixX(float x) {
+            return DenseMatrix.OfArray(new float[,] {
+                {1, 0, 0},
+                {0, (float)Math.Cos(x), (float)-Math.Sin(x)},
+                {0, (float)Math.Sin(x), (float)Math.Cos(x)}
+            });
+        }
+
+        /// <summary>
+        /// Create a matrix to rotate a geometry of 3D points about the y axis
+        /// </summary>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static Matrix<float> RotationalMatrixY(float y) {
+            return DenseMatrix.OfArray(new float[,] {
+                {(float)Math.Cos(y), 0, (float)Math.Sin(y)},
+                {0, 1, 0},
+                {(float)-Math.Sin(y), 0, (float)Math.Cos(y)}
+            });
+        }
+
+        /// <summary>
+        /// Create a matrix to rotate a geometry of 3D points about the z axis
+        /// </summary>
+        /// <param name="z"></param>
+        /// <returns></returns>
+        public static Matrix<float> RotationalMatrixZ(float z) {
+            return DenseMatrix.OfArray(new float[,] {
+                {(float)Math.Cos(z), (float)-Math.Sin(z), 0},
+                {(float)Math.Sin(z), (float)Math.Cos(z), 0},
+                {0, 0, 1}
+            });
+        }
+
         public static double Distance3(Point3 a, Point3 b) {
             return Math.Sqrt(Math.Pow((a.x - b.x), 2)
                 + Math.Pow((a.y - b.y), 2)

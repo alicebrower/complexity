@@ -12,60 +12,33 @@ using Complexity.Math_Things;
 using Complexity.Managers;
 using Complexity.Objects.Base;
 using Complexity.Interfaces;
+using Complexity.Programming;
 
 namespace Complexity.Objects {
-    //CONSTRUCTORS
+    //METHODS, NO ATTRIBUTES
     /// <summary>
     /// Represents a 3 Dimentional Object that can be rendered.
     /// SimpleObject -> Does not recalculate, must be modified externally.
     /// ComplexObject -> Has a Recalculate method and can update itself
     /// </summary>
-    public abstract partial class Object3 : Renderable, Recalculatable {
-        static Object3() {
-            ATTRIBUTES = new Dictionary<string, ObjectAttribute>() {
-                {ORIGIN, new ObjectAttributeT<MatrixTranslateAction>()},
-                {SCALE, new ObjectAttributeT<MatrixScaleAction>()},
-                {ROTATE, new ObjectAttributeT<MatrixRotateAction>()},
-                {TRANSLATE, new ObjectAttributeT<MatrixTranslateAction>()},
-                {COLOR, new ObjectAttributeT<VectorExpr>()}
-            };
-            ATTRIBUTES[COLOR].value = new VectorExpr(new string[]{"1", "0", "1", "1"});
-        }
-
-        protected Object3() {
-            attributes = new Dictionary<string, ObjectAttribute>();
-
-            //Initialize the transform list, leave entries blank
-            //they will be checked for null
-            transforms = new ArrayList(4);
-            transforms.Add(GetAttribute(ORIGIN).value);
-            transforms.Add(GetAttribute(SCALE).value);
-            transforms.Add(GetAttribute(ROTATE).value);
-            transforms.Add(GetAttribute(TRANSLATE).value);
-
-            SetID();
-        }
-
-        public Object3(float[,] geometry)
-            : this() {
-            vertecies = ConvertGeometry(geometry);
-            originalGeo = MatrixF.OfArray(geometry);
-        }
-    }
-
-    //METHODS, NO ATTRIBUTES
-    public abstract partial class Object3 {
-        protected const int ORIGIN_T = 0;
-        protected const int SCALE_T = 1;
-        protected const int ROTATE_T = 2;
-        protected const int TRANSLATE_T = 3;
+    public abstract partial class Object3 : ProgrammableObject, Renderable, Recalculatable {
         protected static ulong ID = 0;
 
         //Don't forget that collections need special handling in the clone method!
         protected ulong id;
         protected ArrayList transforms;
-        protected PointMatrixF vertecies;
-        protected MatrixF originalGeo;
+        protected PointMatrix vertecies;
+
+        protected Object3() {
+            InitVariables();
+            transforms = new ArrayList(4);
+            SetID();
+        }
+
+        public Object3(Geometry geometry)
+            : this() {
+            vertecies = ConvertGeometry(geometry);
+        }
 
         public void SetTransformArray(ArrayList trans) {
             transforms = trans;
@@ -76,15 +49,11 @@ namespace Complexity.Objects {
         /// </summary>
         /// <param name="trans">Index of the transform</param>
         /// <returns></returns>
-        public int AppendTransform(MatrixTransformAction trans) {
+        public int AddTransform(MatrixTransformAction trans) {
             return transforms.Add(trans);
         }
 
         public void SetTransform(int index, MatrixTransformAction trans) {
-            if (index >= transforms.Count) {
-                throw new IndexOutOfRangeException();
-            }
-
             transforms[index] = trans;
         }
 
@@ -96,21 +65,14 @@ namespace Complexity.Objects {
             if (index < 0) {
                 throw new ArgumentException("Object3.RemoveTransform : index < 0");
             }
-
-            //If it's below 4, set it to null.
-            //The point is to make the order & existence of entries 0-3 unmodifiable
-            if (index < 4) {
-                transforms[index] = null;
-            } else {
-                transforms.RemoveAt(index);
-            }
+            transforms.RemoveAt(index);
         }
 
-        public PointMatrixF GetVertecies() {
+        public PointMatrix GetVertecies() {
             return vertecies;
         }
 
-        public void SetVertecies(PointMatrixF vertecies) {
+        public void SetVertecies(PointMatrix vertecies) {
             this.vertecies = vertecies;
         }
 
@@ -118,13 +80,17 @@ namespace Complexity.Objects {
         /// 
         /// </summary>
         public virtual void Recalculate() {
-            vertecies.SetFromMatrix(originalGeo);
-            GetAttribute(COLOR).value.Recalculate();
+            RecalculateVariables();
+            vertecies.Restore();
+
+            //Manipulate vertecies
+            vertecies.Translate(originX.Value(), originY.Value(), originZ.Value());
+            vertecies.Scale(scaleX.Value(), scaleY.Value(), scaleZ.Value());
+            vertecies.Rotate(rotateX.Value(), rotateY.Value(), rotateZ.Value());
+            vertecies.Translate(positionX.Value(), positionY.Value(), positionZ.Value());
 
             foreach (MatrixTransformAction mta in transforms) {
-                if (mta != null) {
-                    mta.Transform(vertecies);
-                }
+                mta.Transform(vertecies);
             }
         }
 
@@ -137,25 +103,16 @@ namespace Complexity.Objects {
         /// </summary>
         /// <returns>a shallow copy of this object</returns>
         public virtual Object3 Clone() {
-            PointMatrixF _vertecies = new PointMatrixF(vertecies.ToArray());
-            for (int i = 0; i < _vertecies.ColumnCount; i++) {
-                _vertecies.Set(i, vertecies.Get(i).Clone());
-            }
+            PointMatrix _vertecies = new PointMatrix(vertecies.originalGeo.Clone());
 
             ArrayList _transforms = new ArrayList();
             foreach (MatrixTransformAction mta in transforms) {
                 _transforms.Add(mta);
             }
 
-            Dictionary<string, ObjectAttribute> _attributes = new Dictionary<string, ObjectAttribute>();
-            foreach (KeyValuePair<string, ObjectAttribute> attr in attributes) {
-                _attributes.Add(attr.Key, attr.Value.Clone());
-            }
-
             Object3 result = (Object3)MemberwiseClone();
             result.SetVertecies(_vertecies);
             result.SetTransformArray(_transforms);
-            result.SetAttributes(_attributes);
             result.SetID();
 
             return result;
@@ -172,63 +129,99 @@ namespace Complexity.Objects {
         /// populated PointMatrix representing all the object's vertecies
         /// </summary>
         /// <param name="geometry"></param>
-        protected virtual PointMatrixF ConvertGeometry(float[,] geometry) {
-            return new PointMatrixF(geometry);
+        protected virtual PointMatrix ConvertGeometry(Geometry geometry) {
+            return new PointMatrix(geometry);
         }
     }
 
     //ATTRIBUTE METHODS
     public abstract partial class Object3 {
-        protected const string ORIGIN    = "origin";
-        protected const string SCALE     = "scale";
-        protected const string ROTATE    = "rotate";
-        protected const string TRANSLATE = "translate";
-        protected const string COLOR     = "color";
-        protected static Dictionary<string, ObjectAttribute> ATTRIBUTES;
-        protected Dictionary<string, ObjectAttribute> attributes;
+        protected ExpressionF colorR = new ExpressionF("1");
+        protected ExpressionF colorG = new ExpressionF("0");
+        protected ExpressionF colorB = new ExpressionF("1");
+        protected ExpressionF colorA = new ExpressionF("1");
+        protected ExpressionF scaleX = new ExpressionF("1");
+        protected ExpressionF scaleY = new ExpressionF("1");
+        protected ExpressionF scaleZ = new ExpressionF("1");
+        protected ExpressionF rotateX = new ExpressionF("0");
+        protected ExpressionF rotateY = new ExpressionF("0");
+        protected ExpressionF rotateZ = new ExpressionF("0");
+        protected ExpressionF originX = new ExpressionF("0");
+        protected ExpressionF originY = new ExpressionF("0");
+        protected ExpressionF originZ = new ExpressionF("0");
+        protected ExpressionF positionX = new ExpressionF("0");
+        protected ExpressionF positionY = new ExpressionF("0");
+        protected ExpressionF positionZ = new ExpressionF("0");
+        protected ProgrammableObject parent;
+        protected Dictionary<string, Variable> variables;
 
-        public void SetInherit(string name, bool inherit) {
-            attributes[name].inherit = inherit;
+        protected virtual void InitVariables() {
+            variables = new Dictionary<string, Variable>() {
+               {"colorR", new Variable(Variable.FLOAT) {Value = () => colorR.Value()}},
+               {"colorG", new Variable(Variable.FLOAT) {Value = () => colorG.Value()}},
+               {"colorB", new Variable(Variable.FLOAT) {Value = () => colorB.Value()}},
+               {"colorA", new Variable(Variable.FLOAT) {Value = () => colorA.Value()}},
+               {"scaleX", new Variable(Variable.FLOAT) {Value = () => scaleX.Value()}},
+               {"scaleY", new Variable(Variable.FLOAT) {Value = () => scaleY.Value()}},
+               {"scaleZ", new Variable(Variable.FLOAT) {Value = () => scaleZ.Value()}},
+               {"rotateX", new Variable(Variable.FLOAT) {Value = () => rotateX.Value()}},
+               {"rotateY", new Variable(Variable.FLOAT) {Value = () => rotateY.Value()}},
+               {"rotateZ", new Variable(Variable.FLOAT) {Value = () => rotateZ.Value()}},
+               {"originX", new Variable(Variable.FLOAT) {Value = () => originX.Value()}},
+               {"originY", new Variable(Variable.FLOAT) {Value = () => originY.Value()}},
+               {"originZ", new Variable(Variable.FLOAT) {Value = () => originZ.Value()}},
+               {"positionX", new Variable(Variable.FLOAT) {Value = () => positionX.Value()}},
+               {"positionY", new Variable(Variable.FLOAT) {Value = () => positionY.Value()}},
+               {"positionZ", new Variable(Variable.FLOAT) {Value = () => positionZ.Value()}},
+               {"parent", new Variable(Variable.OBJECT) {Value = () => GetParent()}}
+            };
         }
 
-        protected void SetAttributes(Dictionary<string, ObjectAttribute> attributes) {
-            this.attributes = attributes;
+        protected void RecalculateVariables() {
+            colorR.Evaluate();
+            colorG.Evaluate();
+            colorB.Evaluate();
+            colorA.Evaluate();
+            scaleX.Evaluate();
+            scaleY.Evaluate();
+            scaleZ.Evaluate();
+            rotateX.Evaluate();
+            rotateY.Evaluate();
+            rotateZ.Evaluate();
+            originX.Evaluate();
+            originY.Evaluate();
+            originZ.Evaluate();
+            positionX.Evaluate();
+            positionY.Evaluate();
+            positionZ.Evaluate();
         }
 
-        public ObjectAttribute GetAttribute(string name) {
-            if (attributes.ContainsKey(name)) {
-                return attributes[name];
-            } else if (ResourceManager.ContainsAttribute(name)) {
-                return ResourceManager.GetAttribute(name);
-            } else if (ATTRIBUTES.ContainsKey(name)) {
-                return ATTRIBUTES[name];
-            } else {
-                throw new Exception("Attribute not defined, " + name);
-            }
+        public bool ContainsVariable(string name) {
+            return variables.ContainsKey(name);
         }
 
-        public void AddAttribute(string name, dynamic value, bool inherit) {
-            attributes.Add(name, new ObjectAttribute(value, inherit, false));
+        public void AddVariable(string name, Variable value) {
+            variables.Add(name, value);
         }
 
-        public void SetAttribute(string name, dynamic value) {
-            attributes[name].value = value;
+        public Variable GetVariable(string name) {
+            return variables[name];
         }
 
-        public void SetAttribute(string attr, ObjectAttribute value) {
-            if (attributes.ContainsKey(attr)) {
-                attributes[attr] = value;
-            } else {
-                attributes.Add(attr, value);
-            }
+        public bool ContainsFunction(string name) {
+            throw new NotImplementedException();
         }
 
-        public void RemoveAttribute(string name) {
-            if (attributes[name].removable) {
-                attributes.Remove(name);
-            } else {
-                attributes[name].value = null;
-            }
+        public Function GetFunction(string name) {
+            throw new NotImplementedException();
+        }
+
+        public ProgrammableObject GetParent() {
+            return parent;
+        }
+
+        public void SetParent(ProgrammableObject parent) {
+            this.parent = parent;
         }
 
         public void SetScale(string scale) {
@@ -236,64 +229,38 @@ namespace Complexity.Objects {
         }
 
         public void SetScale(string x, string y, string z) {
-            SetScale(new VectorExpr(new string[]{x, y, z}));
-        }
-
-        public void SetScale(VectorExpr scale) {
-            if (scale.Size() != 3) {
-                throw new ArgumentException("Scale vector must have three components, one for each dimension.");
-            }
-
-            ObjectAttribute objAttr = new ObjectAttribute(new MatrixScaleAction(scale), false, false);
-            SetAttribute(SCALE, objAttr);
-            transforms[SCALE_T] = attributes[SCALE].value;
+            scaleX = new ExpressionF(x);
+            scaleY = new ExpressionF(y);
+            scaleZ = new ExpressionF(z);
         }
 
         public void SetRotate(string x, string y, string z) {
-            SetRotate(new VectorExpr(new string[]{x, y, z}));
+            rotateX = new ExpressionF(x);
+            rotateY = new ExpressionF(y);
+            rotateZ = new ExpressionF(z);
         }
 
-        public void SetRotate(VectorExpr rotate) {
-            if (rotate.Size() != 3) {
-                throw new ArgumentException("Rotate vector must have three components, one for each dimension.");
-            }
-
-            ObjectAttribute objAttr = new ObjectAttribute(new MatrixRotateAction(rotate), false, false);
-            SetAttribute(ROTATE, objAttr);
-            transforms[ROTATE_T] = attributes[ROTATE].value;
+        public void SetPosition(string x, string y, string z) {
+            positionX = new ExpressionF(x);
+            positionY = new ExpressionF(y);
+            positionZ = new ExpressionF(z);
         }
 
-        public void SetTranslate(string x, string y, string z) {
-            SetTranslate(new VectorExpr(new string[]{x, y, z}));
-        }
-
-        public void SetTranslate(VectorExpr trans) {
-            if (trans.Size() != 3) {
-                throw new ArgumentException("Trans vector must have three components, one for each dimension.");
-            }
-
-            ObjectAttribute objattr = new ObjectAttribute(new MatrixTranslateAction(trans), false, false);
-            SetAttribute(TRANSLATE, objattr);
-            transforms[TRANSLATE_T] = attributes[TRANSLATE].value;
-        }
-
-        public void SetOrigin(VectorExpr origin) {
-            if (origin.Size() != 3) {
-                throw new ArgumentException("Origin vector must have three cells, one for each dimension.");
-            }
-
-            ObjectAttribute objAttr = new ObjectAttribute(new MatrixTranslateAction(origin), false, false);
-            SetAttribute(ORIGIN, objAttr);
-            transforms[ORIGIN_T] = attributes[ORIGIN].value;
+        public void SetOrigin(string x, string y, string z) {
+            originX = new ExpressionF(x);
+            originY = new ExpressionF(y);
+            originZ = new ExpressionF(z);
         }
 
         public void SetColor(string r, string g, string b, string a) {
-            ObjectAttribute objAttr = new ObjectAttribute(new VectorExpr(new string[]{r, g, b, a}), false, false);
-            SetAttribute(COLOR, objAttr);
+            colorR = new ExpressionF(r);
+            colorG = new ExpressionF(g);
+            colorB = new ExpressionF(b);
+            colorA = new ExpressionF(a);
         }
 
         public float[] GetColor() {
-            return GetAttribute(COLOR).value.Values();
+            return new float[] {colorR.Value(), colorG.Value(), colorB.Value(), colorA.Value()};
         }
     }
 }

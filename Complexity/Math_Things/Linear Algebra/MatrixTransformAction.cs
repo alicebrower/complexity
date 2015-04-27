@@ -12,34 +12,34 @@ namespace Complexity.Util {
     /// a Matrix/PointMatrix
     /// </summary>
     public abstract class MatrixTransformAction {
-        public abstract MatrixF Transform(MatrixF matrix);
+        public abstract void Transform(PointMatrix matrix);
     }
 
     public class MatrixRotateAction : MatrixTransformAction {
-        private VectorExpr vec;
+        private ExpressionF x, y, z;
 
-        public MatrixRotateAction(VectorExpr vec) {
-            this.vec = vec;
+        public MatrixRotateAction(ExpressionF x, ExpressionF y, ExpressionF z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
 
-        public override MatrixF Transform(MatrixF matrix) {
-            vec.Recalculate();
-            matrix.Rotate(vec.Values());
-            return matrix;
+        public override void Transform(PointMatrix matrix) {
+            matrix.Rotate(x.Value(), y.Value(), z.Value());
         }
     }
 
     public class MatrixTranslateAction : MatrixTransformAction {
-        private VectorExpr vec;
+        private ExpressionF x, y, z;
 
-        public MatrixTranslateAction(VectorExpr vec) {
-            this.vec = vec;
+        public MatrixTranslateAction(ExpressionF x, ExpressionF y, ExpressionF z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
 
-        public override MatrixF Transform(MatrixF matrix) {
-            vec.Recalculate();
-            matrix.Translate(vec.Values());
-            return matrix;
+        public override void Transform(PointMatrix matrix) {
+            matrix.Translate(x.Value(), y.Value(), z.Value());
         }
     }
 
@@ -50,23 +50,22 @@ namespace Complexity.Util {
             this.point = point;
         }
 
-        public override MatrixF Transform(MatrixF matrix) {
+        public override void Transform(PointMatrix matrix) {
             matrix.Translate(point.x, point.y, point.z);
-            return matrix;
         }
     }
 
     public class MatrixScaleAction : MatrixTransformAction {
-        private VectorExpr vec;
+        private ExpressionF x, y, z;
 
-        public MatrixScaleAction(VectorExpr vec) {
-            this.vec = vec;
+        public MatrixScaleAction(ExpressionF x, ExpressionF y, ExpressionF z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
 
-        public override MatrixF Transform(MatrixF matrix) {
-            vec.Recalculate();
-            matrix.Scale(vec.Values());
-            return matrix;
+        public override void Transform(PointMatrix matrix) {
+            matrix.Scale(x.Value(), y.Value(), z.Value());
         }
     }
 }

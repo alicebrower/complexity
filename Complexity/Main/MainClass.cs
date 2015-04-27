@@ -17,29 +17,29 @@ namespace Complexity {
     /// For testing. When this is compiled as a library, this will be removed.
     /// </summary>
     public class MainClass {
+        static int number = 0;
         /// <summary>
         /// 
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
         static int Main(string[] args) {
-            Program p = Compiler.Compile("(1+1)PerformAction(1,2,3,4)");
+            Program p = Compiler.Compile(".5");
             Variable v = p.Run();
-            //ExpressionF expr = new ExpressionF("parent.color*sin(7+1.1/abcd)-PerformAction(1,2,3,4)");
 
             #region Objects
             //Create all the things
             Console.Write("Creating Objects... ");
 
             Cube cube = new Cube();
-            //cube.SetColor("sin(time)^2", "0", "sin(time+pi/2)^2", "1");
-            cube.SetRotate("rad(-20)", "rad(45)+time", "0");
-            //cube.SetScale("sin(time)+1", "1", "1");
+            cube.SetColor("sin(time)^2", "0", "sin(time+pi/2)^2", "1");
+            cube.SetRotate("rad(20)", "rad(45)+time", "0");
+            cube.SetScale(".5", ".5", ".5");
 
-            System3 system = new System3(new float[,] { {0}, {0}, {0} }, cube);
+            //System3 sys = new System3(new float[,]{{0, 0, 0}}, cube);
 
             Scene scene = new Scene();
-            scene.Add(system);
+            scene.Add(cube);
 
             Console.WriteLine("Done.");
             #endregion
@@ -56,6 +56,10 @@ namespace Complexity {
                 Console.ReadLine();
             }
             //return 0;
+        }
+
+        public static int GetNumber() {
+            return number++;
         }
     }
 }

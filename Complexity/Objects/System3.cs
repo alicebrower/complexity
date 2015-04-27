@@ -2,6 +2,7 @@
 using Complexity.Math_Things;
 using Complexity.Objects.Base;
 using Complexity.Objects.Vertex;
+using Complexity.Programming;
 using Complexity.Util;
 using System;
 using System.Collections;
@@ -15,8 +16,6 @@ namespace Complexity.Objects {
     /// Represents a system of objects and/or systems in 3 Dimensions
     /// </summary>
     public class System3 : Object3 {
-        public const string DIST = "dist";
-        public const string LENGTH = "length";
         protected Object3 masterObj;
         protected int count;
 
@@ -25,11 +24,10 @@ namespace Complexity.Objects {
         /// </summary>
         /// <param name="geometry"></param>
         /// <param name="masterObj"></param>
-        public System3(float[,] geometry, Object3 masterObj)
+        public System3(Geometry geometry, Object3 masterObj)
             : base() {
             SetMasterObj(masterObj);
             vertecies = ConvertGeometry(geometry);
-            originalGeo = MatrixF.OfArray(geometry);
         }
 
         /// <summary>
@@ -37,20 +35,14 @@ namespace Complexity.Objects {
         /// </summary>
         /// <returns></returns>
         public override Object3 Clone() {
-            System3 result = new System3(GetVertecies().ToArray(), masterObj.Clone());
+            System3 result = new System3(GetVertecies().originalGeo.Clone(), masterObj.Clone());
 
             ArrayList _transforms = new ArrayList();
             foreach (MatrixTransformAction mta in transforms) {
                 _transforms.Add(mta);
             }
 
-            Dictionary<string, ObjectAttribute> _attributes = new Dictionary<string, ObjectAttribute>();
-            foreach (KeyValuePair<string, ObjectAttribute> attr in attributes) {
-                _attributes.Add(attr.Key, attr.Value);
-            }
-
             result.SetTransformArray(_transforms);
-            result.SetAttributes(_attributes);
             result.SetID();
 
             return result;
@@ -70,11 +62,8 @@ namespace Complexity.Objects {
         /// </summary>
         public override void Recalculate() {
             ResourceManager.AdvanceScope();
-            ResourceManager.AddVariable(DIST, 0);
-            ResourceManager.AddVariable(LENGTH, count);
 
             base.Recalculate();
-
             masterObj.Recalculate();
             foreach (VertexSystem vert in vertecies) {
                 vert.Recalculate();
@@ -83,23 +72,30 @@ namespace Complexity.Objects {
             ResourceManager.DecreaseScope();
         }
 
-        protected override PointMatrixF ConvertGeometry(float[,] _geometry) {
-            TypedArrayList<Point3> _vertecies = new TypedArrayList<Point3>();
+        protected override void InitVariables() {
+            base.InitVariables();
+            variables.Add("length", new Variable(Variable.FLOAT, 0));
+        }
+
+        protected PointMatrix ConvertGeometry(float[,] _geometry) {
+            throw new NotImplementedException();
+            List<Point3> _vertecies = new List<Point3>();
             for (int i = 0; i < _geometry.GetLength(1); i++) {
                 _vertecies.Add(CreateVertex(
                     _geometry[0, i], _geometry[1, i], _geometry[2, i], i));
             }
 
             count = _vertecies.Count();
-            return new PointMatrixF(_vertecies);
+            //return new PointMatrix(_vertecies);
         }
 
-        protected VertexSystem CreateVertex(double x, double y, double z, double index) {
+        protected VertexSystem CreateVertex(double x, double y, double z, float index) {
             VertexSystem vert = new VertexSystem((float)x, (float)y, (float)z);
             vert.distance = (float)index;
 
             Object3 obj = masterObj.Clone();
-            obj.AppendTransform(new MatrixTranslatePoint3Action(vert));
+            obj.AddVariable("distance", new Variable(Variable.FLOAT, index));
+            obj.AddTransform(new MatrixTranslatePoint3Action(vert));
             vert.obj = obj;
 
             return vert;
@@ -113,7 +109,7 @@ namespace Complexity.Objects {
             masterObj = obj;
         }
 
-        protected void SetPointMatrix(PointMatrixF vertecies) {
+        protected void SetPointMatrix(PointMatrix vertecies) {
             this.vertecies = vertecies;
         }
 

@@ -29,15 +29,15 @@ namespace Complexity.Programming {
 
         static Compiler() {
             OPERATORS = new Dictionary<string, ExpressionOperator>() {
-                {"+", new ExpressionOperator("+", 2, LEFT_ASSOC, 1, (a) => new Variable("", a[1].value + a[0].value))},
-                {"-", new ExpressionOperator("-", 2, LEFT_ASSOC, 1, (a) => new Variable("", a[1].value - a[0].value))},
-                {"*", new ExpressionOperator("*", 2, LEFT_ASSOC, 5, (a) => new Variable("", a[1].value * a[0].value))},
-                {"/", new ExpressionOperator("/", 2, LEFT_ASSOC, 5, (a) => new Variable("", a[1].value / a[0].value))},
-                {"%", new ExpressionOperator("%", 2, LEFT_ASSOC, 5, (a) => new Variable("", a[1].value % a[0].value))},
+                {"+", new ExpressionOperator("+", 2, LEFT_ASSOC, 1, (a) => new Variable(Variable.DOUBLE, a[1].Value() + a[0].Value()))},
+                {"-", new ExpressionOperator("-", 2, LEFT_ASSOC, 1, (a) => new Variable(Variable.DOUBLE, a[1].Value() - a[0].Value()))},
+                {"*", new ExpressionOperator("*", 2, LEFT_ASSOC, 5, (a) => new Variable(Variable.DOUBLE, a[1].Value() * a[0].Value()))},
+                {"/", new ExpressionOperator("/", 2, LEFT_ASSOC, 5, (a) => new Variable(Variable.DOUBLE, a[1].Value() / a[0].Value()))},
+                {"%", new ExpressionOperator("%", 2, LEFT_ASSOC, 5, (a) => new Variable(Variable.DOUBLE, a[1].Value() % a[0].Value()))},
                 {"^", new ExpressionOperator("^", 2, RIGHT_ASSOC, 9,
-                    (a) => new Variable("", Math.Pow((double)a[1].value,(double)a[0].value)))},
+                    (a) => new Variable(Variable.DOUBLE, Math.Pow(a[1].Value(), a[0].Value())))},
 
-                {".", new ExpressionOperator(".", 2, RIGHT_ASSOC, 9, (a) => new Variable("null"))}
+                {".", new ExpressionOperator(".", 2, LEFT_ASSOC, 9, (a) => new Variable(Variable.INT, 0))}
             };
 
             DELIMITERS = new Dictionary<string, ExpressionDelimeter>() {
@@ -65,71 +65,69 @@ namespace Complexity.Programming {
             input = input.Replace("\n", "");
             string[] _tokens = Regex.Split(input, @"(" + VAR_REGEX + "|" + DEL_REGEX + "|" + OPS_REGEX + ")");
 
-            //Remove blanks
-            List<string> tokens = new List<string>();
-            foreach (string token in _tokens) {
-                if (token.CompareTo("") != 0) {
-                    tokens.Add(token);
+            List<ExpressionPart> tokens = new List<ExpressionPart>();
+            for (int i = 0; i < _tokens.Length; i++) {
+                while (i < _tokens.Length && _tokens[i].Equals("")) { i++; }
+                string token;
+                if (i < _tokens.Length) {
+                    token = _tokens[i];
+                } else {
+                    break;
                 }
-            }
 
-            List<ExpressionPart> finalTokens = new List<ExpressionPart>();
-            try {
-                for (int i = 0; i < tokens.Count; i++) {
-                    while (tokens[i].Equals("")) {
-                        i++;
-                    }
-                    string token = (string)tokens[i];
+                //This is wrong, need to advance without modifying i
+                //set lookaheads
+                int j = i + 1;
+                string lookAhead1;
+                while (j < _tokens.Length && _tokens[j].Equals("")) { j++; }
+                lookAhead1 = (j < _tokens.Length) ? _tokens[j] : lookAhead1 = "UNDEFINED";
 
-                    string lookAhead1;
-                    while (tokens[i].Equals("")) {
-                        i++;
-                    }
-                    if (i < tokens.Count - 1) {
-                        lookAhead1 = (string)tokens[i];
-                    } else {
-                        lookAhead1 = "UNDEFINED";
-                    }
+                int k = j + 1;
+                string lookAhead2;
+                while (k < _tokens.Length && _tokens[k].Equals("")) { k++; }
+                lookAhead2 = (k < _tokens.Length) ? _tokens[k] : lookAhead2 = "UNDEFINED";
 
-                    string lookAhead2;
-                    while (tokens[i].Equals("")) {
-                        i++;
-                    }
-                    if (i < tokens.Count - 1) {
-                        lookAhead2 = (string)tokens[i];
-                    } else {
-                        lookAhead2 = "UNDEFINED";
-                    }
-
-                    if (OPERATORS.ContainsKey(token)) {
-                        finalTokens.Add(OPERATORS[token]);
-                    } else if (DELIMITERS.ContainsKey(token)) {
-                        finalTokens.Add(DELIMITERS[token]);
-                    } else if (Regex.IsMatch(token, "^[0-9]*$")) {
-                        if (lookAhead1.CompareTo(".") == 0) {
-                            if (lookAhead2.Equals("UNDEFINED")) {
-                                throw new Exception("Malformatted expression");
+                if (OPERATORS.ContainsKey(token)) {
+                    if (token.Equals(".")) {
+                        if (i == 0) {
+                            if (Regex.IsMatch(lookAhead1, "^[0-9]*$")) {
+                                tokens.Add(new ExpressionNumber(float.Parse("0" + token + lookAhead1)));
+                                i = j;
+                            } else {
+                                throw new Exception("Invalid expression format");
                             }
-
-                            finalTokens.Add(new ExpressionNumber(
-                                float.Parse(token + lookAhead1 + lookAhead2)));
-                            //i += 2;
-                        } else {
-                            finalTokens.Add(new ExpressionNumber(float.Parse(token)));
+                        } else if (Regex.IsMatch(lookAhead1, "^[0-9]*$")) {
+                            tokens.Add(new ExpressionNumber(float.Parse("0" + token + lookAhead1)));
+                            i = j;
                         }
-                    } else if (ResourceManager.ContainsVariable(token)) {
-                        finalTokens.Add(new ExpressionVariable(token));
-                    } else if (ResourceManager.ContainsFunction(token)) {
-                        finalTokens.Add(new ExpressionFunction(token, 0, null));
                     } else {
-                        throw new Exception("Unknown symbol, " + token);
+                        tokens.Add(OPERATORS[token]);
                     }
+                } else if (DELIMITERS.ContainsKey(token)) {
+                    tokens.Add(DELIMITERS[token]);
+                } else if (Regex.IsMatch(token, "^[0-9]*$")) {
+                    if (lookAhead1.CompareTo(".") == 0) {
+                        if (lookAhead2.Equals("UNDEFINED")) {
+                            throw new Exception("Malformatted expression");
+                        }
+
+                        tokens.Add(new ExpressionNumber(
+                            float.Parse(token + lookAhead1 + lookAhead2)));
+
+                        i = k;
+                    } else {
+                        tokens.Add(new ExpressionNumber(float.Parse(token)));
+                    }
+                } else if (ResourceManager.ContainsVariable(token)) {
+                    tokens.Add(new ExpressionVariable(token));
+                } else if (ResourceManager.ContainsFunction(token)) {
+                    tokens.Add(new ExpressionFunction(token, 0, null));
+                } else {
+                    throw new Exception("Unknown symbol, " + token);
                 }
-            } catch (Exception ex) {
-                Console.WriteLine("Malformatted expression, " + ex.Message);
             }
 
-            return finalTokens;
+            return tokens;
         }
 
         /// <summary>
@@ -142,7 +140,6 @@ namespace Complexity.Programming {
             ExpressionPart token, lookAhead;
             int parens = 0;
 
-            //Syntax & Symantics
             for (int i = 0; i < input.Count; i++) {
                 token = (ExpressionPart)input[i];
                 if (i < input.Count - 1) {
@@ -275,7 +272,7 @@ namespace Complexity.Programming {
             string exception = "Exception while linking symbols: ";
             switch (token.Type()) {
                 case NUMBER:
-                    return new Symbol(false, 0, (a) => new Variable("", float.Parse(token.name)));
+                    return new Symbol(false, 0, (a) => new Variable(Variable.FLOAT, float.Parse(token.name)));
                 case VARIABLE:
                     return new Symbol(false, 0, (a) => ResourceManager.GetVariable(token.name));
                 case OPERATOR:
