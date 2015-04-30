@@ -49,11 +49,7 @@
     <Compile Include="Util\Geometry.cs" />
     <Compile Include="Programming\Compiler.cs" />
     <Compile Include="Math_Things\ExpressionF.cs" />
-    <Compile Include="Math_Things\Linear Algebra\MatrixF.cs" />
-    <Compile Include="Math_Things\Linear Algebra\PointMatrix.cs" />
-    <Compile Include="Math_Things\Linear Algebra\VectorExpr.cs" />
-    <Compile Include="Math_Things\Linear Algebra\VectorF.cs" />
-    <Compile Include="Objects\Vertex\VertexSystem.cs" />
+    <Compile Include="Util\PointMatrix.cs" />
     <Compile Include="Programming\Function.cs" />
     <Compile Include="Programming\ProgrammableObject.cs" />
     <Compile Include="Programming\Program.cs" />
@@ -64,7 +60,7 @@
     <Compile Include="Interfaces\Renderable.cs" />
     <Compile Include="Objects\System3.cs" />
     <Compile Include="Util\CloneableStack.cs" />
-    <Compile Include="Math_Things\Linear Algebra\MatrixTransformAction.cs" />
+    <Compile Include="Util\MatrixTransformAction.cs" />
     <Compile Include="Util\GeometryBuilder.cs" />
     <Compile Include="Main\MainClass.cs" />
     <Compile Include="Objects\Cube.cs" />

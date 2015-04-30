@@ -57,7 +57,11 @@ namespace Complexity.Managers {
         }
 
         public bool Contains(string name) {
-            return scope.Peek().ContainsKey(name);
+            if (scope.Count < 1) {
+                return false;
+            } else {
+                return scope.Peek().ContainsKey(name);
+            }
         }
     }
 }

@@ -44,15 +44,21 @@ namespace Complexity.Util {
     }
 
     public class MatrixTranslatePoint3Action : MatrixTransformAction {
-        Point3 point;
+        private GetPointDelegate GetPoint;
 
         public MatrixTranslatePoint3Action(Point3 point) {
-            this.point = point;
+            GetPoint = () => point;
+        }
+
+        public MatrixTranslatePoint3Action(GetPointDelegate GetPoint) {
+            this.GetPoint = GetPoint;
         }
 
         public override void Transform(PointMatrix matrix) {
-            matrix.Translate(point.x, point.y, point.z);
+            matrix.Translate(GetPoint().x, GetPoint().y, GetPoint().z);
         }
+
+        public delegate Point3 GetPointDelegate();
     }
 
     public class MatrixScaleAction : MatrixTransformAction {

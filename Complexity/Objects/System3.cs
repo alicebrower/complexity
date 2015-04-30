@@ -1,7 +1,6 @@
 ﻿using Complexity.Managers;
 using Complexity.Math_Things;
 using Complexity.Objects.Base;
-using Complexity.Objects.Vertex;
 using Complexity.Programming;
 using Complexity.Util;
 using System;
@@ -17,6 +16,7 @@ namespace Complexity.Objects {
     /// </summary>
     public class System3 : Object3 {
         protected Object3 masterObj;
+        protected Object3[] vertexObjects;
         protected int count;
 
         /// <summary>
@@ -26,7 +26,14 @@ namespace Complexity.Objects {
         /// <param name="masterObj"></param>
         public System3(Geometry geometry, Object3 masterObj)
             : base() {
-            SetMasterObj(masterObj);
+            this.masterObj = masterObj;
+
+            vertexObjects = new Object3[geometry.Rows()];
+            for (int i = 0; i < geometry.Rows(); i++) {
+                vertexObjects[i] = masterObj.Clone();
+                vertexObjects[i].SetPosition("" + geometry[i, 0], "" + geometry[i, 1], "" + geometry[i, 2]);
+            }
+
             vertecies = ConvertGeometry(geometry);
         }
 
@@ -41,9 +48,7 @@ namespace Complexity.Objects {
             foreach (MatrixTransformAction mta in transforms) {
                 _transforms.Add(mta);
             }
-
             result.SetTransformArray(_transforms);
-            result.SetID();
 
             return result;
         }
@@ -52,8 +57,8 @@ namespace Complexity.Objects {
         /// 
         /// </summary>
         public override void Draw() {
-            foreach (VertexSystem vert in vertecies) {
-                vert.obj.Draw();
+            foreach (Object3 obj in vertexObjects) {
+                obj.Draw();
             }
         }
 
@@ -65,8 +70,9 @@ namespace Complexity.Objects {
 
             base.Recalculate();
             masterObj.Recalculate();
-            foreach (VertexSystem vert in vertecies) {
-                vert.Recalculate();
+            for (int i = 0; i < vertecies.RowCount; i++) {
+                vertexObjects[i].SetPosition("" + vertecies[i, 0], "" + vertecies[i, 1], "" + vertecies[i, 2]);
+                vertexObjects[i].Recalculate();
             }
 
             ResourceManager.DecreaseScope();
@@ -75,54 +81,6 @@ namespace Complexity.Objects {
         protected override void InitVariables() {
             base.InitVariables();
             variables.Add("length", new Variable(Variable.FLOAT, 0));
-        }
-
-        protected PointMatrix ConvertGeometry(float[,] _geometry) {
-            throw new NotImplementedException();
-            List<Point3> _vertecies = new List<Point3>();
-            for (int i = 0; i < _geometry.GetLength(1); i++) {
-                _vertecies.Add(CreateVertex(
-                    _geometry[0, i], _geometry[1, i], _geometry[2, i], i));
-            }
-
-            count = _vertecies.Count();
-            //return new PointMatrix(_vertecies);
-        }
-
-        protected VertexSystem CreateVertex(double x, double y, double z, float index) {
-            VertexSystem vert = new VertexSystem((float)x, (float)y, (float)z);
-            vert.distance = (float)index;
-
-            Object3 obj = masterObj.Clone();
-            obj.AddVariable("distance", new Variable(Variable.FLOAT, index));
-            obj.AddTransform(new MatrixTranslatePoint3Action(vert));
-            vert.obj = obj;
-
-            return vert;
-        }
-
-        /// <summary>
-        /// Sets up the masterObj object
-        /// </summary>
-        /// <param name="obj"></param>
-        protected virtual void SetMasterObj(Object3 obj) {
-            masterObj = obj;
-        }
-
-        protected void SetPointMatrix(PointMatrix vertecies) {
-            this.vertecies = vertecies;
-        }
-
-        protected void SetVariables(VertexSystem vert) {
-            //ExpressionF.SetScopedSymbol(DIST, vert.distance);
-        }
-
-        /// <summary>
-        /// Sets the vertecies
-        /// </summary>
-        /// <param name="clones"></param>
-        protected void SetVertecies(VertexSystem[] verts) {
-            vertecies.SetFromArray(verts);
         }
     }
 }

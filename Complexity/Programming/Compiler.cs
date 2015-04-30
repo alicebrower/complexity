@@ -37,7 +37,7 @@ namespace Complexity.Programming {
                 {"^", new ExpressionOperator("^", 2, RIGHT_ASSOC, 9,
                     (a) => new Variable(Variable.DOUBLE, Math.Pow(a[1].Value(), a[0].Value())))},
 
-                {".", new ExpressionOperator(".", 2, LEFT_ASSOC, 9, (a) => new Variable(Variable.INT, 0))}
+                {".", new ExpressionOperator(".", 2, LEFT_ASSOC, 9, (a) => new Variable(Variable.INT, 0))},
             };
 
             DELIMITERS = new Dictionary<string, ExpressionDelimeter>() {
@@ -118,6 +118,10 @@ namespace Complexity.Programming {
                     } else {
                         tokens.Add(new ExpressionNumber(float.Parse(token)));
                     }
+                } else if (token.Equals("E")) {
+                    tokens.Add(OPERATORS["*"]);
+                    tokens.Add(new ExpressionNumber(10));
+                    tokens.Add(OPERATORS["^"]);
                 } else if (ResourceManager.ContainsVariable(token)) {
                     tokens.Add(new ExpressionVariable(token));
                 } else if (ResourceManager.ContainsFunction(token)) {
@@ -145,7 +149,7 @@ namespace Complexity.Programming {
                 if (i < input.Count - 1) {
                     lookAhead = (ExpressionPart)input[i + 1];
                 } else {
-                    lookAhead = null;
+                    lookAhead = new ExpressionUndefined();
                 }
 
                 if (token.Type() == OPERATOR) {
@@ -158,10 +162,9 @@ namespace Complexity.Programming {
                             tokens.Add(new ExpressionNumber(-1));
                             tokens.Add(OPERATORS["*"]);
                         } else if (lookAhead.name.CompareTo("-") == 0) {
-                            tokens.Add(OPERATORS["+"]);
+                            tokens.Add(token);
                             i++;
                         } else if (lookAhead.Type() == NUMBER) {
-                            tokens.Add(OPERATORS["+"]);
                             tokens.Add(new ExpressionNumber(float.Parse("-" + input[i + 1])));
                             i++;
                         } else if (lookAhead.Type() == VARIABLE || lookAhead.Type() == DELIMITER || lookAhead.Type() == FUNCTION) {
@@ -208,6 +211,9 @@ namespace Complexity.Programming {
                     if (i < input.Count - 1 && !lookAhead.Is(OPERATOR) && !lookAhead.Is(")") && !lookAhead.Is(",")) {
                         tokens.Add(token);
                         tokens.Add(OPERATORS["*"]);
+                    } else if (lookAhead.name.Equals("-")) {
+                        tokens.Add(OPERATORS["+"]);
+                        tokens.Add(token);
                     } else {
                         tokens.Add(token);
                     }
@@ -343,6 +349,10 @@ namespace Complexity.Programming {
             public bool Is(int type) {
                 return this.type == type;
             }
+        }
+
+        protected class ExpressionUndefined : ExpressionPart {
+            public ExpressionUndefined() : base("UNDEFINED") { }
         }
 
         protected class ExpressionOperator : ExpressionPart {

@@ -14,21 +14,22 @@ namespace Complexity.Managers {
     /// program's execution.
     /// </summary>
     public class ResourceManager {
+        //Collections by level of scope
+        private static Dictionary<string, Variable> globalVariables;
+        private static Dictionary<string, Function> globalFunctions;
         private static ScopedManager<Variable> variables;
         private static ScopedManager<Function> functions;
+        
         private static Random random;
 
         static ResourceManager() {
-            Dictionary<string, Variable> variableValues = new Dictionary<string, Variable>() {
-                {"abcd", new Variable(Variable.DOUBLE, 7.0)},
-                {"parent", new Variable(Variable.STRING, "object")},
-                {"color", new Variable(Variable.STRING, "red")},
+            globalVariables = new Dictionary<string, Variable>() {
                 {"time", new Variable(Variable.DOUBLE, 0)},
                 {"pi", new Variable(Variable.DOUBLE, Math.PI)},
                 {"e", new Variable(Variable.DOUBLE, Math.E)}
             };
 
-            Dictionary<string, Function>functionValues = new Dictionary<string, Function>() {
+            globalFunctions = new Dictionary<string, Function>() {
                 {"sin", new Function(Variable.DOUBLE, "sin", 1, (a) => new Variable(Variable.DOUBLE, Math.Sin((double)a[0].Value())))},
                 {"cos", new Function(Variable.DOUBLE, "cos", 1, (a) => new Variable(Variable.DOUBLE, Math.Cos((double)a[0].Value())))},
                 {"tan", new Function(Variable.DOUBLE, "tan", 1, (a) => new Variable(Variable.DOUBLE, Math.Tan((double)a[0].Value())))},
@@ -54,8 +55,8 @@ namespace Complexity.Managers {
                     new Variable(Variable.DOUBLE, a[0].Value() + a[1].Value() + a[2].Value() + a[3].Value()))}
             };
 
-            variables = new ScopedManager<Variable>(variableValues);
-            functions = new ScopedManager<Function>(functionValues);
+            variables = new ScopedManager<Variable>();
+            functions = new ScopedManager<Function>();
 
             random = new Random();
         }
@@ -76,7 +77,9 @@ namespace Complexity.Managers {
         }
 
         public static bool IsDefined(string name) {
-            return (variables.Contains(name) || functions.Contains(name));
+            return (
+                globalVariables.ContainsKey(name) || globalFunctions.ContainsKey(name)
+                || variables.Contains(name) || functions.Contains(name));
         }
 
         public static string GetRandomVarName() {
@@ -105,11 +108,11 @@ namespace Complexity.Managers {
         }
 
         public static bool ContainsVariable(string name) {
-            return variables.Contains(name);
+            return globalVariables.ContainsKey(name) || variables.Contains(name);
         }
 
         public static void AddVariable(string name, Variable variable) {
-            if (variables.Contains(name)) {
+            if (ContainsVariable(name)) {
                 throw new Exception("Variable " + name + " is already defined");
             }
 
@@ -117,19 +120,27 @@ namespace Complexity.Managers {
         }
 
         public static void ModifyVariable(string name, dynamic value) {
-            variables.GetAttribute(name).SetValue(value);
+            GetVariable(name).SetValue(value);
         }
 
         public static Variable GetVariable(string name) {
-            return variables.GetAttribute(name);
+            if (globalVariables.ContainsKey(name)) {
+                return globalVariables[name];
+            } else {
+               return variables.GetAttribute(name);
+            }
         }
 
         public static bool ContainsFunction(string name) {
-            return functions.Contains(name);
+            return globalFunctions.ContainsKey(name) || functions.Contains(name);
         }
 
         public static Function GetFunction(string name) {
-            return functions.GetAttribute(name);
+            if (globalFunctions.ContainsKey(name)) {
+                return globalFunctions[name];
+            } else {
+                return functions.GetAttribute(name);
+            }
         }
     }
 }

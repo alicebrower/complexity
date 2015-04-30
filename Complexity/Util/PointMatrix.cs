@@ -99,7 +99,7 @@ namespace Complexity.Util {
 
         object IEnumerator.Current {
             get {
-                return new Point3(At(position, 0), At(position, 1), At(position, 3));
+                return new Point3(this[position, 0], this[position, 1], this[position, 2]);
             }
         }
 

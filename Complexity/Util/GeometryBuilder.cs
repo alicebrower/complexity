@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Complexity.Util {
     public static class GeometryBuilder {
-        public static string POLAR_THETA = ResourceManager.GetRandomVarName();
+
         /// <summary>
         /// Creates a geometry that represents a circle. Z values are set to 0.
         /// </summary>

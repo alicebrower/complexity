@@ -17,14 +17,13 @@ namespace Complexity {
     /// For testing. When this is compiled as a library, this will be removed.
     /// </summary>
     public class MainClass {
-        static int number = 0;
         /// <summary>
         /// 
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
         static int Main(string[] args) {
-            Program p = Compiler.Compile(".5");
+            Program p = Compiler.Compile("0.5E-2");
             Variable v = p.Run();
 
             #region Objects
@@ -32,14 +31,14 @@ namespace Complexity {
             Console.Write("Creating Objects... ");
 
             Cube cube = new Cube();
-            cube.SetColor("sin(time)^2", "0", "sin(time+pi/2)^2", "1");
+            //cube.SetColor("sin(time)^2", "0", "sin(time+pi/2)^2", "1");
             cube.SetRotate("rad(20)", "rad(45)+time", "0");
-            cube.SetScale(".5", ".5", ".5");
+            cube.SetScale(".1", ".1", ".1");
 
-            //System3 sys = new System3(new float[,]{{0, 0, 0}}, cube);
+            System3 sys = new System3(GeometryBuilder.Circle(20), cube);
 
             Scene scene = new Scene();
-            scene.Add(cube);
+            scene.Add(sys);
 
             Console.WriteLine("Done.");
             #endregion
@@ -56,10 +55,6 @@ namespace Complexity {
                 Console.ReadLine();
             }
             //return 0;
-        }
-
-        public static int GetNumber() {
-            return number++;
         }
     }
 }
