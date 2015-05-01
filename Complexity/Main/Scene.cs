@@ -6,15 +6,16 @@ using System.Collections;
 using System.Threading;
 using Complexity.Managers;
 using Complexity.Interfaces;
+using System.Collections.Generic;
+using Complexity.Programming;
 
 namespace Complexity.Main {
     /// <summary>
     /// Contains all the information that a render window needs to draw.
     /// </summary>
-    public class Scene {
+    public class Scene : ProgrammableObject {
         private double[] position;
-
-        private ArrayList objects;
+        private List<Object3> objects;
 
         /// <summary>
         /// 
@@ -28,7 +29,7 @@ namespace Complexity.Main {
         /// 
         /// </summary>
         private void Init() {
-            objects = new ArrayList();
+            objects = new List<Object3>();
 
             position = new double[] { 0, 0, 0 };
         }
@@ -49,10 +50,12 @@ namespace Complexity.Main {
             objects.Clear();
         }
 
+        public override void Compile() { }
+
         /// <summary>
         /// Recalculate the properties of all objects in the scene
         /// </summary>
-        public void Recalculate() {
+        public override void Recalculate() {
             ResourceManager.ModifyVariable("time", Universe.GetElapsedTime());
 
             foreach (Object3 obj in objects) {
@@ -64,6 +67,14 @@ namespace Complexity.Main {
             foreach (Object3 obj in objects) {
                 obj.Draw();
             }
+        }
+
+        public override bool HasChildren() {
+            return true;
+        }
+
+        public override List<Object3> GetChildren() {
+            return objects;
         }
     }
 }

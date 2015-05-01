@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Complexity.Managers;
+using Complexity.Programming;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,11 +13,12 @@ namespace Complexity.Main {
     /// <summary>
     /// This class is responsible for maintaining an entire game state.
     /// </summary>
-    public class Universe {
+    public static class Universe {
         private static Scene activeScene;
         private static ArrayList scenes;
         private static RenderWindow renderWin;
         private static Stopwatch time = new Stopwatch();
+        private static Random random = new Random();
 
         /// <summary>
         /// 
@@ -26,18 +29,22 @@ namespace Complexity.Main {
             renderWin.Run(60.0);
         }
 
-        public Universe() {
+        static Universe() {
             scenes = new ArrayList();
         }
 
         /// <summary>
         /// Let there be light
         /// </summary>
-        public void Begin() {
+        public static void Begin() {
+            //Compile everything
+            Compile(activeScene);
+
             //Render Thread, this is just preliminary stuff.
             //Hard coded for only one scene and one game window.
             //Logic to handle this can be added later
             if (scenes.Count > 0) {
+                ExecutionManager.AddScene(activeScene);
                 Thread thread = new Thread(new ThreadStart(RunRenderWindow));
                 thread.Start();
             } else {
@@ -47,12 +54,25 @@ namespace Complexity.Main {
             time.Start();
         }
 
+        private static void Compile(ProgrammableObject obj) {
+            ResourceManager.AdvanceScope(obj.GetVariables(), obj.GetFunctions());
+
+            obj.Compile();
+            if (obj.HasChildren()) {
+                foreach (ProgrammableObject pObj in obj.GetChildren()) {
+                    Compile(pObj);
+                }
+            }
+
+            ResourceManager.DecreaseScope();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public int AddScene(Scene s) {
+        public static int AddScene(Scene s) {
             return scenes.Add(s);
         }
 
@@ -60,7 +80,7 @@ namespace Complexity.Main {
         /// 
         /// </summary>
         /// <param name="index"></param>
-        public void SetActiveScene(int index) {
+        public static void SetActiveScene(int index) {
             activeScene = (Scene) scenes[index];
         }
 
@@ -70,6 +90,14 @@ namespace Complexity.Main {
         /// <returns></returns>
         public static double GetElapsedTime() {
             return ((double)time.ElapsedMilliseconds) / 1000.0;
+        }
+
+        public static int RandomInt() {
+            return random.Next();
+        }
+
+        public static double RandomDouble() {
+            return random.NextDouble();
         }
     }
 }

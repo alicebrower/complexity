@@ -15,13 +15,13 @@ using Complexity.Interfaces;
 using Complexity.Programming;
 
 namespace Complexity.Objects {
-    //METHODS, NO ATTRIBUTES
+    //MAIN
     /// <summary>
     /// Represents a 3 Dimentional Object that can be rendered.
     /// SimpleObject -> Does not recalculate, must be modified externally.
     /// ComplexObject -> Has a Recalculate method and can update itself
     /// </summary>
-    public abstract partial class Object3 : ProgrammableObject, Renderable, Recalculatable {
+    public abstract partial class Object3 : ProgrammableObject, Renderable {
         protected static ulong ID = 0;
 
         //Don't forget that collections need special handling in the clone method!
@@ -31,6 +31,7 @@ namespace Complexity.Objects {
 
         protected Object3() {
             InitVariables();
+            InitFunctions();
             transforms = new ArrayList(4);
             SetID();
         }
@@ -76,12 +77,40 @@ namespace Complexity.Objects {
             this.vertecies = vertecies;
         }
 
+        public override void Compile() {
+            colorR.Compile();
+            colorG.Compile();
+            colorB.Compile();
+            colorA.Compile();
+            scaleX.Compile();
+            scaleY.Compile();
+            scaleZ.Compile();
+            rotateX.Compile();
+            rotateY.Compile();
+            rotateZ.Compile();
+            originX.Compile();
+            originY.Compile();
+            originZ.Compile();
+            positionX.Compile();
+            positionY.Compile();
+            positionZ.Compile();
+        }
+
         /// <summary>
         /// 
         /// </summary>
-        public virtual void Recalculate() {
+        public override void Recalculate() {
             RecalculateVariables();
             vertecies.Restore();
+
+            if (ResourceManager.ContainsVariable("dist")) {
+                /*
+                Console.WriteLine((ResourceManager.GetVariable("dist").Value() /
+                    ResourceManager.LookupVariable(ResourceManager.GetVariable("parent"), new Variable(Variable.STRING, "length")).Value()));
+                */
+                //Console.WriteLine(colorB.Value());
+            }
+
 
             //Manipulate vertecies
             vertecies.Translate(originX.Value(), originY.Value(), originZ.Value());
@@ -111,6 +140,9 @@ namespace Complexity.Objects {
             }
 
             Object3 result = (Object3)MemberwiseClone();
+            result.CloneVariables();
+            result.InitVariables();
+            result.InitFunctions();
             result.SetVertecies(_vertecies);
             result.SetTransformArray(_transforms);
             result.SetID();
@@ -134,29 +166,45 @@ namespace Complexity.Objects {
         }
     }
 
-    //ATTRIBUTE METHODS
+    //VARIABLES
     public abstract partial class Object3 {
-        protected ExpressionF colorR = new ExpressionF("1");
-        protected ExpressionF colorG = new ExpressionF("0");
-        protected ExpressionF colorB = new ExpressionF("1");
-        protected ExpressionF colorA = new ExpressionF("1");
-        protected ExpressionF scaleX = new ExpressionF("1");
-        protected ExpressionF scaleY = new ExpressionF("1");
-        protected ExpressionF scaleZ = new ExpressionF("1");
-        protected ExpressionF rotateX = new ExpressionF("0");
-        protected ExpressionF rotateY = new ExpressionF("0");
-        protected ExpressionF rotateZ = new ExpressionF("0");
-        protected ExpressionF originX = new ExpressionF("0");
-        protected ExpressionF originY = new ExpressionF("0");
-        protected ExpressionF originZ = new ExpressionF("0");
-        protected ExpressionF positionX = new ExpressionF("0");
-        protected ExpressionF positionY = new ExpressionF("0");
-        protected ExpressionF positionZ = new ExpressionF("0");
+        protected static ExpressionF COLOR_R = new ExpressionF("1");
+        protected static ExpressionF COLOR_G = new ExpressionF("0");
+        protected static ExpressionF COLOR_B = new ExpressionF("1");
+        protected static ExpressionF COLOR_A = new ExpressionF("1");
+        protected static ExpressionF SCALE_X = new ExpressionF("1");
+        protected static ExpressionF SCALE_Y = new ExpressionF("1");
+        protected static ExpressionF SCALE_Z = new ExpressionF("1");
+        protected static ExpressionF ROTATE_X = new ExpressionF("0");
+        protected static ExpressionF ROTATE_Y = new ExpressionF("0");
+        protected static ExpressionF ROTATE_Z = new ExpressionF("0");
+        protected static ExpressionF ORIGIN_X = new ExpressionF("0");
+        protected static ExpressionF ORIGIN_Y = new ExpressionF("0");
+        protected static ExpressionF ORIGIN_Z = new ExpressionF("0");
+        protected static ExpressionF POSITION_X = new ExpressionF("0");
+        protected static ExpressionF POSITION_Y = new ExpressionF("0");
+        protected static ExpressionF POSITION_Z = new ExpressionF("0");
+
+        protected ExpressionF colorR = COLOR_R;
+        protected ExpressionF colorG = COLOR_G;
+        protected ExpressionF colorB = COLOR_B;
+        protected ExpressionF colorA = COLOR_A;
+        protected ExpressionF scaleX = SCALE_X;
+        protected ExpressionF scaleY = SCALE_Y;
+        protected ExpressionF scaleZ = SCALE_Z;
+        protected ExpressionF rotateX = ROTATE_X;
+        protected ExpressionF rotateY = ROTATE_Y;
+        protected ExpressionF rotateZ = ROTATE_Z;
+        protected ExpressionF originX = ORIGIN_X;
+        protected ExpressionF originY = ORIGIN_Y;
+        protected ExpressionF originZ = ORIGIN_Z;
+        protected ExpressionF positionX = POSITION_X;
+        protected ExpressionF positionY = POSITION_Y;
+        protected ExpressionF positionZ = POSITION_Z;
         protected ProgrammableObject parent;
-        protected Dictionary<string, Variable> variables;
 
         protected virtual void InitVariables() {
-            variables = new Dictionary<string, Variable>() {
+            variables = new Dictionary<string, Variable>(17) {
                {"colorR", new Variable(Variable.FLOAT) {Value = () => colorR.Value()}},
                {"colorG", new Variable(Variable.FLOAT) {Value = () => colorG.Value()}},
                {"colorB", new Variable(Variable.FLOAT) {Value = () => colorB.Value()}},
@@ -196,24 +244,23 @@ namespace Complexity.Objects {
             positionZ.Evaluate();
         }
 
-        public bool ContainsVariable(string name) {
-            return variables.ContainsKey(name);
-        }
-
-        public void AddVariable(string name, Variable value) {
-            variables.Add(name, value);
-        }
-
-        public Variable GetVariable(string name) {
-            return variables[name];
-        }
-
-        public bool ContainsFunction(string name) {
-            throw new NotImplementedException();
-        }
-
-        public Function GetFunction(string name) {
-            throw new NotImplementedException();
+        protected void CloneVariables() {
+            colorR = colorR.Clone();
+            colorG = colorG.Clone();
+            colorB = colorB.Clone();
+            colorA = colorA.Clone();
+            scaleX = scaleX.Clone();
+            scaleY = scaleY.Clone();
+            scaleZ = scaleZ.Clone();
+            rotateX = rotateX.Clone();
+            rotateY = rotateY.Clone();
+            rotateZ = rotateZ.Clone();
+            originX = originX.Clone();
+            originY = originY.Clone();
+            originZ = originZ.Clone();
+            positionX = positionX.Clone();
+            positionY = positionY.Clone();
+            positionZ = positionZ.Clone();
         }
 
         public ProgrammableObject GetParent() {
@@ -246,6 +293,12 @@ namespace Complexity.Objects {
             positionZ = new ExpressionF(z);
         }
 
+        public void SetPosition(ExpressionF x, ExpressionF y, ExpressionF z) {
+            positionX = x;
+            positionY = y;
+            positionZ = z;
+        }
+
         public void SetOrigin(string x, string y, string z) {
             originX = new ExpressionF(x);
             originY = new ExpressionF(y);
@@ -258,9 +311,12 @@ namespace Complexity.Objects {
             colorB = new ExpressionF(b);
             colorA = new ExpressionF(a);
         }
+    }
 
-        public float[] GetColor() {
-            return new float[] {colorR.Value(), colorG.Value(), colorB.Value(), colorA.Value()};
+    //FUNCTIONS
+    public abstract partial class Object3 {
+        private void InitFunctions() {
+            functions = new Dictionary<string, Function>(0);
         }
     }
 }

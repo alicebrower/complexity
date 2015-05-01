@@ -17,6 +17,7 @@ namespace Complexity.Programming {
         public const int NUMBER = 3;
         public const int VARIABLE = 4;
         public const int FUNCTION = 5;
+        public const int PROPERTY = 6;
 
         private static readonly int LEFT_ASSOC = 0;
         private static readonly int RIGHT_ASSOC = 1;
@@ -37,7 +38,7 @@ namespace Complexity.Programming {
                 {"^", new ExpressionOperator("^", 2, RIGHT_ASSOC, 9,
                     (a) => new Variable(Variable.DOUBLE, Math.Pow(a[1].Value(), a[0].Value())))},
 
-                {".", new ExpressionOperator(".", 2, LEFT_ASSOC, 9, (a) => new Variable(Variable.INT, 0))},
+                {".", new ExpressionOperator(".", 2, LEFT_ASSOC, 9, (a) => ResourceManager.LookupVariable(a[1], a[0]))},
             };
 
             DELIMITERS = new Dictionary<string, ExpressionDelimeter>() {
@@ -98,6 +99,10 @@ namespace Complexity.Programming {
                             }
                         } else if (Regex.IsMatch(lookAhead1, "^[0-9]*$")) {
                             tokens.Add(new ExpressionNumber(float.Parse("0" + token + lookAhead1)));
+                            i = j;
+                        } else if (Regex.IsMatch(lookAhead1, "^" + VAR_REGEX + "$")) {
+                            tokens.Add(OPERATORS[token]);
+                            tokens.Add(new ExpressionProperty(lookAhead1));
                             i = j;
                         }
                     } else {
@@ -219,6 +224,8 @@ namespace Complexity.Programming {
                     }
                 } else if (token.Type() == FUNCTION) {
                     tokens.Add(token);
+                } else if (token.Is(PROPERTY)) {
+                    tokens.Add(token);
                 } else {
                     throw new Exception("Undefined Symbol " + token);
                 }
@@ -281,6 +288,8 @@ namespace Complexity.Programming {
                     return new Symbol(false, 0, (a) => new Variable(Variable.FLOAT, float.Parse(token.name)));
                 case VARIABLE:
                     return new Symbol(false, 0, (a) => ResourceManager.GetVariable(token.name));
+                case PROPERTY:
+                    return new Symbol(false, 0, (a) => new Variable(Variable.STRING, token.name));
                 case OPERATOR:
                     return new Symbol(true, OPERATORS[token.name].nOps, OPERATORS[token.name].eval);
                 case FUNCTION:
@@ -353,6 +362,13 @@ namespace Complexity.Programming {
 
         protected class ExpressionUndefined : ExpressionPart {
             public ExpressionUndefined() : base("UNDEFINED") { }
+        }
+
+        protected class ExpressionProperty : ExpressionPart {
+            public ExpressionProperty(string name)
+                : base(name) {
+                this.type = PROPERTY;
+            }
         }
 
         protected class ExpressionOperator : ExpressionPart {

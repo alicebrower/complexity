@@ -10,6 +10,7 @@ using Complexity.Util;
 using Complexity.Objects.Base;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
+using Complexity.Managers;
 
 namespace Complexity.Objects {
     /// <summary>
@@ -36,21 +37,28 @@ namespace Complexity.Objects {
         }
 
         public override void Draw() {
-            float[] col = GetColor();
             float[] cubeColors = {
-			    col[0], col[1], col[2], col[3],
-			    col[0], col[1], col[2], col[3],
-			    col[0], col[1], col[2], col[3],
-			    col[0], col[1], col[2], col[3],
-			    col[0], col[1], col[2], col[3],
-			    col[0], col[1], col[2], col[3],
-			    col[0], col[1], col[2], col[3],
-			    col[0], col[1], col[2], col[3]
+			    colorR.Value(), colorG.Value(), colorB.Value(), colorA.Value(),
+			    colorR.Value(), colorG.Value(), colorB.Value(), colorA.Value(),
+			    colorR.Value(), colorG.Value(), colorB.Value(), colorA.Value(),
+			    colorR.Value(), colorG.Value(), colorB.Value(), colorA.Value(),
+			    colorR.Value(), colorG.Value(), colorB.Value(), colorA.Value(),
+			    colorR.Value(), colorG.Value(), colorB.Value(), colorA.Value(),
+			    colorR.Value(), colorG.Value(), colorB.Value(), colorA.Value(),
+			    colorR.Value(), colorG.Value(), colorB.Value(), colorA.Value()
 		    };
 
             GL.VertexPointer(3, VertexPointerType.Float, 0, vertecies.ToRowWiseArray());
             GL.ColorPointer(4, ColorPointerType.Float, 0, cubeColors);
             GL.DrawElements(BeginMode.Triangles, 36, DrawElementsType.UnsignedByte, triangles);
+        }
+
+        public override bool HasChildren() {
+            return false;
+        }
+
+        public override List<Object3> GetChildren() {
+            return null;
         }
     }
 }

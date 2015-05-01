@@ -38,6 +38,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\Recalculatable.cs" />
+    <Compile Include="Managers\ExecutionManager.cs" />
+    <Compile Include="Managers\RenderManager.cs" />
     <Compile Include="Managers\ScopedManager.cs" />
     <Compile Include="Managers\ExpressisonManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
@@ -45,7 +47,8 @@
     <Compile Include="Main\Universe.cs" />
     <Compile Include="Managers\ObjectManager.cs" />
     <Compile Include="Managers\ResourceManager.cs" />
-    <Compile Include="Math_Things\Evaluateable.cs" />
+    <Compile Include="Interfaces\Evaluateable.cs" />
+    <Compile Include="Programming\ProgrammableClass.cs" />
     <Compile Include="Util\Geometry.cs" />
     <Compile Include="Programming\Compiler.cs" />
     <Compile Include="Math_Things\ExpressionF.cs" />
@@ -54,7 +57,7 @@
     <Compile Include="Programming\ProgrammableObject.cs" />
     <Compile Include="Programming\Program.cs" />
     <Compile Include="Programming\Symbol.cs" />
-    <Compile Include="Programming\Variable\Variable.cs" />
+    <Compile Include="Programming\Variable.cs" />
     <Compile Include="Programming\Variable\ObjectAttribute.cs" />
     <Compile Include="Objects\SimpleDot3.cs" />
     <Compile Include="Interfaces\Renderable.cs" />
@@ -68,7 +71,6 @@
     <Compile Include="Main\Scene.cs" />
     <Compile Include="Math_Things\MathUtil.cs" />
     <Compile Include="Util\Point3.cs" />
-    <Compile Include="Util\TypedArrayList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FParsec">
@@ -98,7 +100,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Programming\Libraries\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

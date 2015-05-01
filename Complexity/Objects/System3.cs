@@ -16,8 +16,8 @@ namespace Complexity.Objects {
     /// </summary>
     public class System3 : Object3 {
         protected Object3 masterObj;
-        protected Object3[] vertexObjects;
-        protected int count;
+        protected List<Object3> vertexObjects;
+        protected int count = 0;
 
         /// <summary>
         /// 
@@ -28,13 +28,20 @@ namespace Complexity.Objects {
             : base() {
             this.masterObj = masterObj;
 
-            vertexObjects = new Object3[geometry.Rows()];
+            vertexObjects = new List<Object3>(geometry.Rows());
+            Object3 obj;
             for (int i = 0; i < geometry.Rows(); i++) {
-                vertexObjects[i] = masterObj.Clone();
-                vertexObjects[i].SetPosition("" + geometry[i, 0], "" + geometry[i, 1], "" + geometry[i, 2]);
+                count = i + 1;
+                obj = masterObj.Clone();
+                obj.AddVaraible("dist", new Variable(Variable.FLOAT, i));
+                obj.SetParent(this);
+                obj.SetPosition("" + geometry[i, 0], "" + geometry[i, 1], "" + geometry[i, 2]);
+                vertexObjects.Add(obj);
             }
 
             vertecies = ConvertGeometry(geometry);
+
+            InitVariables();
         }
 
         /// <summary>
@@ -66,21 +73,32 @@ namespace Complexity.Objects {
         /// 
         /// </summary>
         public override void Recalculate() {
-            ResourceManager.AdvanceScope();
-
             base.Recalculate();
-            masterObj.Recalculate();
-            for (int i = 0; i < vertecies.RowCount; i++) {
-                vertexObjects[i].SetPosition("" + vertecies[i, 0], "" + vertecies[i, 1], "" + vertecies[i, 2]);
-                vertexObjects[i].Recalculate();
-            }
+            //masterObj.Recalculate();
 
-            ResourceManager.DecreaseScope();
+            ExpressionF x, y, z;
+            for (int i = 0; i < vertecies.RowCount; i++) {
+                x = new ExpressionF("" + vertecies[i, 0]);
+                y = new ExpressionF("" + vertecies[i, 1]);
+                z = new ExpressionF("" + vertecies[i, 2]);
+                x.Compile();
+                y.Compile();
+                z.Compile();
+                vertexObjects[i].SetPosition(x, y, z);
+            }
         }
 
         protected override void InitVariables() {
             base.InitVariables();
-            variables.Add("length", new Variable(Variable.FLOAT, 0));
+            variables.Add("length", new Variable(Variable.FLOAT, count));
+        }
+
+        public override bool HasChildren() {
+            return true;
+        }
+
+        public override List<Object3> GetChildren() {
+            return vertexObjects;
         }
     }
 }

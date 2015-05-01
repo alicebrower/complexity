@@ -19,7 +19,7 @@ namespace Complexity.Objects {
         public override void Draw() {
             GL.Begin(BeginMode.TriangleFan);
 
-            GL.Color4(GetColor());
+            //GL.Color4(GetColor());
             
             foreach (Point3 p in vertecies) {
                 GL.Vertex3(p.x, p.y, p.z);
@@ -33,6 +33,14 @@ namespace Complexity.Objects {
 
             //GetAttribute("color").value.Recalculate();
             //color = GetAttribute("color").value.Values();
+        }
+
+        public override bool HasChildren() {
+            return false;
+        }
+
+        public override List<Object3> GetChildren() {
+            return null;
         }
     }
 }

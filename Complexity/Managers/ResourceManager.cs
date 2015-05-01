@@ -131,6 +131,22 @@ namespace Complexity.Managers {
             }
         }
 
+        public static Variable LookupVariable(Variable a, Variable b) {
+            if (a.type != Variable.OBJECT) {
+                throw new Exception("Cannot lookup property on a non-object type");
+            }
+            
+            if(b.type != Variable.STRING) {
+                throw new ArgumentException();
+            }
+
+            if (((ProgrammableObject)a.Value()).ContainsVariable((string)b.Value())) {
+                return ((ProgrammableObject)a.Value()).GetVariable((string)b.Value());
+            } else {
+                throw new Exception("Property does not exist");
+            }
+        }
+
         public static bool ContainsFunction(string name) {
             return globalFunctions.ContainsKey(name) || functions.Contains(name);
         }

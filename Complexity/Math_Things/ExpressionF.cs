@@ -13,12 +13,17 @@ namespace Complexity.Math_Things {
     public class ExpressionF {
         private Program program;
         private float value;
+        private string infix;
 
         public ExpressionF(string infix) {
-            program = Compiler.Compile(infix);
+            this.infix = infix;
         }
 
         public void Set(string infix) {
+            this.infix = infix;
+        }
+
+        public void Compile() {
             program = Compiler.Compile(infix);
         }
 
@@ -32,6 +37,14 @@ namespace Complexity.Math_Things {
 
         public float Value() {
             return value;
+        }
+
+        public override string ToString() {
+            return infix;
+        }
+
+        public ExpressionF Clone() {
+            return (ExpressionF)MemberwiseClone();
         }
     }
 }

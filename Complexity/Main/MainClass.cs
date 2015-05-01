@@ -14,7 +14,7 @@ using Complexity.Programming;
 
 namespace Complexity {
     /// <summary>
-    /// For testing. When this is compiled as a library, this will be removed.
+    /// For testing
     /// </summary>
     public class MainClass {
         /// <summary>
@@ -23,19 +23,18 @@ namespace Complexity {
         /// <param name="args"></param>
         /// <returns></returns>
         static int Main(string[] args) {
-            Program p = Compiler.Compile("0.5E-2");
-            Variable v = p.Run();
-
             #region Objects
             //Create all the things
             Console.Write("Creating Objects... ");
 
             Cube cube = new Cube();
-            //cube.SetColor("sin(time)^2", "0", "sin(time+pi/2)^2", "1");
-            cube.SetRotate("rad(20)", "rad(45)+time", "0");
-            cube.SetScale(".1", ".1", ".1");
+            cube.SetColor(".75", "0", "(dist/parent.length+time)%1", "1");
+            cube.SetRotate("0", "0", "rad(360*dist/parent.length) + parent.rotateZ");
+            cube.SetScale(".2", ".5", ".2");
 
             System3 sys = new System3(GeometryBuilder.Circle(20), cube);
+            sys.SetRotate("0", "0", "time/5");
+            sys.SetScale("2");
 
             Scene scene = new Scene();
             scene.Add(sys);
@@ -45,10 +44,9 @@ namespace Complexity {
 
             //Create game universe
             Console.Write("Creating Universe... ");
-            Universe u = new Universe();
-            u.AddScene(scene);
-            u.SetActiveScene(0);
-            u.Begin();
+            Universe.AddScene(scene);
+            Universe.SetActiveScene(0);
+            Universe.Begin();
             Console.WriteLine("Done.");
 
             while (true) {
